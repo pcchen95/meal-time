@@ -1,7 +1,8 @@
 import React from "react";
+// Variable Width
 import { Div, Button } from "atomize";
-import NavBar from "../components/NavBar";
-import Footer from "../components/Footer";
+import NavBar from "../../Components/NavBar";
+import Footer from "../../Components/Footer";
 
 const TypeFilterButton = () => {
   return (
@@ -20,7 +21,7 @@ const TypeFilterButton = () => {
         borderColor="black900"
         textWeight="600"
       >
-        交易中
+        正常
       </Button>
       <Button
         h="2.5rem"
@@ -36,13 +37,13 @@ const TypeFilterButton = () => {
         borderColor="black900"
         textWeight="600"
       >
-        已完成
+        停權中
       </Button>
     </Div>
   );
 };
 
-const OrderList = () => {
+const MemberList = () => {
   return (
     <Div
       border="1px solid"
@@ -53,7 +54,7 @@ const OrderList = () => {
       justify="space-between"
     >
       {" "}
-      <Div transform="translateY(25%)">1. 訂單編號：5298974923</Div>
+      <Div transform="translateY(25%)">1. 會員編號：5298974923</Div>
       <Div d="flex">
         <Button
           h="2.5rem"
@@ -69,7 +70,7 @@ const OrderList = () => {
           borderColor="black900"
           textWeight="300"
         >
-          編輯訂單
+          使停權
         </Button>
         <Button
           h="2.5rem"
@@ -85,26 +86,26 @@ const OrderList = () => {
           borderColor="black900"
           textWeight="300"
         >
-          取消訂單
+          使正常
         </Button>
       </Div>
     </Div>
   );
 };
 
-const AdminOrderPage = () => {
+const AdminMemberPage = () => {
   return (
     <Div>
       <NavBar />
       <Div m={{ l: "5rem", r: "5rem" }}>
         <TypeFilterButton />
-        <OrderList></OrderList>
-        <OrderList />
-        <OrderList />
+        <MemberList></MemberList>
+        <MemberList />
+        <MemberList />
       </Div>
       <Footer />
     </Div>
   );
 };
 
-export default AdminOrderPage;
+export default AdminMemberPage;
