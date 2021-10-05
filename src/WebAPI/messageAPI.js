@@ -1,9 +1,14 @@
 import BASE_URL from '../constants/apiurl';
 import { getAuthToken } from '../utils';
 
-export const getUserMessages = () => {
+export const getUserMessages = ({ page, limit, sort, order }) => {
   const token = getAuthToken();
-  return fetch(`${BASE_URL}/messages`, {
+  let queryString = '?';
+  if (page) queryString += `_page=${page}&`;
+  if (limit) queryString += `_limit=${limit}&`;
+  if (sort) queryString += `_sort=${sort}&`;
+  if (order) queryString += `_order=${order}`;
+  return fetch(`${BASE_URL}/messages${queryString}`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -19,9 +24,14 @@ export const getUserMessagesById = (id) => {
   }).then((res) => res.json());
 };
 
-export const getVendorMessages = () => {
+export const getVendorMessages = ({ page, limit, sort, order }) => {
   const token = getAuthToken();
-  return fetch(`${BASE_URL}/messages/vendor`, {
+  let queryString = '?';
+  if (page) queryString += `_page=${page}&`;
+  if (limit) queryString += `_limit=${limit}&`;
+  if (sort) queryString += `_sort=${sort}&`;
+  if (order) queryString += `_order=${order}`;
+  return fetch(`${BASE_URL}/messages/vendor${queryString}`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -79,9 +89,14 @@ export const sendMessageToAdmin = (content) => {
   }).then((res) => res.json());
 };
 
-export const getAllAdminMessages = () => {
+export const getAllAdminMessages = ({ page, limit, sort, order }) => {
   const token = getAuthToken();
-  return fetch(`${BASE_URL}/messages-to-admin/admin`, {
+  let queryString = '?';
+  if (page) queryString += `_page=${page}&`;
+  if (limit) queryString += `_limit=${limit}&`;
+  if (sort) queryString += `_sort=${sort}&`;
+  if (order) queryString += `_order=${order}`;
+  return fetch(`${BASE_URL}/messages-to-admin/admin${queryString}`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -127,9 +142,14 @@ export const sendReportMessage = ({
   }).then((res) => res.json());
 };
 
-export const getAllReportMessages = () => {
+export const getAllReportMessages = ({ page, limit, sort, order }) => {
   const token = getAuthToken();
-  return fetch(`${BASE_URL}/report-messages/admin`, {
+  let queryString = '?';
+  if (page) queryString += `_page=${page}&`;
+  if (limit) queryString += `_limit=${limit}&`;
+  if (sort) queryString += `_sort=${sort}&`;
+  if (order) queryString += `_order=${order}`;
+  return fetch(`${BASE_URL}/report-messages/admin${queryString}`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },

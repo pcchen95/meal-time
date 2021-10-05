@@ -64,7 +64,7 @@ export const updateVendorProfile = ({
   }).then((res) => res.json());
 };
 
-export const getVendorProfileById = (id) => {
+export const getAvailVendorProfileById = (id) => {
   const token = getAuthToken();
   return fetch(`${BASE_URL}/vendors/profile/${id}`, {
     headers: {
@@ -73,7 +73,16 @@ export const getVendorProfileById = (id) => {
   }).then((res) => res.json());
 };
 
-export const getAllVendorProfiles = ({
+export const getVendorProfileById = (id) => {
+  const token = getAuthToken();
+  return fetch(`${BASE_URL}/vendors/admin/profile/${id}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  }).then((res) => res.json());
+};
+
+export const getAvailableVendorProfiles = ({
   page,
   limit,
   sort,
@@ -88,6 +97,31 @@ export const getAllVendorProfiles = ({
   if (order) queryString += `_order=${order}&`;
   if (categoryId) queryString += `categoryId=${categoryId}`;
   return fetch(`${BASE_URL}/vendors/profile${queryString}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  }).then((res) => res.json());
+};
+
+export const getAllVendorProfiles = ({
+  page,
+  limit,
+  sort,
+  order,
+  categoryId,
+  isOpen,
+  isSuspended,
+}) => {
+  const token = getAuthToken();
+  let queryString = '?';
+  if (page) queryString += `_page=${page}&`;
+  if (limit) queryString += `_limit=${limit}&`;
+  if (sort) queryString += `_sort=${sort}&`;
+  if (order) queryString += `_order=${order}&`;
+  if (categoryId) queryString += `categoryId=${categoryId}&`;
+  if (isOpen) queryString += `isOpen=${isOpen}&`;
+  if (isSuspended) queryString += `isSuspended=${isSuspended}`;
+  return fetch(`${BASE_URL}/vendors/admin/profile${queryString}`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
