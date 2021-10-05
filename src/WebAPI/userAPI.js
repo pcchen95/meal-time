@@ -35,7 +35,7 @@ export const login = (username, password) => {
   }).then((res) => res.json());
 };
 
-export const getProfile = () => {
+export const getMe = () => {
   const token = getAuthToken();
   return fetch(`${BASE_URL}/users/profile/me`, {
     headers: {
@@ -44,21 +44,12 @@ export const getProfile = () => {
   }).then((res) => res.json());
 };
 
-export const updateProfile = ({
-  avatar,
-  nickname,
-  username,
-  password,
-  email,
-  phone,
-}) => {
+export const updateProfile = ({ avatar, nickname, email, phone }) => {
   const formData = new FormData();
   formData.append('avatar', avatar);
   formData.append('nickname', nickname);
-  formData.append('username', username);
   formData.append('email', email);
   formData.append('phone', phone);
-  formData.append('password', password);
   const token = getAuthToken();
   return fetch(`${BASE_URL}/users/profile/me`, {
     method: 'PATCH',
