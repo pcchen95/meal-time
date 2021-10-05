@@ -199,7 +199,7 @@ const UserButton = () => {
   );
 };
 
-const Container = () => {
+/*const Container = () => {
   return (
     <Row>
       <Col size="5">
@@ -214,7 +214,7 @@ const Container = () => {
       </Col>
     </Row>
   );
-};
+};*/
 
 const NavBar = () => {
   return (
