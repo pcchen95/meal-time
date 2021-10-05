@@ -5,12 +5,14 @@ import {
   getMe as getMeApi,
   updateProfile as updateProfileApi,
   updatePassword as updatePasswordApi,
+  getAllProfiles as getAllProfilesApi,
 } from '../../WebAPI/userAPI';
 import { setAuthToken } from '../../utils';
 
 const initialState = {
   errMessage: null,
   user: null,
+  users: null,
 };
 
 export const userReducer = createSlice({
@@ -23,10 +25,13 @@ export const userReducer = createSlice({
     setUser: (state, action) => {
       state.user = action.payload;
     },
+    setUsers: (state, action) => {
+      state.users = action.payload;
+    },
   },
 });
 
-export const { setUser, setErrMessage } = userReducer.actions;
+export const { setErrMessage, setUser, setUsers } = userReducer.actions;
 
 export const register =
   ({ avatar, nickname, username, password, email, phone }) =>
@@ -110,6 +115,17 @@ export const updatePassword =
         }
       }
     );
+  };
+
+export const getAllProfiles =
+  ({ page, limit, sort, order, role }) =>
+  (dispatch) => {
+    return getAllProfilesApi({ page, limit, sort, order, role }).then((res) => {
+      if (!res.ok) {
+        return dispatch(setErrMessage(res.message));
+      }
+      dispatch(setUsers(res.data));
+    });
   };
 
 export default userReducer.reducer;

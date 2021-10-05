@@ -111,9 +111,15 @@ export const updateProfileById = (
   }).then((res) => res.json());
 };
 
-export const getAllProfiles = () => {
+export const getAllProfiles = ({ page, limit, sort, order, role }) => {
   const token = getAuthToken();
-  return fetch(`${BASE_URL}/users/profile`, {
+  let queryString = '?';
+  if (page) queryString += `_page=${page}&`;
+  if (limit) queryString += `_limit=${limit}&`;
+  if (sort) queryString += `_sort=${sort}&`;
+  if (order) queryString += `_order=${order}&`;
+  if (role) queryString += `role=${role}`;
+  return fetch(`${BASE_URL}/users/profile${queryString}`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },

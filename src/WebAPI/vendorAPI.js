@@ -73,9 +73,21 @@ export const getVendorProfileById = (id) => {
   }).then((res) => res.json());
 };
 
-export const getAllVendorProfiles = () => {
+export const getAllVendorProfiles = ({
+  page,
+  limit,
+  sort,
+  order,
+  categoryId,
+}) => {
   const token = getAuthToken();
-  return fetch(`${BASE_URL}/vendors/profile`, {
+  let queryString = '?';
+  if (page) queryString += `_page=${page}&`;
+  if (limit) queryString += `_limit=${limit}&`;
+  if (sort) queryString += `_sort=${sort}&`;
+  if (order) queryString += `_order=${order}&`;
+  if (categoryId) queryString += `categoryId=${categoryId}`;
+  return fetch(`${BASE_URL}/vendors/profile${queryString}`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -132,8 +144,15 @@ export const updateVendorAuth = (id) => {
   }).then((res) => res.json());
 };
 
-export const getVendorCategories = (id) => {
-  return fetch(`${BASE_URL}/vendor-categories`).then((res) => res.json());
+export const getVendorCategories = ({ page, limit, sort, order }) => {
+  let queryString = '?';
+  if (page) queryString += `_page=${page}&`;
+  if (limit) queryString += `_limit=${limit}&`;
+  if (sort) queryString += `_sort=${sort}&`;
+  if (order) queryString += `_order=${order}`;
+  return fetch(`${BASE_URL}/vendor-categories${queryString}`).then((res) =>
+    res.json()
+  );
 };
 
 export const getVendorCategoryById = (id) => {

@@ -1,8 +1,14 @@
 import BASE_URL from '../constants/apiurl';
 import { getAuthToken } from '../utils';
 
-export const getFaq = (id) => {
-  return fetch(`${BASE_URL}/faqs`).then((res) => res.json());
+export const getFaq = ({ page, limit, sort, order, categoryId }) => {
+  let queryString = '?';
+  if (page) queryString += `_page=${page}&`;
+  if (limit) queryString += `_limit=${limit}&`;
+  if (sort) queryString += `_sort=${sort}&`;
+  if (order) queryString += `_order=${order}&`;
+  if (categoryId) queryString += `categoryId=${categoryId}`;
+  return fetch(`${BASE_URL}/faqs${queryString}`).then((res) => res.json());
 };
 
 export const getFaqById = (id) => {
@@ -43,8 +49,15 @@ export const deleteFaq = (id) => {
   }).then((res) => res.json());
 };
 
-export const getFaqCategory = (id) => {
-  return fetch(`${BASE_URL}/faq-categories`).then((res) => res.json());
+export const getFaqCategory = ({ page, limit, sort, order }) => {
+  let queryString = '?';
+  if (page) queryString += `_page=${page}&`;
+  if (limit) queryString += `_limit=${limit}&`;
+  if (sort) queryString += `_sort=${sort}&`;
+  if (order) queryString += `_order=${order}`;
+  return fetch(`${BASE_URL}/faq-categories${queryString}`).then((res) =>
+    res.json()
+  );
 };
 
 export const getFaqCategoryById = (id) => {
