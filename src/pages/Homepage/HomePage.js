@@ -1,62 +1,91 @@
 import React from "react";
-import styled from "styled-components";
-/* import { Link } from "react-router-dom"; */
-import { Div, Button } from "atomize";
+import { Div, Icon, Button } from "atomize";
+import NavBar from "../../Components/NavBar";
+import Footer from "../../Components/Footer";
+import Carousel from "../../Components/Carousel";
 
-const Root = styled.div``;
-
-export default function HomePage() {
-  const productsList = (
-    <>
-      {["食物1", "食物2", "食物3", "食物4", "食物5"].map((name, index) => (
-        <Div
-          key={index}
-          bg="gray400"
-          m={{ t: "2rem", l: { xs: "1rem" } }}
-          h="12rem"
-          w="13rem"
-          border="1px solid"
-          rounded="sm"
-        >
-          {name}
-        </Div>
-      ))}
-    </>
-  );
-
+const NewItemList = () => {
   return (
-    <Root>
-      <Div bg="gray200" h="25rem" m={{ t: "2rem" }}></Div>
-      <Div maxW={{ xs: "70%", lg: "60%" }} m={{ y: "3rem", x: "auto" }}>
-        <Div textSize="title">嚴選食物</Div>
-        <Div d={{ xs: "block", lg: "flex" }}>{productsList}</Div>
-      </Div>
+    <Div>
       <Div
-        d="flex"
-        align={{ xs: "space-around", lg: "center" }}
-        pos="relative"
-        h="4rem"
+        textAlign="center"
+        textSize="heading"
+        textWeight="700"
+        textColor="black700"
+        m={{ t: "3rem", b: "1rem" }}
       >
-        <Button
-          h="3rem"
-          p={{ x: "1.25rem" }}
-          textSize="body"
-          textColor="info700"
-          hoverTextColor="info900"
-          bg="white"
-          hoverBg="info200"
-          border="1px solid"
-          borderColor="info700"
-          hoverBorderColor="info900"
-          m={{ r: "0.5rem" }}
-          pos="absolute"
-          top="50%"
-          left="50%"
-          transform="translate(-50%, -50%)"
-        >
-          載入更多
-        </Button>
+        最新商品
       </Div>
-    </Root>
+      <Div d="flex" justify="space-around">
+        <Div
+          m="2.5rem"
+          bgImg="https://images.unsplash.com/photo-1504674900247-0877df9cc836?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1770&q=80"
+          bgSize="cover"
+          bgPos="center"
+          h="15rem"
+          w="15rem"
+        ></Div>
+        <Div
+          m="2.5rem"
+          bgImg="https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=960&q=80"
+          bgSize="cover"
+          bgPos="center"
+          h="15rem"
+          w="15rem"
+        ></Div>
+        <Div
+          m="2.5rem"
+          bgImg="https://images.unsplash.com/photo-1498837167922-ddd27525d352?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1770&q=80"
+          bgSize="cover"
+          bgPos="center"
+          h="15rem"
+          w="15rem"
+        ></Div>{" "}
+        <Div
+          m="2.5rem"
+          bgImg="https://images.unsplash.com/photo-1482049016688-2d3e1b311543?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=820&q=80"
+          bgSize="cover"
+          bgPos="center"
+          h="15rem"
+          w="15rem"
+        ></Div>
+      </Div>
+      <Div d="flex" justify="center">
+        <Button
+          suffix={
+            <Icon
+              name="LongRight"
+              size="16px"
+              color="black500"
+              m={{ l: "0.25rem" }}
+            />
+          }
+          bg="white"
+          hoverBg="warning300"
+          rounded="circle"
+          textColor="black500"
+          border="1px solid"
+          borderColor="black500"
+          shadow="1"
+          hoverShadow="2"
+          m={{ b: "3rem" }}
+        >
+          查看更多
+        </Button>{" "}
+      </Div>
+    </Div>
   );
-}
+};
+
+const HomePage = () => {
+  return (
+    <Div>
+      <NavBar />
+      <Carousel />
+      <NewItemList />
+      <Footer />
+    </Div>
+  );
+};
+
+export default HomePage;
