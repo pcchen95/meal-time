@@ -1,7 +1,7 @@
 import React from "react";
 import { Div } from "atomize";
-import NavBar from "../components/NavBar";
-import Footer from "../components/Footer";
+import NavBar from "../../Components/NavBar";
+import Footer from "../../Components/Footer";
 
 const RulesSection = () => {
   return (
