@@ -1,13 +1,10 @@
 import React from "react";
-// Variable Width
 import { Div, Dropdown, Anchor } from "atomize";
-import NavBar from "../../Components/NavBar";
-import Footer from "../../Components/Footer";
 
 const ProductListOption = (
   <Div p={{ x: "1rem", y: "0.5rem" }}>
     {["生鮮雜貨", "冷藏肉品", "零食", "飲品", "其他"].map((name, index) => (
-      <Anchor d="block" p={{ y: "0.25rem" }}>
+      <Anchor key={index} d="block" p={{ y: "0.25rem" }}>
         {name}
       </Anchor>
     ))}
@@ -54,14 +51,12 @@ const ProductList = () => {
 const AdminProductTypePage = () => {
   return (
     <Div>
-      <NavBar />
       <Div m={{ l: "5rem", r: "5rem" }}>
         <ProductTypeFilter />
         <ProductList></ProductList>
         <ProductList />
         <ProductList />
       </Div>
-      <Footer />
     </Div>
   );
 };

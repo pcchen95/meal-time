@@ -1,7 +1,5 @@
 import React from "react";
 import { Div, Input, Icon, Image, Button } from "atomize";
-import NavBar from "../../Components/NavBar";
-import Footer from "../../Components/Footer";
 
 const MemberEditInfo = () => {
   return (
@@ -126,9 +124,7 @@ const MemberEditInfo = () => {
 const MemberEdit = () => {
   return (
     <Div>
-      <NavBar />
       <MemberEditInfo />
-      <Footer />
     </Div>
   );
 };
