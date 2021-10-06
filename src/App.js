@@ -1,7 +1,7 @@
 import "./App.css";
 import React from "react";
 import { HashRouter as Router, Switch, Route } from "react-router-dom";
-import HomePage from "./pages/Homepage";
+import HomePage from "./pages/HomePage";
 import ProductsPage from "./pages/ProductsPage";
 import SingleProductPage from "./pages/SingleProductPage";
 import OrderDetailsPage from "./pages/OrderDetailsPage";
@@ -22,7 +22,6 @@ import MemberEdit from "./pages/MemberEdit";
 import RulesPage from "./pages/RulesPage";
 import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
-
 
 function App() {
   return (

@@ -3,7 +3,7 @@ import { Div, Button, Text, Icon } from "atomize";
 /* import { Link } from "react-router-dom"; */
 
 export default function OrdersPage() {
-  const buttonList = (
+  const filterOrders = (
     <Div d="flex">
       {["待處理", "待取貨", "已完成", "已取消"].map((name, index) => (
         <Button
@@ -73,15 +73,42 @@ export default function OrdersPage() {
     </Div>
   );
 
+  const buttonList = (
+    <>
+      {["1", "2", ">"].map((name, index) => (
+        <Button
+          key={index}
+          h="2rem"
+          p={{ x: "1rem" }}
+          textSize="caption"
+          textColor="info700"
+          hoverTextColor="info900"
+          bg="white"
+          hoverBg="info200"
+          border="1px solid"
+          borderColor="info700"
+          hoverBorderColor="info900"
+          m={{ r: "0.5rem" }}
+        >
+          {name}
+        </Button>
+      ))}
+    </>
+  );
+
   return (
     <Div
       bg="gray200"
       w="80%"
       m={{ y: "4rem", x: "auto" }}
       p={{ xs: "1rem", lg: "3rem" }}
+      pos="relative"
     >
-      {buttonList}
+      {filterOrders}
       {orderList}
+      <Div m={{ t: "1rem" }} pos="absolute" right="2rem" bottom="1rem" d="flex">
+        {buttonList}
+      </Div>
     </Div>
   );
 }

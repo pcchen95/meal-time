@@ -1,7 +1,5 @@
 import React from "react";
 import { Div, Button } from "atomize";
-import NavBar from "../../Components/NavBar";
-import Footer from "../../Components/Footer";
 
 const TypeFilterButton = () => {
   return (
@@ -95,14 +93,12 @@ const OrderList = () => {
 const AdminOrderPage = () => {
   return (
     <Div>
-      <NavBar />
       <Div m={{ l: "5rem", r: "5rem" }}>
         <TypeFilterButton />
         <OrderList></OrderList>
         <OrderList />
         <OrderList />
       </Div>
-      <Footer />
     </Div>
   );
 };
