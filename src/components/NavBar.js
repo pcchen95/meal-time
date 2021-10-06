@@ -1,5 +1,5 @@
 import React from "react";
-import { Row, Col, Div, Input, Icon, Image, Button } from "atomize";
+import { Div, Input, Icon, Image, Button } from "atomize";
 
 const InputWithRightIcon = () => {
   return (
@@ -198,23 +198,6 @@ const UserButton = () => {
     </Button>
   );
 };
-
-/*const Container = () => {
-  return (
-    <Row>
-      <Col size="5">
-        <Div p="1rem" bg="warning500">
-          This is 5 of 12
-        </Div>
-      </Col>
-      <Col size="7">
-        <Div p="1rem" bg="warning500">
-          This is 7 of 12
-        </Div>
-      </Col>
-    </Row>
-  );
-};*/
 
 const NavBar = () => {
   return (
