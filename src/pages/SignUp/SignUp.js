@@ -1,7 +1,5 @@
 import React from "react";
 import { Row, Col, Div, Input, Icon, Button } from "atomize";
-import NavBar from "../../Components/NavBar";
-import Footer from "../../Components/Footer";
 
 const SignUpInfo = () => {
   return (
@@ -32,7 +30,6 @@ const SignUpInfo = () => {
 const SignUp = () => {
   return (
     <Div>
-      <NavBar></NavBar>
       <Row>
         <Col>
           <Div
@@ -48,7 +45,6 @@ const SignUp = () => {
           <SignUpInfo></SignUpInfo>
         </Col>
       </Row>
-      <Footer></Footer>
     </Div>
   );
 };

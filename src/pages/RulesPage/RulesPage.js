@@ -1,7 +1,5 @@
 import React from "react";
 import { Div } from "atomize";
-import NavBar from "../../Components/NavBar";
-import Footer from "../../Components/Footer";
 
 const RulesSection = () => {
   return (
@@ -59,9 +57,7 @@ const RulesSection = () => {
 const RulesPage = () => {
   return (
     <Div>
-      <NavBar />
       <RulesSection />
-      <Footer />
     </Div>
   );
 };
