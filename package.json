@@ -14,7 +14,7 @@
     "react-dom": "^17.0.2",
     "react-redux": "^7.2.5",
     "react-router-dom": "^5.3.0",
-    "react-scripts": "4.0.3",
+    "react-scripts": "^4.0.3",
     "react-transition-group": "^4.4.2",
     "styled-components": "^5.3.1",
     "styletron-engine-atomic": "^1.4.8",
@@ -47,7 +47,7 @@
   },
   "devDependencies": {
     "eslint": "^7.32.0",
-     "eslint-plugin-react": "^7.25.2",
+    "eslint-plugin-react": "^7.25.2",
     "prettier": "^2.4.1",
     "prettier-eslint": "^13.0.0"
   }
