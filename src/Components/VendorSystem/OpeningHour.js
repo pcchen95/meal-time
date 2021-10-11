@@ -33,7 +33,7 @@ TimeInput.propTypes = {
   value: PropTypes.string,
   isDisabled: PropTypes.bool,
   handleOnChange: PropTypes.func,
-  required: PropTypes.bool,
+  required: PropTypes.number,
 };
 
 const EachDay = ({ name, value, dayENG, newValues, setValues }) => {
@@ -102,7 +102,7 @@ EachDay.propTypes = {
   name: PropTypes.string,
   value: PropTypes.object,
   dayENG: PropTypes.string,
-  newValues: PropTypes.string,
+  newValues: PropTypes.object,
   setValues: PropTypes.func,
 };
 
@@ -141,7 +141,7 @@ const OpeningHour = ({ daysCH, values, setValues }) => {
 
 OpeningHour.propTypes = {
   values: PropTypes.object,
-  daysCH: PropTypes.string,
+  daysCH: PropTypes.array,
   setValues: PropTypes.func,
 };
 
