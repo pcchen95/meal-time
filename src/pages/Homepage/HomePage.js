@@ -1,7 +1,5 @@
 import React from "react";
 import { Div, Icon, Button } from "atomize";
-import NavBar from "../../Components/NavBar";
-import Footer from "../../Components/Footer";
 import Carousel from "../../Components/Carousel";
 
 const NewItemList = () => {
@@ -80,10 +78,8 @@ const NewItemList = () => {
 const HomePage = () => {
   return (
     <Div>
-      <NavBar />
       <Carousel />
       <NewItemList />
-      <Footer />
     </Div>
   );
 };
