@@ -7,7 +7,7 @@ import Footer from "../../Components/Footer";
 const StoreListOption = (
   <Div p={{ x: "1rem", y: "0.5rem" }}>
     {["生鮮雜貨", "冷藏肉品", "零食", "飲品", "其他"].map((name, index) => (
-      <Anchor d="block" p={{ y: "0.25rem" }}>
+      <Anchor key={index} d="block" p={{ y: "0.25rem" }}>
         {name}
       </Anchor>
     ))}
