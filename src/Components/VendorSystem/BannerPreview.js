@@ -105,8 +105,8 @@ const BannerPreview = ({ banner, handleBanner, bannerInput, handleDelete }) => {
 BannerPreview.propTypes = {
   banner: PropTypes.string,
   handleBanner: PropTypes.func,
-  bannerInput: PropTypes.string,
-  handleDelete: PropTypes.bool,
+  bannerInput: PropTypes.object,
+  handleDelete: PropTypes.func,
 };
 
 export default BannerPreview;

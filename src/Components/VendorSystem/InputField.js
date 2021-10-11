@@ -74,9 +74,9 @@ const InputField = ({
 InputField.propTypes = {
   name: PropTypes.string,
   type: PropTypes.string,
-  value: PropTypes.string,
+  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   handleEvent: PropTypes.func,
-  remind: PropTypes.bool,
+  remind: PropTypes.string,
   setCategoryId: PropTypes.func,
   rule: PropTypes.string,
   required: PropTypes.bool,
