@@ -6,7 +6,7 @@ import store from './redux/store'
 import { Provider as StyletronProvider, DebugEngine } from 'styletron-react'
 import { Client as Styletron } from 'styletron-engine-atomic'
 
-const debug = process.env.NODE_ENV === 'production' ? void 0 : new DebugEngine()
+const debug = process.env.NODE_ENV === '' ? void 0 : new DebugEngine()
 
 // 1. Create a client engine instance
 const engine = new Styletron()
