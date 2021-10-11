@@ -1,8 +1,5 @@
 import React from "react";
-// Variable Width
 import { Div, Button } from "atomize";
-import NavBar from "../../Components/NavBar";
-import Footer from "../../Components/Footer";
 
 const TypeFilterButton = () => {
   return (
@@ -96,14 +93,12 @@ const MemberList = () => {
 const AdminMemberPage = () => {
   return (
     <Div>
-      <NavBar />
       <Div m={{ l: "5rem", r: "5rem" }}>
         <TypeFilterButton />
         <MemberList></MemberList>
         <MemberList />
         <MemberList />
       </Div>
-      <Footer />
     </Div>
   );
 };

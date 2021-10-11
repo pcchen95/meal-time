@@ -199,23 +199,6 @@ const UserButton = () => {
   );
 };
 
-/*const Container = () => {
-  return (
-    <Row>
-      <Col size="5">
-        <Div p="1rem" bg="warning500">
-          This is 5 of 12
-        </Div>
-      </Col>
-      <Col size="7">
-        <Div p="1rem" bg="warning500">
-          This is 7 of 12
-        </Div>
-      </Col>
-    </Row>
-  );
-};*/
-
 const NavBar = () => {
   return (
     <Div

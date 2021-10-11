@@ -56,15 +56,7 @@ const getOrder = (id) => {
   }).then((res) => res.json())
 }
 
-const postOrder = ({
-  orderNumber,
-  vendorId,
-  clientId,
-  totalQuantity,
-  totalPrice,
-  pickupTime,
-  remarks,
-}) => {
+const postOrder = ({ orderProducts, vendorId, pickupTime, remarks }) => {
   const token = getAuthToken()
   return fetch(`${BASE_URL}/orders`, {
     method: 'POST',
@@ -73,11 +65,8 @@ const postOrder = ({
       authorization: `Bearer ${token}`,
     },
     body: JSON.stringify({
-      orderNumber,
+      orderProducts,
       vendorId,
-      clientId,
-      totalQuantity,
-      totalPrice,
       pickupTime,
       remarks,
     }),

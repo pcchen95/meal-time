@@ -118,7 +118,7 @@ const deleteProduct = (id) => {
   }).then((res) => res.json())
 }
 
-const getProductCategories = (id) => {
+const getProductCategories = () => {
   return fetch(`${BASE_URL}/product-categories`).then((res) => res.json())
 }
 

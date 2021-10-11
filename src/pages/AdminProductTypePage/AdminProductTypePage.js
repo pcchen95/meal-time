@@ -1,8 +1,5 @@
 import React from "react";
-// Variable Width
 import { Div, Dropdown, Anchor } from "atomize";
-import NavBar from "../../Components/NavBar";
-import Footer from "../../Components/Footer";
 
 const ProductListOption = (
   <Div p={{ x: "1rem", y: "0.5rem" }}>
@@ -54,14 +51,12 @@ const ProductList = () => {
 const AdminProductTypePage = () => {
   return (
     <Div>
-      <NavBar />
       <Div m={{ l: "5rem", r: "5rem" }}>
         <ProductTypeFilter />
         <ProductList></ProductList>
         <ProductList />
         <ProductList />
       </Div>
-      <Footer />
     </Div>
   );
 };
