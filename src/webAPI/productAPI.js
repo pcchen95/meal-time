@@ -1,8 +1,8 @@
-import { BASE_URL } from '../constants/unit'
+import BASE_URL from '../constants/apiurl'
 import { getAuthToken } from '../utils'
 
 const getQueryString = (queryParameters) => {
-  const { page, sort, order, limit } = queryParameters
+  const { page, sort, order, limit } = queryParameters || {}
   let queryString = ''
   if (page) queryString += `&page=${page}`
   if (sort) queryString += `&sort=${sort}`
