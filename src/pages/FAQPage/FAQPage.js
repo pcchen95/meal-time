@@ -1,7 +1,5 @@
 import React from "react";
 import { Div, Icon, Button } from "atomize";
-import NavBar from "../../Components/NavBar";
-import Footer from "../../Components/Footer";
 
 const FAQSection = () => {
   return (
@@ -110,11 +108,9 @@ const FAQSection = () => {
 const FAQPage = () => {
   return (
     <Div>
-      <NavBar />
       <FAQSection />
       <FAQSection />
       <FAQSection />
-      <Footer />
     </Div>
   );
 };
