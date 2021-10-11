@@ -1,5 +1,5 @@
 import React from "react";
-import { Row, Col, Div, Input, Icon, Image, Button } from "atomize";
+import { Div, Input, Icon, Image, Button } from "atomize";
 
 const InputWithRightIcon = () => {
   return (

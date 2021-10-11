@@ -1,5 +1,5 @@
-import BASE_URL from '../constants/apiurl';
-import { getAuthToken } from '../utils';
+import BASE_URL from "../constants/apiurl";
+import { getAuthToken } from "../utils";
 
 export const register = ({
   vendorName,
@@ -12,16 +12,21 @@ export const register = ({
   banner,
 }) => {
   const formData = new FormData();
-  formData.append('vendorName', vendorName);
-  formData.append('address', address);
-  formData.append('phone', phone);
-  formData.append('categoryId', categoryId);
-  formData.append('description', description);
-  formData.append('openingHour', openingHour);
-  formData.append('avatar', avatar);
-  formData.append('banner', banner);
+  formData.append("vendorName", vendorName);
+  formData.append("address", address);
+  formData.append("phone", phone);
+  formData.append("categoryId", categoryId);
+  formData.append("description", description);
+  formData.append("openingHour", openingHour);
+  formData.append("avatar", avatar);
+  formData.append("banner", banner);
+
+  const token = getAuthToken();
   return fetch(`${BASE_URL}/vendors/register`, {
-    method: 'POST',
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
     body: formData,
   }).then((res) => res.json());
 };
@@ -44,19 +49,23 @@ export const updateVendorProfile = ({
   openingHour,
   avatar,
   banner,
+  isDeleteAvatar,
+  isDeleteBanner,
 }) => {
   const formData = new FormData();
-  formData.append('vendorName', vendorName);
-  formData.append('address', address);
-  formData.append('phone', phone);
-  formData.append('categoryId', categoryId);
-  formData.append('description', description);
-  formData.append('openingHour', openingHour);
-  formData.append('avatar', avatar);
-  formData.append('banner', banner);
+  formData.append("vendorName", vendorName);
+  formData.append("address", address);
+  formData.append("phone", phone);
+  formData.append("categoryId", categoryId);
+  formData.append("description", description);
+  formData.append("openingHour", openingHour);
+  formData.append("avatar", avatar);
+  formData.append("banner", banner);
+  if (isDeleteAvatar) formData.append("isDeleteAvatar", isDeleteAvatar);
+  if (isDeleteBanner) formData.append("isDeleteBanner", isDeleteBanner);
   const token = getAuthToken();
   return fetch(`${BASE_URL}/vendors/profile/me`, {
-    method: 'PATCH',
+    method: "PATCH",
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -90,7 +99,7 @@ export const getAvailableVendorProfiles = ({
   categoryId,
 }) => {
   const token = getAuthToken();
-  let queryString = '?';
+  let queryString = "?";
   if (page) queryString += `_page=${page}&`;
   if (limit) queryString += `_limit=${limit}&`;
   if (sort) queryString += `_sort=${sort}&`;
@@ -113,7 +122,7 @@ export const getAllVendorProfiles = ({
   isSuspended,
 }) => {
   const token = getAuthToken();
-  let queryString = '?';
+  let queryString = "?";
   if (page) queryString += `_page=${page}&`;
   if (limit) queryString += `_limit=${limit}&`;
   if (sort) queryString += `_sort=${sort}&`;
@@ -140,17 +149,17 @@ export const updateVendorProfileById = ({
   banner,
 }) => {
   const formData = new FormData();
-  formData.append('vendorName', vendorName);
-  formData.append('address', address);
-  formData.append('phone', phone);
-  formData.append('categoryId', categoryId);
-  formData.append('description', description);
-  formData.append('openingHour', openingHour);
-  formData.append('avatar', avatar);
-  formData.append('banner', banner);
+  formData.append("vendorName", vendorName);
+  formData.append("address", address);
+  formData.append("phone", phone);
+  formData.append("categoryId", categoryId);
+  formData.append("description", description);
+  formData.append("openingHour", openingHour);
+  formData.append("avatar", avatar);
+  formData.append("banner", banner);
   const token = getAuthToken();
   return fetch(`${BASE_URL}/vendors/profile/${id}`, {
-    method: 'PATCH',
+    method: "PATCH",
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -161,7 +170,7 @@ export const updateVendorProfileById = ({
 export const updateIsOpen = () => {
   const token = getAuthToken();
   return fetch(`${BASE_URL}/vendors/set-open`, {
-    method: 'PATCH',
+    method: "PATCH",
     headers: {
       authorization: `Bearer ${token}`,
     },
@@ -171,7 +180,7 @@ export const updateIsOpen = () => {
 export const updateVendorAuth = (id) => {
   const token = getAuthToken();
   return fetch(`${BASE_URL}/vendors/auth/${id}`, {
-    method: 'PATCH',
+    method: "PATCH",
     headers: {
       authorization: `Bearer ${token}`,
     },
@@ -179,7 +188,7 @@ export const updateVendorAuth = (id) => {
 };
 
 export const getVendorCategories = ({ page, limit, sort, order }) => {
-  let queryString = '?';
+  let queryString = "?";
   if (page) queryString += `_page=${page}&`;
   if (limit) queryString += `_limit=${limit}&`;
   if (sort) queryString += `_sort=${sort}&`;
@@ -200,9 +209,9 @@ export const getVendorCategoryById = (id) => {
 
 export const addVendorCategory = (name) => {
   return fetch(`${BASE_URL}/vendor-categories`, {
-    method: 'POST',
+    method: "POST",
     headers: {
-      'content-type': 'application/json',
+      "content-type": "application/json",
     },
     body: JSON.stringify({ name }),
   }).then((res) => res.json());
@@ -210,9 +219,9 @@ export const addVendorCategory = (name) => {
 
 export const updateVendorCategory = (id, name) => {
   return fetch(`${BASE_URL}/vendor-categories/${id}`, {
-    method: 'PATCH',
+    method: "PATCH",
     headers: {
-      'content-type': 'application/json',
+      "content-type": "application/json",
     },
     body: JSON.stringify({ name }),
   }).then((res) => res.json());
@@ -220,9 +229,9 @@ export const updateVendorCategory = (id, name) => {
 
 export const deleteVendorCategory = (id) => {
   return fetch(`${BASE_URL}/vendor-categories/${id}`, {
-    method: 'DELETE',
+    method: "DELETE",
     headers: {
-      'content-type': 'application/json',
+      "content-type": "application/json",
     },
   }).then((res) => res.json());
 };
