@@ -43,6 +43,6 @@ export default function CustomRaios({ isOpen, handleEvent }) {
 }
 
 CustomRaios.propTypes = {
-  isOpen: PropTypes.bool,
+  isOpen: PropTypes.number,
   handleEvent: PropTypes.func,
 };

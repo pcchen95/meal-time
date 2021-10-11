@@ -38,7 +38,7 @@ const InputField = ({ name, avatarInput, handleAvatar }) => {
 
 InputField.propTypes = {
   name: PropTypes.string,
-  avatarInput: PropTypes.string,
+  avatarInput: PropTypes.object,
   handleAvatar: PropTypes.func,
 };
 
