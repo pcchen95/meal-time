@@ -1,8 +1,8 @@
-import { BASE_URL } from '../constants/unit'
+import BASE_URL from '../constants/apiurl'
 import { getAuthToken } from '../utils'
 
 const getQueryString = (queryParameters) => {
-  const { page, sort, order, limit } = queryParameters
+  const { page, sort, order, limit } = queryParameters || {}
   let queryString = ''
   if (page) queryString += `&page=${page}`
   if (sort) queryString += `&sort=${sort}`
@@ -118,7 +118,7 @@ const deleteProduct = (id) => {
   }).then((res) => res.json())
 }
 
-const getProductCategories = (id) => {
+const getProductCategories = () => {
   return fetch(`${BASE_URL}/product-categories`).then((res) => res.json())
 }
 
