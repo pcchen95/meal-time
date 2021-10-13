@@ -1,6 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { useSelector } from "react-redux";
+import { useLocation } from "react-router";
 import { Icon, Div } from "atomize";
 import styled from "styled-components";
 import UploadButton from "../../Components/VendorSystem/UploadButton";
@@ -72,6 +73,7 @@ PreviewArea.propTypes = {
 };
 
 const BannerPreview = ({ banner, handleBanner, bannerInput, handleDelete }) => {
+  const location = useLocation();
   const isVendor = useSelector((store) => store.vendors.vendor || false);
   const isOpen = useSelector(
     (store) => store.vendors.vendor && store.vendors.vendor.isOpen
@@ -82,22 +84,29 @@ const BannerPreview = ({ banner, handleBanner, bannerInput, handleDelete }) => {
   const isDisabled = isVendor && (!isOpen || isSuspended);
   return (
     <Div>
-      <Div d="flex" flexDir="column" align="flex-start" justify="flex-start">
-        <Div>賣場主圖</Div>
-        {!isDisabled && (
-          <UploadButton fileInput={bannerInput} handleEvent={handleBanner} />
-        )}
-      </Div>
+      {location.pathname === "/update_store" && (
+        <Div d="flex" flexDir="column" align="flex-start" justify="flex-start">
+          <Div>賣場主圖</Div>
+          {!isDisabled && (
+            <>
+              <UploadButton
+                fileInput={bannerInput}
+                handleEvent={handleBanner}
+              />
+              <input
+                type="file"
+                accept=".png,.jpg,.jpeg"
+                ref={bannerInput}
+                onChange={handleBanner}
+                style={{ display: "none" }}
+                id="bannerInput"
+                disabled={isDisabled}
+              />
+            </>
+          )}
+        </Div>
+      )}
       <PreviewArea banner={banner} handleDelete={handleDelete} />
-      <input
-        type="file"
-        accept=".png,.jpg,.jpeg"
-        ref={bannerInput}
-        onChange={handleBanner}
-        style={{ display: "none" }}
-        id="bannerInput"
-        disabled={isDisabled}
-      />
     </Div>
   );
 };

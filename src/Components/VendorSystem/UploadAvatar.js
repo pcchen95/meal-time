@@ -38,7 +38,7 @@ const InputField = ({ name, avatarInput, handleAvatar }) => {
 
 InputField.propTypes = {
   name: PropTypes.string,
-  avatarInput: PropTypes.object,
+  avatarInput: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
   handleAvatar: PropTypes.func,
 };
 

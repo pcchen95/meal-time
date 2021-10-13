@@ -57,7 +57,7 @@ function App() {
           <Route path="/orders">
             <OrdersPage />
           </Route>
-          <Route path="/store">
+          <Route path="/store/:id">
             <StorePage />
           </Route>
           <Route path="/update_store">

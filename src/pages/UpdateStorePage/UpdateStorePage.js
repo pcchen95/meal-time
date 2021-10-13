@@ -25,6 +25,23 @@ import InputField from "../../Components/VendorSystem/InputField";
 import TextAreaField from "../../Components/VendorSystem/TextAreaField";
 import OpeningHour from "../../Components/VendorSystem/OpeningHour";
 import UploadAvatar from "../../Components/VendorSystem/UploadAvatar";
+import Map from "../../Components/VendorSystem/Map";
+
+const debounce = (fn) => {
+  let timer;
+  return function (...args) {
+    if (timer) {
+      clearTimeout(timer);
+    }
+    timer = setTimeout(() => {
+      fn(...args);
+    }, 3000);
+  };
+};
+
+const debounceFn = debounce((value, setCompleteAddress) =>
+  setCompleteAddress(value)
+);
 
 export default function UpdateStorePage() {
   const daysCH = [
@@ -48,6 +65,8 @@ export default function UpdateStorePage() {
   const [vendorName, setVendorName] = useState("");
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
+  const [latlng, setLatLng] = useState(null);
+  const [completeAddress, setCompleteAddress] = useState("");
   const [openingHour, setOpeningHour] = useState(() => {
     const time = {};
     daysENG.forEach((day) => (time[day] = { isOpen: 0, start: "", end: "" }));
@@ -59,7 +78,6 @@ export default function UpdateStorePage() {
   const [banner, setBanner] = useState(null);
   const [avatarInfo, setAvatarInfo] = useState(null);
   const [bannerInfo, setBannerInfo] = useState(null);
-
   const [isEdited, setIsEdited] = useState(false);
   const [isDeleteAvatar, setIsDeleteAvatar] = useState(false);
   const [isDeleteBanner, setIsDeleteBanner] = useState(false);
@@ -88,6 +106,7 @@ export default function UpdateStorePage() {
     }
 
     const openingHourJson = JSON.stringify(openingHour);
+    const latlngJson = JSON.stringify(latlng);
     if (
       (!avatarInfo || avatarInfo.size <= 1048576) &&
       (!bannerInfo || bannerInfo.size < 1048576)
@@ -100,6 +119,7 @@ export default function UpdateStorePage() {
             banner: bannerInfo,
             vendorName,
             address,
+            latlng: latlngJson,
             phone,
             openingHour: openingHourJson,
             categoryId,
@@ -113,6 +133,7 @@ export default function UpdateStorePage() {
           banner: bannerInfo,
           vendorName,
           address,
+          latlng: latlngJson,
           phone,
           openingHour: openingHourJson,
           categoryId,
@@ -168,6 +189,11 @@ export default function UpdateStorePage() {
     }
   };
 
+  const handleInputAddress = (e) => {
+    setAddress(e.target.value);
+    debounceFn(e.target.value, setCompleteAddress);
+  };
+
   useEffect(() => {
     dispatch(getVendor());
     dispatch(getCategories());
@@ -187,6 +213,10 @@ export default function UpdateStorePage() {
     if (vendor) {
       setVendorName(vendor.vendorName);
       setAddress(vendor.address);
+      setLatLng({
+        lat: vendor.position.coordinates[0],
+        lng: vendor.position.coordinates[1],
+      });
       setPhone(vendor.phone);
       setOpeningHour(JSON.parse(vendor.openingHour));
       setAvatar(vendor.avatarUrl);
@@ -200,6 +230,8 @@ export default function UpdateStorePage() {
     if (vendor) {
       vendorName !== vendor.vendorName ||
       address !== vendor.address ||
+      latlng.lat !== vendor.position.coordinates[0] ||
+      latlng.lng !== vendor.position.coordinates[1] ||
       phone !== vendor.phone ||
       JSON.stringify(openingHour) !== vendor.openingHour ||
       categoryId !== vendor.categoryId ||
@@ -211,6 +243,7 @@ export default function UpdateStorePage() {
     vendor,
     vendorName,
     address,
+    latlng,
     openingHour,
     phone,
     description,
@@ -291,7 +324,7 @@ export default function UpdateStorePage() {
                   name="賣場地址"
                   type="text"
                   value={address}
-                  handleEvent={(e) => setAddress(e.target.value)}
+                  handleEvent={handleInputAddress}
                   remind={remindText.address}
                   rule={inputRule.address}
                   required
@@ -306,12 +339,13 @@ export default function UpdateStorePage() {
             </Div>
             <Div
               d={{ xs: "", md: "flex" }}
-              align="center"
+              align="flex-end"
               h={{ xs: "auto", md: "18rem" }}
               border={{ b: "4px solid" }}
               borderColor="gray400"
+              p="1rem 0"
             >
-              <Div w={{ xs: "100%", md: "70%" }} p={{ x: "1rem" }}>
+              <Div w={{ xs: "100%", md: "60%" }} p={{ x: "1rem" }} h="100%">
                 賣場介紹
                 <TextAreaField
                   name="向顧客介紹你的賣場吧"
@@ -320,7 +354,7 @@ export default function UpdateStorePage() {
                 />
               </Div>
               <Div
-                w={{ xs: "100%", md: "30%" }}
+                w={{ xs: "100%", md: "40%" }}
                 h={{ xs: "18rem", md: "16rem" }}
                 border={{ t: { xs: "4px solid", md: "" } }}
                 borderColor="gray400"
@@ -329,9 +363,11 @@ export default function UpdateStorePage() {
                 d="flex"
                 align="center"
               >
-                <Div bg="gray400" w="100%" h="100%">
-                  地圖
-                </Div>
+                <Map
+                  completeAddress={completeAddress}
+                  latlng={latlng}
+                  setLatLng={setLatLng}
+                />
               </Div>
             </Div>
           </Div>
