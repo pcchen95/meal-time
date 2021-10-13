@@ -2,6 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import { Div, Icon } from "atomize";
 import { useSelector } from "react-redux";
+import { useLocation } from "react-router";
 import styled from "styled-components";
 
 const PreviewImg = styled.div`
@@ -49,6 +50,7 @@ Delete.propTypes = {
 };
 
 const AvatarPreview = ({ image, handleDelete }) => {
+  const location = useLocation();
   const isVendor = useSelector((store) => store.vendors.vendor || false);
   const isOpen = useSelector(
     (store) => store.vendors.vendor && store.vendors.vendor.isOpen
@@ -67,7 +69,9 @@ const AvatarPreview = ({ image, handleDelete }) => {
           transform="translate(-50%, -50%)"
           d="flex"
         >
-          {image && !isDisabled && <Delete handleDelete={handleDelete} />}
+          {image && !isDisabled && location.pathname === "/update_store" && (
+            <Delete handleDelete={handleDelete} />
+          )}
         </Div>
       </PreviewImg>
     </Div>

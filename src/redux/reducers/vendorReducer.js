@@ -17,6 +17,7 @@ import {
 
 const initialState = {
   vendor: null,
+  address: null,
   vendors: null,
   vendorById: null,
   categories: null,
@@ -29,6 +30,9 @@ export const vendorReducer = createSlice({
   reducers: {
     setVendor: (state, action) => {
       state.vendor = action.payload;
+    },
+    setAddress: (state, action) => {
+      state.address = action.payload;
     },
     setVendors: (state, action) => {
       state.vendors = action.payload;
@@ -47,6 +51,7 @@ export const vendorReducer = createSlice({
 
 export const {
   setVendor,
+  setAddress,
   setVendors,
   setCategories,
   setVendorById,
@@ -60,6 +65,7 @@ export const register =
     vendorName,
     phone,
     address,
+    latlng,
     openingHour,
     description,
     categoryId,
@@ -71,6 +77,7 @@ export const register =
       vendorName,
       phone,
       address,
+      latlng,
       openingHour,
       description,
       categoryId,
@@ -115,6 +122,7 @@ export const updateProfile =
     vendorName,
     phone,
     address,
+    latlng,
     openingHour,
     description,
     categoryId,
@@ -129,6 +137,7 @@ export const updateProfile =
       vendorName,
       phone,
       address,
+      latlng,
       openingHour,
       description,
       categoryId,
@@ -193,8 +202,8 @@ export const getAllProfiles =
     });
   };
 
-export const getVendorById = () => (dispatch) => {
-  return getAvailVendorProfileByIdApi().then((res) => {
+export const getVendorById = (id) => (dispatch) => {
+  return getAvailVendorProfileByIdApi(id).then((res) => {
     if (!res.ok) {
       dispatch(setErrorMessage(res.message));
       dispatch(setShowWarningNotification(true));
@@ -213,6 +222,10 @@ export const getCategories = () => (dispatch) => {
     }
     dispatch(setCategories(res.data));
   });
+};
+
+export const setCompleteAddress = (address) => (dispatch) => {
+  dispatch(setAddress(address));
 };
 
 export default vendorReducer.reducer;
