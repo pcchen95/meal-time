@@ -4,6 +4,7 @@ import { getAuthToken } from "../utils";
 export const register = ({
   vendorName,
   address,
+  latlng,
   phone,
   categoryId,
   description,
@@ -14,6 +15,7 @@ export const register = ({
   const formData = new FormData();
   formData.append("vendorName", vendorName);
   formData.append("address", address);
+  formData.append("latlng", latlng);
   formData.append("phone", phone);
   formData.append("categoryId", categoryId);
   formData.append("description", description);
@@ -43,6 +45,7 @@ export const getVendorProfile = () => {
 export const updateVendorProfile = ({
   vendorName,
   address,
+  latlng,
   phone,
   categoryId,
   description,
@@ -55,6 +58,7 @@ export const updateVendorProfile = ({
   const formData = new FormData();
   formData.append("vendorName", vendorName);
   formData.append("address", address);
+  formData.append("latlng", latlng);
   formData.append("phone", phone);
   formData.append("categoryId", categoryId);
   formData.append("description", description);
@@ -74,12 +78,7 @@ export const updateVendorProfile = ({
 };
 
 export const getAvailVendorProfileById = (id) => {
-  const token = getAuthToken();
-  return fetch(`${BASE_URL}/vendors/profile/${id}`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  }).then((res) => res.json());
+  return fetch(`${BASE_URL}/vendors/profile/${id}`).then((res) => res.json());
 };
 
 export const getVendorProfileById = (id) => {
@@ -141,6 +140,7 @@ export const updateVendorProfileById = ({
   id,
   vendorName,
   address,
+  latlng,
   phone,
   categoryId,
   description,
@@ -151,6 +151,7 @@ export const updateVendorProfileById = ({
   const formData = new FormData();
   formData.append("vendorName", vendorName);
   formData.append("address", address);
+  formData.append("latlng", latlng);
   formData.append("phone", phone);
   formData.append("categoryId", categoryId);
   formData.append("description", description);

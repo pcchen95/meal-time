@@ -16,7 +16,7 @@ const TextAreaField = ({ name, value, handleEvent }) => {
     <Textarea
       h="12rem"
       p="1.5rem"
-      w={{ xs: "100%", xl: "30rem" }}
+      w={{ xs: "100%", xl: "25rem" }}
       m={{ y: { xs: "1rem", xl: "0.5rem" }, r: { xs: "0", xl: "2rem" } }}
       placeholder={name}
       value={value}
