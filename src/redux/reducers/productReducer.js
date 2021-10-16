@@ -1,23 +1,32 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { createSlice } from "@reduxjs/toolkit"
 import {
   getProducts as getProductsApi,
   getProduct as getProductApi,
   getProductsByVendor as getProductsByVendorApi,
   getProductsByCategory as getProductsByCategoryApi,
-} from '../../WebAPI/productAPI'
-
+  getProductCategories as getProductCategoriesApi,
+  postProduct as postProductApi,
+  updateProduct as updateProductApi,
+} from "../../WebAPI/productAPI"
+import {
+  setErrorMessage,
+  setShowSuccessNotification,
+  setShowWarningNotification,
+} from "./notificationReducer"
 const initialState = {
   page: 1,
-  sort: 'id',
+  sort: "id",
   products: null,
   product: null,
   vendorProducts: null,
   categoryProducts: null,
+  productCategories: null,
   errorMessage: null,
+  isLoading: false,
 }
 
 export const productReducer = createSlice({
-  name: 'product',
+  name: "product",
   initialState,
   reducers: {
     setSort: (state, action) => {
@@ -38,8 +47,14 @@ export const productReducer = createSlice({
     setCategoryProduct: (state, action) => {
       state.categoryProducts = action.payload
     },
+    setProductCategories: (state, action) => {
+      state.productCategories = action.payload
+    },
     setErrMessage: (state, action) => {
       state.errorMessage = action.payload
+    },
+    setIsLoading: (state, action) => {
+      state.isLoading = action.payload
     },
   },
 })
@@ -52,17 +67,21 @@ export const {
   setErrMessage,
   setVendorProduct,
   setCategoryProduct,
+  setProductCategories,
+  setIsLoading,
 } = productReducer.actions
 
 export const getProducts = (queryParameters) => (dispatch) => {
+  dispatch(setIsLoading(true))
   return getProductsApi(queryParameters)
     .then((res) => {
       if (!res.ok) {
-        return dispatch(setErrMessage(res ? res.message : 'something wrong'))
+        return dispatch(setErrMessage(res ? res.message : "something wrong"))
       }
       return res.data
     })
     .then((products) => {
+      dispatch(setIsLoading(false))
       dispatch(setProducts(products))
     })
     .catch((err) => {
@@ -74,14 +93,18 @@ export const cleanProducts = () => (dispatch) => {
 }
 
 export const getProduct = (id) => (dispatch) => {
+  dispatch(setIsLoading(true))
+
   return getProductApi(id)
     .then((res) => {
       if (!res.ok) {
-        return dispatch(setErrMessage(res ? res.message : 'something wrong'))
+        return dispatch(setErrMessage(res ? res.message : "something wrong"))
       }
       return res.data
     })
     .then((product) => {
+      dispatch(setIsLoading(false))
+
       dispatch(setProduct(product))
     })
     .catch((err) => {
@@ -94,14 +117,18 @@ export const cleanProduct = () => (dispatch) => {
 }
 
 export const getVendorProducts = (id, queryParameters) => (dispatch) => {
+  dispatch(setIsLoading(true))
+
   return getProductsByVendorApi(id, queryParameters)
     .then((res) => {
       if (!res.ok) {
-        return dispatch(setErrMessage(res ? res.message : 'something wrong'))
+        return dispatch(setErrMessage(res ? res.message : "something wrong"))
       }
       return res.data
     })
     .then((products) => {
+      dispatch(setIsLoading(false))
+
       dispatch(setVendorProduct(products))
     })
     .catch((err) => {
@@ -113,14 +140,18 @@ export const cleanVendorProducts = () => (dispatch) => {
 }
 
 export const getCategoryProducts = (id, queryParameters) => (dispatch) => {
+  dispatch(setIsLoading(true))
+
   return getProductsByCategoryApi(id, queryParameters)
     .then((res) => {
       if (!res.ok) {
-        return dispatch(setErrMessage(res ? res.message : 'something wrong'))
+        return dispatch(setErrMessage(res ? res.message : "something wrong"))
       }
       return res.data
     })
     .then((products) => {
+      dispatch(setIsLoading(false))
+
       dispatch(setCategoryProduct(products))
     })
     .catch((err) => {
@@ -130,5 +161,102 @@ export const getCategoryProducts = (id, queryParameters) => (dispatch) => {
 export const cleanCategoryProducts = () => (dispatch) => {
   dispatch(setCategoryProduct(null))
 }
+
+export const getProductCategories = () => (dispatch) => {
+  return getProductCategoriesApi()
+    .then((res) => {
+      if (!res.ok) {
+        return dispatch(setErrMessage(res ? res.message : "something wrong"))
+      }
+      return res.data
+    })
+    .then((categories) => {
+      dispatch(setProductCategories(categories))
+    })
+    .catch((err) => {
+      console.log(err)
+    })
+}
+
+export const cleanProductCategories = () => (dispatch) => {
+  dispatch(setProductCategories(null))
+}
+
+export const postProduct =
+  ({
+    picture,
+    name,
+    price,
+    quantity,
+    categoryId,
+    manufactureDate,
+    expiryDate,
+    description,
+    isAvailable,
+    // isDeletePicture,
+  }) =>
+  (dispatch) => {
+    dispatch(setIsLoading(true))
+    return postProductApi({
+      picture,
+      name,
+      price,
+      quantity,
+      categoryId,
+      manufactureDate,
+      expiryDate,
+      description,
+      isAvailable,
+      // isDeletePicture,
+    }).then((res) => {
+      if (!res.ok) {
+        dispatch(setErrorMessage(res.message))
+        dispatch(setShowWarningNotification(true))
+        return
+      }
+      dispatch(setShowSuccessNotification(true))
+      return res.data
+    })
+  }
+
+export const patchProduct =
+  (
+    id,
+    {
+      picture,
+      name,
+      price,
+      quantity,
+      categoryId,
+      manufactureDate,
+      expiryDate,
+      description,
+      isAvailable,
+      // isDeletePicture,
+    }
+  ) =>
+  (dispatch) => {
+    dispatch(setIsLoading(true))
+    return updateProductApi(id, {
+      picture,
+      name,
+      price,
+      quantity,
+      categoryId,
+      manufactureDate,
+      expiryDate,
+      description,
+      isAvailable,
+      // isDeletePicture,
+    }).then((res) => {
+      if (!res.ok) {
+        dispatch(setErrorMessage(res.message))
+        dispatch(setShowWarningNotification(true))
+        return
+      }
+      dispatch(setShowSuccessNotification(true))
+      return res.data
+    })
+  }
 
 export default productReducer.reducer
