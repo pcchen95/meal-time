@@ -5,6 +5,7 @@ import {
   getProductsByVendor as getProductsByVendorApi,
   getProductsByCategory as getProductsByCategoryApi,
   getProductCategories as getProductCategoriesApi,
+  searchProduct as searchProductApi,
   postProduct as postProductApi,
   updateProduct as updateProductApi,
 } from "../../WebAPI/productAPI"
@@ -20,6 +21,7 @@ const initialState = {
   product: null,
   vendorProducts: null,
   categoryProducts: null,
+  searchedProducts: null,
   productCategories: null,
   errorMessage: null,
   isLoading: false,
@@ -47,6 +49,9 @@ export const productReducer = createSlice({
     setCategoryProduct: (state, action) => {
       state.categoryProducts = action.payload
     },
+    setSearchedProduct: (state, action) => {
+      state.searchedProducts = action.payload
+    },
     setProductCategories: (state, action) => {
       state.productCategories = action.payload
     },
@@ -67,6 +72,7 @@ export const {
   setErrMessage,
   setVendorProduct,
   setCategoryProduct,
+  setSearchedProduct,
   setProductCategories,
   setIsLoading,
 } = productReducer.actions
@@ -82,7 +88,7 @@ export const getProducts = (queryParameters) => (dispatch) => {
     })
     .then((products) => {
       dispatch(setIsLoading(false))
-      dispatch(setProducts(products))
+      dispatch(setProducts(products.rows))
     })
     .catch((err) => {
       console.log(err)
@@ -129,7 +135,7 @@ export const getVendorProducts = (id, queryParameters) => (dispatch) => {
     .then((products) => {
       dispatch(setIsLoading(false))
 
-      dispatch(setVendorProduct(products))
+      dispatch(setVendorProduct(products.rows))
     })
     .catch((err) => {
       console.log(err)
@@ -152,7 +158,7 @@ export const getCategoryProducts = (id, queryParameters) => (dispatch) => {
     .then((products) => {
       dispatch(setIsLoading(false))
 
-      dispatch(setCategoryProduct(products))
+      dispatch(setCategoryProduct(products.rows))
     })
     .catch((err) => {
       console.log(err)
@@ -160,6 +166,20 @@ export const getCategoryProducts = (id, queryParameters) => (dispatch) => {
 }
 export const cleanCategoryProducts = () => (dispatch) => {
   dispatch(setCategoryProduct(null))
+}
+
+export const searchProducts = (keyword, queryParameters) => (dispatch) => {
+  return searchProductApi(keyword, queryParameters)
+    .then((res) => {
+      if (!res.ok) {
+        return dispatch(setErrMessage(res ? res.message : "something wrong"))
+      }
+      return res.data
+    })
+    .then((products) => {
+      dispatch(setSearchedProduct(products))
+    })
+    .catch((err) => console.log(err))
 }
 
 export const getProductCategories = () => (dispatch) => {
@@ -214,7 +234,7 @@ export const postProduct =
         dispatch(setShowWarningNotification(true))
         return
       }
-      dispatch(setShowSuccessNotification(true))
+      dispatch(setShowSuccessNotification(true, "新增成功！"))
       return res.data
     })
   }
@@ -254,7 +274,7 @@ export const patchProduct =
         dispatch(setShowWarningNotification(true))
         return
       }
-      dispatch(setShowSuccessNotification(true))
+      dispatch(setShowSuccessNotification(true, "更新成功！"))
       return res.data
     })
   }
