@@ -43,25 +43,26 @@ const debounceFn = debounce((value, setCompleteAddress) =>
   setCompleteAddress(value)
 );
 
+const daysCH = [
+  "星期一",
+  "星期二",
+  "星期三",
+  "星期四",
+  "星期五",
+  "星期六",
+  "星期日",
+];
+const daysENG = [
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday",
+  "Sunday",
+];
+
 export default function UpdateStorePage() {
-  const daysCH = [
-    "星期一",
-    "星期二",
-    "星期三",
-    "星期四",
-    "星期五",
-    "星期六",
-    "星期日",
-  ];
-  const daysENG = [
-    "Monday",
-    "Tuesday",
-    "Wednesday",
-    "Thursday",
-    "Friday",
-    "Saturday",
-    "Sunday",
-  ];
   const [vendorName, setVendorName] = useState("");
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");

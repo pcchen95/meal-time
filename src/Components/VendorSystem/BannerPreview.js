@@ -6,19 +6,21 @@ import { Icon, Div } from "atomize";
 import styled from "styled-components";
 import UploadButton from "../../Components/VendorSystem/UploadButton";
 
-const PreviewImg = styled.div`
-  position: relative;
-  width: 100%;
-  height: 15rem;
-  border-radius: 10px;
+const PreviewImg = ({ banner }) => {
+  return (
+    <Div
+      pos="relative"
+      w="100%"
+      h="15rem"
+      rounded="10px"
+      bgImg={banner || "defaultBanner.jpg"}
+    ></Div>
+  );
+};
 
-  ${(props) =>
-    props.banner
-      ? `
-      background: url(${props.banner}) no-repeat center/cover;
-  `
-      : `background: rgb(183, 183, 183)`}
-`;
+PreviewImg.propTypes = {
+  banner: PropTypes.string,
+};
 
 const DeleteBtn = styled.div`
   height: 2.5rem;
