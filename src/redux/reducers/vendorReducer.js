@@ -7,6 +7,7 @@ import {
   getAvailableVendorProfiles as getAvailableVendorProfilesApi,
   updateIsOpen as updateIsOpenApi,
   getVendorCategories as getVendorCategoriesApi,
+  getDistance as getDistanceApi,
 } from "../../WebAPI/vendorAPI";
 import { setAuthToken } from "../../utils";
 import {
@@ -22,6 +23,8 @@ const initialState = {
   vendorById: null,
   categories: null,
   isLoading: false,
+  vendorOfMap: null,
+  distance: null,
 };
 
 export const vendorReducer = createSlice({
@@ -46,6 +49,12 @@ export const vendorReducer = createSlice({
     setIsLoading: (state, action) => {
       state.isLoading = action.payload;
     },
+    setVendorOfMap: (state, action) => {
+      state.vendorOfMap = action.payload;
+    },
+    setDistance: (state, action) => {
+      state.distance = action.payload;
+    },
   },
 });
 
@@ -56,6 +65,9 @@ export const {
   setCategories,
   setVendorById,
   setIsLoading,
+  setDistanceList,
+  setVendorOfMap,
+  setDistance,
 } = vendorReducer.actions;
 
 export const register =
@@ -183,8 +195,8 @@ export const setToggleOpen = () => (dispatch) => {
   });
 };
 
-export const getAllProfiles =
-  ({ page, limit, sort, order, role }) =>
+export const getAllVendors =
+  ({ page, limit, sort, order, role, categoryId }) =>
   (dispatch) => {
     return getAvailableVendorProfilesApi({
       page,
@@ -192,6 +204,7 @@ export const getAllProfiles =
       sort,
       order,
       role,
+      categoryId,
     }).then((res) => {
       if (!res.ok) {
         dispatch(setErrorMessage(res.message));
@@ -213,6 +226,17 @@ export const getVendorById = (id) => (dispatch) => {
   });
 };
 
+export const getVendorOfMap = (id) => (dispatch) => {
+  return getAvailVendorProfileByIdApi(id).then((res) => {
+    if (!res.ok) {
+      dispatch(setErrorMessage(res.message));
+      dispatch(setShowWarningNotification(true));
+      return;
+    }
+    return res.data;
+  });
+};
+
 export const getCategories = () => (dispatch) => {
   return getVendorCategoriesApi({ order: "ASC" }).then((res) => {
     if (!res.ok) {
@@ -227,5 +251,13 @@ export const getCategories = () => (dispatch) => {
 export const setCompleteAddress = (address) => (dispatch) => {
   dispatch(setAddress(address));
 };
+
+export const getDistance =
+  ({ origin, destination }) =>
+  (dispatch) => {
+    return getDistanceApi({ origin, destination }).then((res) => {
+      dispatch(setDistance(res));
+    });
+  };
 
 export default vendorReducer.reducer;
