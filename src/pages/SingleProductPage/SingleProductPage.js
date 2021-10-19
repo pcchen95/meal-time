@@ -7,8 +7,8 @@ import {
   cleanProduct,
   getVendorProducts,
   getCategoryProducts,
-  // cleanVendorProducts,
-  // cleanCategoryProducts,
+  cleanVendorProducts,
+  cleanCategoryProducts,
 } from "../../redux/reducers/productReducer"
 import { useEffect } from "react"
 import { useDispatch, useSelector } from "react-redux"
@@ -39,20 +39,32 @@ ProductDetails.propTypes = {
 const Product = ({ product }) => {
   return (
     <Link to={`/product/${product.id}`} style={{ textDecoration: "none" }}>
-      <Div key={product.id} p={{ l: { xs: "3rem", lg: "1rem" } }}>
-        <Link to={`/product/${product.id}`} style={{ textDecoration: "none" }}>
-          <Col>
-            <Div
-              bgImg={product.pictureUrl}
-              bgSize="cover"
-              bgPos="center"
-              h="8rem"
-              w="8rem"
-              m={{ t: "1rem" }}
-            />
-          </Col>
-          <Text m={{ y: "1rem", l: "2.2rem" }}>{product.name}</Text>
-        </Link>
+      <Div
+        key={product.id}
+        borderColor="gray400"
+        shadow="2"
+        hoverShadow="4"
+        m={{ x: { xs: "1rem", lg: "0.5rem" } }}
+        p={{ x: 0, b: "0.2rem" }}
+        transition
+      >
+        <Col>
+          <Div
+            bgImg={product.pictureUrl}
+            bgSize="cover"
+            bgPos="center"
+            h={{ xs: "12rem", lg: "8rem" }}
+            w={{ xs: "100%", lg: "8rem" }}
+            m={{ t: "1rem" }}
+            rounded="sm"
+          />
+        </Col>
+        <Text m={{ y: "1rem" }} textAlign="center">
+          {product.name}
+        </Text>
+        <Text m={{ y: "1rem" }} textAlign="center">
+          NT$ {product.price}
+        </Text>
       </Div>
     </Link>
   )
@@ -64,6 +76,7 @@ Product.propTypes = {
 export default function SingleProductPage() {
   let { id } = useParams()
   const dispatch = useDispatch()
+  const user = useSelector((state) => state.users.user)
   const product = useSelector((state) => state.products.product)
   const vendorProducts = useSelector((state) => state.products.vendorProducts)
   const categoryProducts = useSelector(
@@ -71,12 +84,16 @@ export default function SingleProductPage() {
   )
   const page = useSelector((state) => state.products.page)
   const sort = useSelector((state) => state.products.sort)
-  const queryParameters = { page, sort, limit: 3, order: "DESC" }
+  const queryParameters = { page, sort, limit: 4, order: "DESC" }
   const [productCoount, setProductCount] = useState(null)
 
   useEffect(() => {
     dispatch(getProduct(id))
-    return () => dispatch(cleanProduct())
+    return () => {
+      dispatch(cleanVendorProducts())
+      dispatch(cleanCategoryProducts())
+      dispatch(cleanProduct())
+    }
   }, [id, dispatch])
 
   useEffect(() => {
@@ -98,42 +115,66 @@ export default function SingleProductPage() {
   const addToCart = (value) => {
     const newVendorId = product && product.vendorId
     const newProductId = product && product.id
-    let cart = localStorage.getItem("cart") || null
+    let cart = localStorage.getItem(`cartId${user.id}`) || null
+    const newCartArray = []
+    const cartArray = JSON.parse(cart)
+
+    const isVendorExist = (cartByVendor) => {
+      return cartByVendor.vendorId === newVendorId
+    }
+    const isProductExist = (product) => {
+      return product.productId === newProductId
+    }
     if (cart) {
-      const cartObj = JSON.parse(cart)
-      console.log(cartObj)
-      const newCartObj = cartObj.map((cartByVendor) => {
-        if (cartByVendor.vendorId === newVendorId) {
-          if (
-            cartByVendor.cartItems.findIndex(
-              (item) => item.productId === newProductId
-            )
-          ) {
-            return (cartByVendor.cartItems[
-              cartByVendor.cartItems.findIndex(
-                (item) => item.productId === newProductId
-              )
-            ].quantity += value)
-          } else {
-            return cartByVendor.cartItems.push({
-              productId: newProductId,
-              quantity: value,
-            })
-          }
+      if (cartArray.find(isVendorExist)) {
+        if (cartArray.find(isVendorExist).cartItems.find(isProductExist)) {
+          cartArray.forEach((element) => {
+            element.vendorId === newVendorId
+              ? newCartArray.push({
+                  vendorId: newVendorId,
+                  cartItems: element.cartItems.map((product) => {
+                    if (product.productId !== newProductId) return product
+                    return {
+                      ...product,
+                      quantity: product.quantity + value,
+                    }
+                  }),
+                })
+              : newCartArray.push(element)
+          })
+          localStorage.setItem(`cartId${user.id}`, JSON.stringify(newCartArray))
         } else {
-          return cartByVendor
+          cartArray.forEach((element) => {
+            element.vendorId === newVendorId
+              ? newCartArray.push({
+                  vendorId: newVendorId,
+                  cartItems: [
+                    ...element.cartItems,
+                    { productId: newProductId, quantity: value },
+                  ],
+                })
+              : newCartArray.push(element)
+          })
+          localStorage.setItem(`cartId${user.id}`, JSON.stringify(newCartArray))
         }
-      })
-      localStorage.setItem("cart", JSON.stringify(newCartObj))
+      } else {
+        cartArray.forEach((element) => newCartArray.push(element))
+        newCartArray.push({
+          vendorId: newVendorId,
+          cartItems: [{ productId: newProductId, quantity: value }],
+        })
+      }
+      localStorage.setItem(`cartId${user.id}`, JSON.stringify(newCartArray))
     } else {
-      let newCartItem = [
+      let newCartArray = [
         {
           vendorId: newVendorId,
           cartItems: [{ productId: newProductId, quantity: value }],
         },
       ]
-      localStorage.setItem("cart", JSON.stringify(newCartItem))
+      localStorage.setItem(`cartId${user.id}`, JSON.stringify(newCartArray))
     }
+    setProductCount(0)
   }
 
   return (
@@ -141,7 +182,7 @@ export default function SingleProductPage() {
       <Div d="flex" p={{ l: "0.4rem" }}>
         <Text>Home</Text>/<Text>Category</Text>
       </Div>
-      <Div d={{ xs: "block", xl: "flex" }} w={{ xs: "18rem", lg: "30rem" }}>
+      <Div d={{ xs: "block", xl: "flex" }} w={{ xs: "100%", lg: "24rem" }}>
         <div>
           <Col>
             <Div
@@ -263,6 +304,7 @@ export default function SingleProductPage() {
                 w="100%"
                 bg="info800"
                 hoverBg="info900"
+                hoverShadow="2"
                 rounded="sm"
                 m={{ b: "2rem" }}
               >
@@ -297,9 +339,16 @@ export default function SingleProductPage() {
               <Text textSize="title" m={{ t: "1rem" }}>
                 {product && product.Vendor.vendorName}
               </Text>
-              <Text textSize="subheader" m={{ t: "1rem" }}>
-                {product && product.Vendor.categoryId}
-              </Text>
+              <Div d="flex">
+                <Text
+                  textColor="gray900"
+                  m={{ y: "0rem", r: "1rem" }}
+                  textWeight="600"
+                >
+                  賣家分類
+                </Text>
+                <Text>{product && product.Vendor.VendorCategory.name}</Text>
+              </Div>
             </Div>
           </Div>
           <Div border={{ t: "2px solid" }} borderColor="gray600" p="1rem">
@@ -307,10 +356,14 @@ export default function SingleProductPage() {
               此賣家其他食物
             </Text>
             <Div d={{ xs: "block", lg: "flex" }}>
-              {vendorProducts &&
-                vendorProducts.map((product) => (
-                  <Product key={product.id} product={product} />
-                ))}
+              {product &&
+                vendorProducts &&
+                vendorProducts
+                  .filter((item) => item.id !== product.id)
+                  .slice(0, 3)
+                  .map((product) => (
+                    <Product key={product.id} product={product} />
+                  ))}
             </Div>
           </Div>
           <Div border={{ t: "2px solid" }} borderColor="gray600" p="1rem">
@@ -318,10 +371,14 @@ export default function SingleProductPage() {
               此分類其他食物
             </Text>
             <Div d={{ xs: "block", lg: "flex" }}>
-              {categoryProducts &&
-                categoryProducts.map((product) => (
-                  <Product key={product.id} product={product} />
-                ))}
+              {product &&
+                categoryProducts &&
+                categoryProducts
+                  .filter((item) => item.id !== product.id)
+                  .slice(0, 3)
+                  .map((product) => (
+                    <Product key={product.id} product={product} />
+                  ))}
             </Div>
           </Div>
         </Div>
