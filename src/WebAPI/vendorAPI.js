@@ -1,5 +1,7 @@
 import BASE_URL from "../constants/apiurl";
+import MAP_BASE_URL from "../constants/googleMapApiUrl";
 import { getAuthToken } from "../utils";
+import googleMapToken from "../constants/googleMapToken";
 
 export const register = ({
   vendorName,
@@ -235,4 +237,14 @@ export const deleteVendorCategory = (id) => {
       "content-type": "application/json",
     },
   }).then((res) => res.json());
+};
+
+export const getDistance = ({ origin, destination }) => {
+  console.log(origin.lat, origin.lng);
+  return fetch(
+    `${MAP_BASE_URL}?origins=${origin.lat}%2C${origin.lng}&destinations=${destination.lat}%2C${destination.lng}&key=${googleMapToken}&libraries=places`,
+    {
+      headers: {},
+    }
+  ).then((res) => console.log(res));
 };
