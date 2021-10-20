@@ -1,108 +1,65 @@
-import React, { useState } from "react";
-import { Div, Text, Col, Checkbox, Button, Label, Icon } from "atomize";
-import styled from "styled-components";
-
-const BookingProducts = styled.div`
-  visibility: hidden;
-  width: 0;
-  background: white;
-  height: 0;
-
-  ${(props) =>
-    props.$isShow &&
-    `
-    visibility: visible;
-    position: absolute;
-    z-index: 99;
-    height: 12rem;
-    width: 18rem;
-    background: white;
-    border: 1px solid #adadad;
-    border-radius: 6px;
-    top: 1.5rem;
-    right: 1rem;
-    transition: all 0.5s ease-in-out;
-
-    @media screen and (max-width: 768px){
-      height: 18rem;
-      width: 12rem;
-      right: 0.5rem;
-      top: 1rem;
-    }
-  `}
-`;
-
-const BasicCheckbox = () => {
-  const [checked, setChecked] = useState(false);
-  const handleToggle = (e) => {
-    e.target.checked ? setChecked(true) : setChecked(false);
-  };
-
-  return (
-    <>
-      <Label align="center" textWeight="600">
-        <Checkbox onChange={handleToggle} checked={checked} />
-      </Label>
-    </>
-  );
-};
+import React, { useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { Div, Button, Text, Icon } from "atomize";
+import CartList from "../../Components/CartSystem/CartList";
+import BookingBoard from "../../Components/CartSystem/BookingBoard";
+import LoadingPage from "../LoadingPage";
+import {
+  setIsShow,
+  setIsSelect,
+  setIsChecked,
+  selectIsShow,
+  selectIsChecked,
+  selectIsSelect,
+  selectIsLoading,
+  selectVendorId,
+  selectProductId,
+} from "../../redux/reducers/cartReducer";
+//import { newOrder } from "../../redux/reducers/orderReducer";
+import { getVendorById } from "../../redux/reducers/vendorReducer";
+import { setErrorMessage } from "../../redux/reducers/notificationReducer";
 
 export default function CartPage() {
-  const [isShow, setIsShow] = useState(false);
+  const dispatch = useDispatch();
+  const isShow = useSelector(selectIsShow);
+  const isChecked = useSelector(selectIsChecked);
+  const isSelect = useSelector(selectIsSelect);
+  const isLoading = useSelector(selectIsLoading);
+  const vendorId = useSelector(selectVendorId);
+  const productId = useSelector(selectProductId);
+  const vendorById = useSelector((store) => store.vendors.vendorById);
+  const errMessage = useSelector((store) => store.notifications.errMessage);
 
-  const handleToggleBooking = () => {
-    isShow ? setIsShow(false) : setIsShow(true);
+  useEffect(() => {}, [errMessage, isSelect]);
+
+  const handleIsShow = (type) => {
+    if (type === "book") {
+      if (isChecked === true) {
+        dispatch(setErrorMessage(null));
+        dispatch(getVendorById(isSelect));
+        dispatch(setIsShow(true));
+      } else {
+        window.scroll(0, 0);
+        dispatch(setErrorMessage("請至少勾選一個購物車才能預訂食物"));
+      }
+    }
+    if (type === "cancel") {
+      dispatch(setIsShow(false));
+    }
   };
 
-  const cartList = (
-    <Div p={{ x: { xs: "1rem", lg: "5rem" }, t: { xs: "3rem", lg: "5rem" } }}>
-      {["賣家A", "賣家B", "賣家C"].map((name, index) => (
-        <Div key={index} pos="relative">
-          <Div p="1rem" bg="gray400" m={{ t: "2rem" }}>
-            {name}
-          </Div>
-          <Div d={{ xs: "block", lg: "flex" }} pos="relative">
-            <Div d="flex">
-              <BasicCheckbox />
-              <Div m={{ l: "2rem" }}>
-                <Col>
-                  <Div
-                    bgImg="https://cdn2.ettoday.net/images/3161/d3161278.jpg"
-                    bgSize="cover"
-                    bgPos="center"
-                    w={{ xs: "10rem", lg: "12rem" }}
-                    h={{ xs: "10rem", lg: "12rem" }}
-                    rounded="lg"
-                    m={{ t: "1rem" }}
-                  />
-                </Col>
-              </Div>
-            </Div>
-            <Div
-              d={{ xs: "static", lg: "flex" }}
-              justify="space-between"
-              m={{ x: "4rem", y: "2rem" }}
-            >
-              <Div>
-                <Text>商品名稱</Text>
-                <Text m={{ t: "1rem" }}>數量</Text>
-                <Text>$ 0</Text>
-              </Div>
-            </Div>
-            <Icon
-              pos={{ xs: "static", lg: "absolute" }}
-              name="Cross"
-              size="20px"
-              right="1rem"
-              top="1rem"
-              m={{ y: "0.5rem", l: "6rem" }}
-            />
-            <BookingProducts $isShow={isShow} />
-          </Div>
-        </Div>
-      ))}
-    </Div>
-  );
+  const handleBookingClick = () => {
+    dispatch();
+  };
+
+  const handleCheckedClick = (vendorId) => {
+    dispatch(setIsSelect(vendorId));
+    dispatch(setIsChecked(!isChecked));
+  };
+
+  const handleDeleteClick = (productId) => {
+    dispatch(localStorage.removeItem(productId));
+  };
 
   return (
     <Div
@@ -111,95 +68,73 @@ export default function CartPage() {
       m={{ y: "4rem", x: "auto" }}
       p={{ xs: "1rem", lg: "2rem" }}
     >
-      {cartList}
-      <Div m={{ t: "4rem" }} border="2px solid" borderColor="gray400" />
-      <Div m={{ y: "2rem", l: "3rem" }} p={{ xs: "1rem", lg: "2rem" }}>
-        <Div d={{ xs: "block", lg: "flex" }} justify="space-between">
-          <div>
-            <Label>
-              <BasicCheckbox />
-              全選
-            </Label>
-          </div>
-          <div>
-            合計價格：$ 0
-            <Button
-              h="3rem"
-              p={{ x: "1.25rem" }}
-              textSize="body"
-              textColor="info700"
-              hoverTextColor="info900"
-              bg="white"
-              hoverBg="info200"
-              border="1px solid"
-              borderColor="info700"
-              hoverBorderColor="info900"
-              m={{ r: "0.5rem", t: "1rem" }}
-              onClick={handleToggleBooking}
-              $isShow={isShow}
-            >
-              預訂食物
-            </Button>
-          </div>
+      {isLoading && <LoadingPage />}
+      <Div m={{ t: "2rem", l: { xs: "0", lg: "5rem" } }}>
+        <Div
+          border={{ b: "4px solid" }}
+          borderColor="info600"
+          w="10rem"
+          textAlign="center"
+        >
+          <Div d="flex">
+            <Icon name="Bag" size="50px" color="black300" />
+            <Text textSize="display1" w="24rem" textColor="black300">
+              購物車
+            </Text>
+          </Div>
         </Div>
+        <Div d="flex" m={{ t: "1rem" }} textColor="warning800">
+          <Icon name="Alert" size="20px" color="warning800" />
+          <Text>一次只能預訂一位賣家商品，如果有多位賣家商品請分開下單</Text>
+        </Div>
+        {errMessage && (
+          <Text
+            m={{ t: "1rem" }}
+            textColor="danger700"
+            textSize="title"
+            textWeight="700"
+          >
+            {errMessage}
+          </Text>
+        )}
       </Div>
+      <CartList
+        vendorId={vendorId}
+        isChecked={isChecked}
+        isSelect={isSelect}
+        handleCheckedClick={handleCheckedClick}
+        handleDeleteClick={handleDeleteClick}
+        productId={productId}
+      />
+      <Div m={{ t: "4rem" }} border="2px solid" borderColor="warning600" />
+      <Div m={{ y: "2rem" }} p={{ xs: "1rem", lg: "2rem" }} pos="relative">
+        <Button
+          h="3rem"
+          p={{ x: "1.25rem" }}
+          textSize="body"
+          textColor="info700"
+          bg="white"
+          hoverBg="warning300"
+          border="1px solid"
+          borderColor="info700"
+          hoverBorderColor="info800"
+          m={{ r: "0.5rem", t: "1rem" }}
+          pos="absolute"
+          top="50%"
+          left="50%"
+          transform="translate(-50%, -50%)"
+          onClick={() => handleIsShow("book")}
+          $isShow={isShow}
+        >
+          預訂
+        </Button>
+      </Div>
+      <BookingBoard
+        vendorById={vendorById}
+        isShow={isShow}
+        handleIsShow={handleIsShow}
+        handleBookingClick={handleBookingClick}
+      />
     </Div>
   );
 }
-
-/*<BookingProducts $isShow={isShow} onClick={handleShowBooking}>
-        {vendorList}
-        <Div d={{ xs: "block", xl: "flex" }}>
-          <Button
-            h="3rem"
-            p={{ x: "1.25rem" }}
-            textSize="body"
-            textColor="info700"
-            hoverTextColor="info900"
-            bg="white"
-            hoverBg="info200"
-            border="1px solid"
-            borderColor="info700"
-            hoverBorderColor="info900"
-            m={{ x: "auto", y: "1rem" }}
-          >
-            提交
-          </Button>
-          <Button
-            h="3rem"
-            p={{ x: "1.25rem" }}
-            textSize="body"
-            textColor="info700"
-            hoverTextColor="info900"
-            bg="white"
-            hoverBg="info200"
-            border="1px solid"
-            borderColor="info700"
-            hoverBorderColor="info900"
-            m={{ x: "auto", y: "1rem" }}
-          >
-            取消
-          </Button>
-          </BookingProducts>
-    </Div>
-    
-    const vendorList = (
-  <Div m={{ x: "auto", y: "1rem" }}>
-    {["賣家A", "賣家B", "賣家C"].map((name, index) => (
-      <Div
-        key={index}
-        border={{ b: "2px solid" }}
-        borderColor="gray400"
-        textSize="subheader"
-        p="2rem"
-        w="60%"
-        m={{ x: "auto", y: "1rem" }}
-      >
-        <Div>{name}</Div>
-        <Div>營業時間：10:00 AM ~ 17:00 PM</Div>
-        <Input type="time"></Input>
-      </Div>
-    ))}
-  </Div>
-);
-*/
