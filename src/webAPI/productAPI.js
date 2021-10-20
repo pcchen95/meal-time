@@ -33,7 +33,7 @@ const getProductsByVendor = (id, queryParameters) => {
 const searchProduct = (keyword, queryParameters) => {
   const queryString = getQueryString(queryParameters)
   return fetch(
-    `${BASE_URL}/products/search?_keyword=${keyword}${queryString}`
+    `${BASE_URL}/products/search?keyword=${keyword}${queryString}`
   ).then((res) => res.json())
 }
 
