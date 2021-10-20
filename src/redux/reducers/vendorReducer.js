@@ -25,6 +25,7 @@ const initialState = {
   isLoading: false,
   vendorOfMap: null,
   distance: null,
+  searchedVendors: null,
 };
 
 export const vendorReducer = createSlice({
@@ -55,6 +56,9 @@ export const vendorReducer = createSlice({
     setDistance: (state, action) => {
       state.distance = action.payload;
     },
+    setSearchedVendors: (state, action) => {
+      state.searchedVendors = action.payload;
+    },
   },
 });
 
@@ -68,6 +72,7 @@ export const {
   setDistanceList,
   setVendorOfMap,
   setDistance,
+  setSearchedVendors,
 } = vendorReducer.actions;
 
 export const register =
@@ -211,7 +216,7 @@ export const getAllVendors =
         dispatch(setShowWarningNotification(true));
         return;
       }
-      dispatch(setVendors(res.data));
+      dispatch(setVendors(res.data.rows));
     });
   };
 
@@ -222,8 +227,37 @@ export const getVendorById = (id) => (dispatch) => {
       dispatch(setShowWarningNotification(true));
       return;
     }
+    if (res.data === null) return dispatch(setVendorById("no-result"));
     dispatch(setVendorById(res.data));
   });
+};
+
+export const cleanVendorById = () => (dispatch) => {
+  dispatch(setVendorById(null));
+};
+
+export const getVendorOfSearchedProducts = (array) => (dispatch) => {
+  if (!array) return dispatch(setSearchedVendors(null));
+  const result = [];
+  Promise.all(
+    array.map((id) => {
+      return getAvailVendorProfileByIdApi(id).then((res) => {
+        if (!res.ok) {
+          dispatch(setErrorMessage(res.message));
+          dispatch(setShowWarningNotification(true));
+          return;
+        }
+        result.push(res.data);
+      });
+    })
+  )
+    .then(() => {
+      dispatch(setSearchedVendors(result));
+    })
+    .catch((err) => {
+      dispatch(setErrorMessage(err.message));
+      dispatch(setShowWarningNotification(true));
+    });
 };
 
 export const getVendorOfMap = (id) => (dispatch) => {

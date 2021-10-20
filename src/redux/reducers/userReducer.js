@@ -106,6 +106,12 @@ export const getMe = () => (dispatch) => {
   dispatch(setIsLoading(true));
   return getMeApi().then((res) => {
     if (!res.ok) {
+      if (res.message === "non-login") {
+        dispatch(setIsLoading(false));
+        dispatch(setUser("non-login"));
+        return;
+      }
+      dispatch(setIsLoading(false));
       dispatch(setErrorMessage(res.message));
       return;
     }
