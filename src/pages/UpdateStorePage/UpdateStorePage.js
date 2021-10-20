@@ -85,6 +85,7 @@ export default function UpdateStorePage() {
   const avatarInput = createRef();
   const bannerInput = createRef();
   const dispatch = useDispatch();
+  const user = useSelector((store) => store.users.user);
   const vendor = useSelector((store) => store.vendors.vendor);
   const isLoading = useSelector((store) => store.vendors.isLoading);
   const history = useHistory();
@@ -196,6 +197,9 @@ export default function UpdateStorePage() {
   };
 
   useEffect(() => {
+    if (user === "non-login") {
+      return history.push("/");
+    }
     dispatch(getVendor());
     dispatch(getCategories());
     window.scrollTo({
@@ -252,144 +256,154 @@ export default function UpdateStorePage() {
   ]);
 
   return (
-    <Div w="80%" m={{ y: "4rem", x: "auto" }}>
-      <form onSubmit={handleSubmit}>
-        <Div w="100%">
-          <BannerPreview
-            banner={banner}
-            handleBanner={handleBanner}
-            bannerInput={bannerInput}
-            handleDelete={() => {
-              setBanner(null);
-              setBannerInfo(null);
-              if (vendor.bannerUrl) {
-                setIsDeleteBanner(true);
-                setIsEdited(true);
-              }
-              if (!vendor.bannerUrl) {
-                setIsEdited(false);
-              }
-            }}
-          />
-          <Div w="100%">
-            <Div
-              p="1rem"
-              d={{ xs: "", md: "flex" }}
-              align="center"
-              w="100%"
-              h={{ xs: "auto", md: "20rem" }}
-            >
-              <AvatarPreview
-                image={avatar}
+    <>
+      {vendor && (
+        <Div w="80%" m={{ y: "4rem", x: "auto" }}>
+          <form onSubmit={handleSubmit}>
+            <Div w="100%">
+              <BannerPreview
+                banner={banner}
+                handleBanner={handleBanner}
+                bannerInput={bannerInput}
                 handleDelete={() => {
-                  setAvatar(null);
-                  setAvatarInfo(null);
-                  if (vendor.avatarUrl) {
-                    setIsDeleteAvatar(true);
+                  setBanner(null);
+                  setBannerInfo(null);
+                  if (vendor.bannerUrl) {
+                    setIsDeleteBanner(true);
                     setIsEdited(true);
                   }
-                  if (!vendor.avatarUrl) {
+                  if (!vendor.bannerUrl) {
                     setIsEdited(false);
                   }
                 }}
               />
-              <Div
-                w={{ xs: "100%", md: "calc(100% - 14rem)" }}
-                d="flex"
-                flexDir="column"
-                justify="center"
-                m={{ l: { xs: "0", md: " 2rem" }, t: { xs: "2rem", md: " 0" } }}
-              >
-                <UploadAvatar
-                  name="個人頭像"
-                  avatarInput={avatarInput}
-                  handleAvatar={handleAvatar}
-                />
-                <InputField
-                  name="賣場名稱"
-                  type="text"
-                  value={vendorName}
-                  handleEvent={(e) => setVendorName(e.target.value)}
-                  required
-                />
-                <InputField
-                  name="聯絡電話"
-                  type="tel"
-                  value={phone}
-                  handleEvent={(e) => setPhone(e.target.value)}
-                  remind={remindText.phone}
-                  rule={inputRule.phone}
-                  required
-                />
-                <InputField
-                  name="賣場地址"
-                  type="text"
-                  value={address}
-                  handleEvent={handleInputAddress}
-                  remind={remindText.address}
-                  rule={inputRule.address}
-                  required
-                />
-                <InputField
-                  name="賣場分類"
-                  type="dropdown"
-                  value={categoryId}
-                  setCategoryId={setCategoryId}
-                />
+              <Div w="100%">
+                <Div
+                  p="1rem"
+                  d={{ xs: "", md: "flex" }}
+                  align="center"
+                  w="100%"
+                  h={{ xs: "auto", md: "20rem" }}
+                >
+                  <AvatarPreview
+                    image={avatar}
+                    handleDelete={() => {
+                      setAvatar(null);
+                      setAvatarInfo(null);
+                      if (vendor.avatarUrl) {
+                        setIsDeleteAvatar(true);
+                        setIsEdited(true);
+                      }
+                      if (!vendor.avatarUrl) {
+                        setIsEdited(false);
+                      }
+                    }}
+                  />
+                  <Div
+                    w={{ xs: "100%", md: "calc(100% - 14rem)" }}
+                    d="flex"
+                    flexDir="column"
+                    justify="center"
+                    m={{
+                      l: { xs: "0", md: " 2rem" },
+                      t: { xs: "2rem", md: " 0" },
+                    }}
+                  >
+                    <UploadAvatar
+                      name="個人頭像"
+                      avatarInput={avatarInput}
+                      handleAvatar={handleAvatar}
+                    />
+                    <InputField
+                      name="賣場名稱"
+                      type="text"
+                      value={vendorName}
+                      handleEvent={(e) => setVendorName(e.target.value)}
+                      required
+                    />
+                    <InputField
+                      name="聯絡電話"
+                      type="tel"
+                      value={phone}
+                      handleEvent={(e) => setPhone(e.target.value)}
+                      remind={remindText.phone}
+                      rule={inputRule.phone}
+                      required
+                    />
+                    <InputField
+                      name="賣場地址"
+                      type="text"
+                      value={address}
+                      handleEvent={handleInputAddress}
+                      remind={remindText.address}
+                      rule={inputRule.address}
+                      required
+                    />
+                    <InputField
+                      name="賣場分類"
+                      type="dropdown"
+                      value={categoryId}
+                      setCategoryId={setCategoryId}
+                    />
+                  </Div>
+                </Div>
+                <Div
+                  d={{ xs: "", md: "flex" }}
+                  align="flex-end"
+                  h={{ xs: "auto", md: "18rem" }}
+                  border={{ b: "4px solid" }}
+                  borderColor="gray400"
+                  p="1rem 0"
+                >
+                  <Div w={{ xs: "100%", md: "60%" }} p={{ x: "1rem" }} h="100%">
+                    賣場介紹
+                    <TextAreaField
+                      name="向顧客介紹你的賣場吧"
+                      value={description}
+                      handleEvent={(e) => setDescription(e.target.value)}
+                    />
+                  </Div>
+                  <Div
+                    w={{ xs: "100%", md: "40%" }}
+                    h={{ xs: "18rem", md: "16rem" }}
+                    border={{ t: { xs: "4px solid", md: "" } }}
+                    borderColor="gray400"
+                    m={{
+                      l: { xs: "0", md: "1rem" },
+                      t: { xs: "2rem", md: "0" },
+                    }}
+                    p={{ y: { xs: "2rem", md: "0" } }}
+                    d="flex"
+                    align="center"
+                  >
+                    <Map
+                      completeAddress={completeAddress}
+                      latlng={latlng}
+                      setLatLng={setLatLng}
+                    />
+                  </Div>
+                </Div>
               </Div>
             </Div>
-            <Div
-              d={{ xs: "", md: "flex" }}
-              align="flex-end"
-              h={{ xs: "auto", md: "18rem" }}
-              border={{ b: "4px solid" }}
-              borderColor="gray400"
-              p="1rem 0"
-            >
-              <Div w={{ xs: "100%", md: "60%" }} p={{ x: "1rem" }} h="100%">
-                賣場介紹
-                <TextAreaField
-                  name="向顧客介紹你的賣場吧"
-                  value={description}
-                  handleEvent={(e) => setDescription(e.target.value)}
-                />
-              </Div>
-              <Div
-                w={{ xs: "100%", md: "40%" }}
-                h={{ xs: "18rem", md: "16rem" }}
-                border={{ t: { xs: "4px solid", md: "" } }}
-                borderColor="gray400"
-                m={{ l: { xs: "0", md: "1rem" }, t: { xs: "2rem", md: "0" } }}
-                p={{ y: { xs: "2rem", md: "0" } }}
-                d="flex"
-                align="center"
-              >
-                <Map
-                  completeAddress={completeAddress}
-                  latlng={latlng}
-                  setLatLng={setLatLng}
-                />
-              </Div>
+            <Div>
+              <OpeningHour
+                daysCH={daysCH}
+                values={openingHour}
+                setValues={setOpeningHour}
+              />
+              <ButtonGroup
+                isDisabled={!isEdited || isLoading}
+                handleSubmit={handleSubmit}
+                handleBack={() => history.goBack()}
+                vendor={vendor}
+                handleToggleOpen={() => dispatch(setToggleOpen())}
+              />
             </Div>
-          </Div>
+            <SuccessNotification />
+            <WarningNotification />
+          </form>
         </Div>
-        <Div>
-          <OpeningHour
-            daysCH={daysCH}
-            values={openingHour}
-            setValues={setOpeningHour}
-          />
-          <ButtonGroup
-            isDisabled={!isEdited || isLoading}
-            handleSubmit={handleSubmit}
-            handleBack={() => history.goBack()}
-            vendor={vendor}
-            handleToggleOpen={() => dispatch(setToggleOpen())}
-          />
-        </Div>
-        <SuccessNotification />
-        <WarningNotification />
-      </form>
-    </Div>
+      )}
+    </>
   );
 }

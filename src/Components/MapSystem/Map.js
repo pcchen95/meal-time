@@ -1,6 +1,6 @@
 import React from "react";
 import { useState, useEffect, useRef } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import {
   GoogleMap,
   useJsApiLoader,
@@ -13,10 +13,11 @@ import { Div } from "atomize";
 import googleMapToken from "../../constants/googleMapToken";
 
 export function Map({ vendorOfMap, handleEvent, setDistance }) {
-  const dispatch = useDispatch();
   const [clicked, setClicked] = useState(null);
+  const [showVendors, setShowVendors] = useState(null);
   const currentPosition = useSelector((store) => store.users.position);
   const vendors = useSelector((store) => store.vendors.vendors);
+  const searchedVendors = useSelector((store) => store.vendors.searchedVendors);
   const defaultParams = useRef({
     center: {
       lat: 23.893598219621072,
@@ -36,9 +37,18 @@ export function Map({ vendorOfMap, handleEvent, setDistance }) {
     Geocode.setLocationType("ROOFTOP");
   }, []);
 
+  useEffect(() => {
+    if (vendors) setShowVendors(vendors);
+    if (searchedVendors && searchedVendors.length > 0)
+      setShowVendors(searchedVendors);
+  }, [vendors, searchedVendors]);
+
   return (
     isLoaded && (
-      <Div w="100%" h="100%">
+      <Div
+        w={{ xs: "100%", lg: "calc(100% - 18rem)" }}
+        h={{ xs: "20rem", lg: "40rem" }}
+      >
         <GoogleMap
           mapContainerStyle={{ width: "100%", height: "100%" }}
           center={currentPosition || defaultParams.current.center}
@@ -51,8 +61,8 @@ export function Map({ vendorOfMap, handleEvent, setDistance }) {
             }}
             position={currentPosition}
           />
-          {vendors &&
-            vendors.map((vendor) => {
+          {showVendors &&
+            showVendors.map((vendor) => {
               return (
                 <Marker
                   key={vendor.id}
