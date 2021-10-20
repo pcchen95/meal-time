@@ -50,7 +50,7 @@ const Product = ({ product }) => {
       >
         <Col>
           <Div
-            bgImg={product.pictureUrl}
+            bgImg={product.pictureUrl || "defaultImage.png"}
             bgSize="cover"
             bgPos="center"
             h={{ xs: "12rem", lg: "8rem" }}
@@ -186,7 +186,7 @@ export default function SingleProductPage() {
         <div>
           <Col>
             <Div
-              bgImg={product && product.pictureUrl}
+              bgImg={(product && product.pictureUrl) || "defaultImage.png"}
               bgSize="cover"
               bgPos="center"
               h={{ xs: "20rem", lg: "30rem" }}
@@ -221,11 +221,19 @@ export default function SingleProductPage() {
             />
             <ProductDetails
               title="製造日期"
-              content={product && product.manufactureDate.slice(0, 10)}
+              content={
+                product &&
+                product.manufactureDate &&
+                product.manufactureDate.slice(0, 10)
+              }
             />
             <ProductDetails
               title="有效期限"
-              content={product && product.expiryDate.slice(0, 10)}
+              content={
+                product &&
+                product.manufactureDate &&
+                product.expiryDate.slice(0, 10)
+              }
             />
           </Div>
           <Div

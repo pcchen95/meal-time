@@ -17,6 +17,7 @@ import {
 const initialState = {
   page: 1,
   sort: "id",
+  limit: 10,
   products: null,
   product: null,
   vendorProducts: null,
@@ -36,6 +37,9 @@ export const productReducer = createSlice({
     },
     setPage: (state, action) => {
       state.page = action.payload
+    },
+    setLimit: (state, action) => {
+      state.limit = action.payload
     },
     setProducts: (state, action) => {
       state.products = action.payload
@@ -67,6 +71,7 @@ export const productReducer = createSlice({
 export const {
   setSort,
   setPage,
+  setLimit,
   setProducts,
   setProduct,
   setErrMessage,
@@ -88,7 +93,7 @@ export const getProducts = (queryParameters) => (dispatch) => {
     })
     .then((products) => {
       dispatch(setIsLoading(false))
-      dispatch(setProducts(products.rows))
+      dispatch(setProducts(products))
     })
     .catch((err) => {
       console.log(err)
