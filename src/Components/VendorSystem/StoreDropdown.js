@@ -1,14 +1,19 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { useState, useEffect } from "react";
-import { Div, Dropdown, Anchor, Text } from "atomize";
+import { Div, Dropdown, Anchor } from "atomize";
 import { useSelector } from "react-redux";
 
-const lists = ({ categories, categoryId, setCategoryId, setShowDropdown }) => {
+const lists = ({
+  productCategories: categories,
+  categoryId,
+  setCategoryId,
+  setShowDropdown,
+}) => {
   return (
     <Div p={{ x: "1rem", y: "0.5rem" }}>
       {categories &&
-        [{ id: 0, name: "全部" }, ...categories]
+        categories
           .filter((category) => category.id !== categoryId)
           .map((category) => {
             return (
@@ -37,47 +42,47 @@ lists.propTypes = {
   setShowDropdown: PropTypes.func,
 };
 
-export function SmallDropdown({ categoryId, setCategoryId }) {
+export function StoreDropdown({ categoryId, setCategoryId }) {
   const [showDropdown, setShowDropdown] = useState(false);
   const [name, setName] = useState("");
-  const categories = useSelector((store) => store.vendors.categories);
+  const productCategories = useSelector(
+    (store) => store.products.productCategories
+  );
 
   const handleToggleDropdown = () => {
     setShowDropdown(!showDropdown);
   };
 
   useEffect(() => {
-    if (categories) {
+    if (productCategories) {
       if (categoryId === 0) return setName("全部");
-      for (let i = 0; i < categories.length; i++) {
-        if (categories[i].id === categoryId) return setName(categories[i].name);
+      for (let i = 0; i < productCategories.length; i++) {
+        if (productCategories[i].id === categoryId)
+          return setName(productCategories[i].name);
       }
     }
-  }, [categories, categoryId]);
+  }, [productCategories, categoryId]);
 
   return (
-    <Div d="flex">
-      <Text p="0.5rem">選擇分類</Text>
-      <Dropdown
-        w="fit-content"
-        isOpen={showDropdown}
-        onClick={handleToggleDropdown}
-        menu={lists({
-          categories,
-          categoryId,
-          setCategoryId,
-          setShowDropdown,
-        })}
-      >
-        {categoryId ? name : "全部"}
-      </Dropdown>
-    </Div>
+    <Dropdown
+      w="8rem"
+      isOpen={showDropdown}
+      onClick={handleToggleDropdown}
+      menu={lists({
+        productCategories,
+        categoryId,
+        setCategoryId,
+        setShowDropdown,
+      })}
+    >
+      {name}
+    </Dropdown>
   );
 }
 
-SmallDropdown.propTypes = {
+StoreDropdown.propTypes = {
   categoryId: PropTypes.number,
   setCategoryId: PropTypes.func,
 };
 
-export default SmallDropdown;
+export default StoreDropdown;
