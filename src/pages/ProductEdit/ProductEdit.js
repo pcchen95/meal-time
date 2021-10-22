@@ -200,23 +200,6 @@ export default function ProductEdit() {
     isAvailable,
   ])
 
-  // useEffect(() => {
-  //   if (user) {
-  //     setNickname(user.nickname);
-  //     setEmail(user.email);
-  //     setPhone(user.phone);
-  //     setImg(user.avatarURL);
-  //   }
-  // }, [user]);
-
-  // useEffect(() => {
-  //   if (user) {
-  //     nickname !== user.nickname || email !== user.email || phone !== user.phone
-  //       ? setIsEdited(true)
-  //       : setIsEdited(false);
-  //   }
-  // }, [user, nickname, email, phone]);
-
   return (
     <Div
       w={{ xs: "100%", md: "70%" }}
