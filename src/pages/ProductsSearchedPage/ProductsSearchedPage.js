@@ -1,10 +1,10 @@
 import React from "react"
 import { Div } from "atomize"
-
 import { useEffect } from "react"
+import { useParams } from "react-router"
 import {
-  getProducts,
-  cleanProducts,
+  searchProducts,
+  cleanSearchProducts,
   setPage,
 } from "../../redux/reducers/productReducer"
 import { useDispatch, useSelector } from "react-redux"
@@ -12,8 +12,9 @@ import PaginationButton from "../../Components/PaginationButton/PaginationButton
 import ProductCard from "../../Components/ProductSystem/ProductCard"
 
 export default function ProductsPage() {
+  let { keyword } = useParams()
   const dispatch = useDispatch()
-  const productsData = useSelector((state) => state.products.products)
+  const productsData = useSelector((state) => state.products.searchedProducts)
   let products
   let count
   if (productsData) {
@@ -22,16 +23,16 @@ export default function ProductsPage() {
   const page = useSelector((state) => state.products.page)
   const sort = useSelector((state) => state.products.sort)
   const limit = useSelector((state) => state.products.limit)
+  const queryParameters = { page, sort, limit }
   let totalPages
   if (productsData) {
     count = productsData.count
     totalPages = Math.ceil(count / limit)
   }
   useEffect(() => {
-    dispatch(getProducts({ page, sort, limit }))
-
-    return () => dispatch(cleanProducts())
-  }, [page, dispatch])
+    dispatch(searchProducts(keyword, queryParameters))
+    return () => dispatch(cleanSearchProducts())
+  }, [keyword, page, dispatch])
 
   const clickPagination = (action) => {
     if (action === "next") {
@@ -49,6 +50,17 @@ export default function ProductsPage() {
         minH="60rem"
         p={{ b: { xs: "3rem" } }}
       >
+        {products && count === 0 && (
+          <Div
+            w="100%"
+            d="flex"
+            justify="center"
+            textSize="display1"
+            textColor="gray600"
+          >
+            沒有相關產品
+          </Div>
+        )}
         {products &&
           products.map((product) => (
             <ProductCard key={product.id} product={product} />
