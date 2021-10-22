@@ -158,88 +158,94 @@ export default function SingleProductPage() {
   }
 
   return (
-    <Div w={{ xs: "80%", lg: "60%" }} m={{ y: "2rem", x: "auto" }}>
-      <Div d={{ xs: "block", xl: "flex" }} w={{ xs: "100%", lg: "24rem" }}>
-        <div>
-          <Col>
-            <Div
-              bgImg={(product && product.pictureUrl) || "defaultImage.png"}
-              bgSize="cover"
-              bgPos="center"
-              h={{ xs: "20rem", lg: "30rem" }}
-              w={{ xs: "100%", lg: "30rem" }}
-              m={{ xs: "0rem", lg: { t: "1rem" } }}
-              border="1px solid"
-              shadow="2"
-              borderColor="gray400"
-              rounded="sm"
-            />
-            <Div
-              border="1px solid"
-              shadow="2"
-              borderColor="gray400"
-              rounded="sm"
-              m={{ t: "2rem" }}
-              w={{ xs: "100%", lg: "30rem" }}
-              p={{ x: "1rem", y: "1rem" }}
-            >
-              <Text textSize="title" textWeight="600" m={{ t: "0.5rem" }}>
-                商品資訊
-              </Text>
-              <ProductDetails
-                title="類別"
-                content={
-                  product && (
-                    <Link
-                      key={product.ProductCategory.id}
-                      to={`/products/category/${product.ProductCategory.id}`}
-                      style={{ textDecoration: "none" }}
-                    >
-                      <Text textColor="info600">
-                        {product.ProductCategory.name}
-                      </Text>
-                    </Link>
-                  )
-                }
-              />
-              <ProductDetails
-                title="剩餘數量"
-                content={product && product.quantity}
-              />
-              <ProductDetails
-                title="製造日期"
-                content={
-                  product &&
-                  product.manufactureDate &&
-                  product.manufactureDate.slice(0, 10)
-                }
-              />
-              <ProductDetails
-                title="有效期限"
-                content={
-                  product &&
-                  product.manufactureDate &&
-                  product.expiryDate.slice(0, 10)
-                }
-              />
-            </Div>
-            <Div
-              border="1px solid"
-              shadow="2"
-              borderColor="gray400"
-              rounded="sm"
-              m={{ t: "2rem" }}
-              w={{ xs: "100%", lg: "30rem" }}
-              p={{ x: "1rem", y: "1rem" }}
-            >
-              <Text textSize="title" textWeight="600" m={{ t: "0.5rem" }}>
-                商品介紹
-              </Text>
-              <Text textSize="subheader">{product && product.description}</Text>
-            </Div>
-          </Col>
-        </div>
-        <Div m={{ l: { xs: "1rem", lg: "5rem" }, t: "2rem" }}>
+    <Div
+      d={{ xs: "block", xl: "flex" }}
+      w={{ xs: "80%", lg: "64rem" }}
+      m={{ y: "2rem", x: "auto" }}
+      justify="center"
+    >
+      <Col>
+        <Div
+          bgImg={(product && product.pictureUrl) || "defaultImage.png"}
+          bgSize="cover"
+          bgPos="center"
+          h={{ xs: "20rem", lg: "30rem" }}
+          minW={{ lg: "30rem" }}
+          m={{ xs: "0rem", lg: { t: "1rem" } }}
+          border="1px solid"
+          shadow="2"
+          borderColor="gray400"
+          rounded="sm"
+        />
+        <Div
+          border="1px solid"
+          shadow="2"
+          borderColor="gray400"
+          rounded="sm"
+          m={{ t: "2rem" }}
+          minW={{ lg: "30rem" }}
+          p={{ x: "1rem", y: "1rem" }}
+        >
+          <Text textSize="title" textWeight="600" m={{ t: "0.5rem" }}>
+            商品資訊
+          </Text>
+          <ProductDetails
+            title="類別"
+            content={
+              product && (
+                <Link
+                  key={product.ProductCategory.id}
+                  to={`/products/category/${product.ProductCategory.id}`}
+                  style={{ textDecoration: "none" }}
+                >
+                  <Text textColor="info600">
+                    {product.ProductCategory.name}
+                  </Text>
+                </Link>
+              )
+            }
+          />
+          <ProductDetails
+            title="剩餘數量"
+            content={product && product.quantity}
+          />
+          <ProductDetails
+            title="製造日期"
+            content={
+              product &&
+              product.manufactureDate &&
+              product.manufactureDate.slice(0, 10)
+            }
+          />
+          <ProductDetails
+            title="有效期限"
+            content={
+              product &&
+              product.manufactureDate &&
+              product.expiryDate.slice(0, 10)
+            }
+          />
+        </Div>
+        <Div
+          border="1px solid"
+          shadow="2"
+          borderColor="gray400"
+          rounded="sm"
+          minW={{ lg: "30rem" }}
+          m={{ t: "2rem" }}
+          p={{ x: "1rem", y: "1rem" }}
+        >
+          <Text textSize="title" textWeight="600" m={{ t: "0.5rem" }}>
+            商品介紹
+          </Text>
+          <Text textSize="subheader">{product && product.description}</Text>
+        </Div>
+      </Col>
+      <Col>
+        <Div maxW={{ xs: "0px", lg: "2rem" }}></Div>
+      </Col>
+      <Col>
+        <Div m={{ l: { xs: "0rem", lg: "0rem" }, t: "2rem" }}>
           <div>
             <Text textSize="display1" textWeight="600">
               {product && product.name}
@@ -441,7 +447,7 @@ export default function SingleProductPage() {
             </Div>
           </Div>
         </Div>
-      </Div>
+      </Col>
     </Div>
   )
 }
