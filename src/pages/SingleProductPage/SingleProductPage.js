@@ -134,6 +134,7 @@ export default function SingleProductPage() {
           }
         })
       } else {
+        cartArray.forEach((item) => newCartArray.push(item))
         newCartArray.push({ id: newProductId, quantity: value })
       }
     } else {
