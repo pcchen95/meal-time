@@ -23,7 +23,6 @@ export const getCartData = (userId) => (dispatch) => {
   let cartArray
   if (cart) {
     cartArray = JSON.parse(cart)
-    console.log(cartArray)
   }
   return getCartDataApi({ cart: cartArray })
     .then((res) => {
