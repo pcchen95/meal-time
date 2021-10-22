@@ -10,6 +10,7 @@ import {
   cleanVendorProducts,
   cleanCategoryProducts,
 } from "../../redux/reducers/productReducer"
+import { getCartData } from "../../redux/reducers/cartReducer"
 import { useEffect } from "react"
 import { useDispatch, useSelector } from "react-redux"
 
@@ -113,67 +114,32 @@ export default function SingleProductPage() {
   }, [productCoount])
 
   const addToCart = (value) => {
-    const newVendorId = product && product.vendorId
     const newProductId = product && product.id
     let cart = localStorage.getItem(`cartId${user.id}`) || null
-    const newCartArray = []
+    let newCartArray = []
     const cartArray = JSON.parse(cart)
-
-    const isVendorExist = (cartByVendor) => {
-      return cartByVendor.vendorId === newVendorId
-    }
     const isProductExist = (product) => {
-      return product.productId === newProductId
+      return product.id === newProductId
     }
     if (cart) {
-      if (cartArray.find(isVendorExist)) {
-        if (cartArray.find(isVendorExist).cartItems.find(isProductExist)) {
-          cartArray.forEach((element) => {
-            element.vendorId === newVendorId
-              ? newCartArray.push({
-                  vendorId: newVendorId,
-                  cartItems: element.cartItems.map((product) => {
-                    if (product.productId !== newProductId) return product
-                    return {
-                      ...product,
-                      quantity: product.quantity + value,
-                    }
-                  }),
-                })
-              : newCartArray.push(element)
-          })
-          localStorage.setItem(`cartId${user.id}`, JSON.stringify(newCartArray))
-        } else {
-          cartArray.forEach((element) => {
-            element.vendorId === newVendorId
-              ? newCartArray.push({
-                  vendorId: newVendorId,
-                  cartItems: [
-                    ...element.cartItems,
-                    { productId: newProductId, quantity: value },
-                  ],
-                })
-              : newCartArray.push(element)
-          })
-          localStorage.setItem(`cartId${user.id}`, JSON.stringify(newCartArray))
-        }
-      } else {
-        cartArray.forEach((element) => newCartArray.push(element))
-        newCartArray.push({
-          vendorId: newVendorId,
-          cartItems: [{ productId: newProductId, quantity: value }],
+      if (cartArray.find(isProductExist)) {
+        cartArray.forEach((item) => {
+          if (item.id === newProductId) {
+            newCartArray.push({
+              id: newProductId,
+              quantity: item.quantity + value,
+            })
+          } else {
+            newCartArray.push(item)
+          }
         })
+      } else {
+        newCartArray.push({ id: newProductId, quantity: value })
       }
-      localStorage.setItem(`cartId${user.id}`, JSON.stringify(newCartArray))
     } else {
-      let newCartArray = [
-        {
-          vendorId: newVendorId,
-          cartItems: [{ productId: newProductId, quantity: value }],
-        },
-      ]
-      localStorage.setItem(`cartId${user.id}`, JSON.stringify(newCartArray))
+      newCartArray = [{ id: newProductId, quantity: value }]
     }
+    localStorage.setItem(`cartId${user.id}`, JSON.stringify(newCartArray))
     setProductCount(0)
   }
 
@@ -388,6 +354,13 @@ export default function SingleProductPage() {
                     <Product key={product.id} product={product} />
                   ))}
             </Div>
+            <Button
+              onClick={() => {
+                dispatch(getCartData(user.id))
+              }}
+            >
+              get cart api!
+            </Button>
           </Div>
         </Div>
       </Div>

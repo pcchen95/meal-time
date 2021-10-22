@@ -1,7 +1,8 @@
-import React from "react";
-import { Div, Button, Icon } from "atomize";
+import React from "react"
+import { Div, Button, Icon } from "atomize"
+import PropTypes from "prop-types"
 
-const PaginationButton = ({ page, handlePageClick, data, limit }) => {
+const PaginationButton = ({ page, handlePageClick, limit }) => {
   return (
     <Div m={{ t: "1rem" }} pos="absolute" right="5rem" bottom="1rem" d="flex">
       {page == 1 ? (
@@ -35,7 +36,9 @@ const PaginationButton = ({ page, handlePageClick, data, limit }) => {
         {page}
       </Div>
 
-      {data.length === limit ? (
+      {page === limit ? (
+        ""
+      ) : (
         <Button
           h="2rem"
           p="1rem"
@@ -53,11 +56,15 @@ const PaginationButton = ({ page, handlePageClick, data, limit }) => {
         >
           <Icon name="LongRight" size="20px" color="info700" />
         </Button>
-      ) : (
-        ""
       )}
     </Div>
-  );
-};
+  )
+}
 
-export default PaginationButton;
+PaginationButton.propTypes = {
+  page: PropTypes.number,
+  handlePageClick: PropTypes.func,
+  limit: PropTypes.number,
+}
+
+export default PaginationButton

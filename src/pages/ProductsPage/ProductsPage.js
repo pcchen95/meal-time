@@ -1,11 +1,23 @@
 import React from "react"
-import { Div, Button, Text } from "atomize"
+import { Div, Text } from "atomize"
 import PropTypes from "prop-types"
+import styled from "styled-components"
 
 import { useEffect } from "react"
 import { Link } from "react-router-dom"
-import { getProducts, cleanProducts } from "../../redux/reducers/productReducer"
+import {
+  getProducts,
+  cleanProducts,
+  setPage,
+} from "../../redux/reducers/productReducer"
 import { useDispatch, useSelector } from "react-redux"
+import PaginationButton from "../../Components/PaginationButton/PaginationButton"
+
+const EllipsisText = styled.div`
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+`
 
 const Product = ({ product }) => {
   return (
@@ -14,6 +26,7 @@ const Product = ({ product }) => {
       textAlign="center"
       m={{ t: "2rem", l: { xs: "2rem", lg: "3.5rem" } }}
       p={{ x: 0 }}
+      w="13rem"
       d="inline-block"
       borderColor="gray400"
       shadow="2"
@@ -28,7 +41,7 @@ const Product = ({ product }) => {
           bgSize="cover"
           bgPos="center"
           h="13rem"
-          w="13rem"
+          w="100%"
           rounded={{ tl: "sm", tr: "sm" }}
         />
         <Text
@@ -39,10 +52,11 @@ const Product = ({ product }) => {
           cursor="pointer"
           rounded="sm"
           m={{ t: "0.5rem", b: "0rem" }}
+          p={{ x: "1rem" }}
         >
-          {product.name}
+          <EllipsisText>{product.name}</EllipsisText>
         </Text>
-        <Div d="flex" align="center" m={{ t: "0.5rem", b: "0rem" }}>
+        <Div d="flex" align="center" m={{ t: "0.5rem", b: "0rem" }} w="100%">
           <Div
             bgImg={product.Vendor.avatarUrl || "defaultImage.png"}
             bgSize="cover"
@@ -50,14 +64,24 @@ const Product = ({ product }) => {
             h="2rem"
             w="2rem"
             rounded="circle"
-            m={{ l: "1.5rem", r: "1rem" }}
+            m={{ l: "1.5rem", r: "1rem", y: "0rem" }}
           ></Div>
-          <Text textSize="subheader" textColor="gray600" cursor="pointer">
-            {product.Vendor.vendorName}
+          <Text
+            textSize="subheader"
+            textColor="gray600"
+            cursor="pointer"
+            maxW="7.5rem"
+            m={{ r: "1rem", y: "0rem" }}
+          >
+            <EllipsisText>{product.Vendor.vendorName}</EllipsisText>
           </Text>
         </Div>
 
-        <Text textSize="subheader" m="0rem">
+        <Text
+          textSize="subheader"
+          m={{ b: "0.5rem", t: "0rem" }}
+          textColor="info600"
+        >
           NT$ {product.price}
         </Text>
       </Link>
@@ -75,43 +99,31 @@ export default function ProductsPage() {
   let count
   if (productsData) {
     products = productsData.rows
-    count = productsData.count
   }
-
   const page = useSelector((state) => state.products.page)
   const sort = useSelector((state) => state.products.sort)
   const limit = useSelector((state) => state.products.limit)
+  let totalPages
+  if (productsData) {
+    count = productsData.count
+    totalPages = Math.ceil(count / limit)
+    console.log(limit, count, totalPages)
+  }
   useEffect(() => {
     dispatch(getProducts({ page, sort, limit }))
+
     return () => dispatch(cleanProducts())
   }, [page, dispatch])
-  const totalPages = Math.ceil(limit / count)
 
   console.log(totalPages)
 
-  const buttonList = (
-    <>
-      {["1", "2", ">"].map((name, index) => (
-        <Button
-          key={index}
-          h="2rem"
-          p={{ x: "1rem" }}
-          textSize="caption"
-          textColor="info700"
-          hoverTextColor="info900"
-          bg="white"
-          hoverBg="info200"
-          border="1px solid"
-          borderColor="info700"
-          hoverBorderColor="info900"
-          m={{ r: "0.5rem" }}
-        >
-          {name}
-        </Button>
-      ))}
-    </>
-  )
-
+  const clickPagination = (action) => {
+    if (action === "next") {
+      dispatch(setPage(page + 1))
+    } else if (action === "back") {
+      dispatch(setPage(page - 1))
+    }
+  }
   return (
     <>
       <Div
@@ -133,7 +145,11 @@ export default function ProductsPage() {
           bottom="1rem"
           d="flex"
         >
-          {buttonList}
+          <PaginationButton
+            page={page}
+            handlePageClick={clickPagination}
+            limit={totalPages}
+          />
         </Div>
       </Div>
     </>
