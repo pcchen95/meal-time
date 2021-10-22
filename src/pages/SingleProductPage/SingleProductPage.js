@@ -1,7 +1,7 @@
 import React, { useState } from "react"
 import { Div, Text, Col, Button, Icon, Input } from "atomize"
 import PropTypes from "prop-types"
-import { Link, useParams } from "react-router-dom"
+import { Link, useParams, useHistory } from "react-router-dom"
 import {
   getProduct,
   cleanProduct,
@@ -10,13 +10,12 @@ import {
   cleanVendorProducts,
   cleanCategoryProducts,
 } from "../../redux/reducers/productReducer"
-import { getCartData } from "../../redux/reducers/cartReducer"
 import { useEffect } from "react"
 import { useDispatch, useSelector } from "react-redux"
-
+import styled from "styled-components"
 const ProductDetails = ({ title, content }) => {
   return (
-    <Div d={{ xs: "block", xl: "flex" }} textSize="subheader">
+    <Div d="flex" textSize="subheader">
       <Text
         textColor="gray900"
         m={{ y: "0rem", r: "1rem" }}
@@ -36,6 +35,12 @@ ProductDetails.propTypes = {
   title: PropTypes.string,
   content: PropTypes.string,
 }
+
+const EllipsisText = styled.div`
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+`
 
 const Product = ({ product }) => {
   return (
@@ -60,11 +65,17 @@ const Product = ({ product }) => {
             rounded="sm"
           />
         </Col>
-        <Text m={{ y: "1rem" }} textAlign="center">
-          {product.name}
+        <Text
+          m={{ y: "1rem", r: "0rem" }}
+          textAlign="center"
+          textColor="black"
+          p={{ x: "0.5rem" }}
+          w={{ xs: "100%", lg: "9rem" }}
+        >
+          <EllipsisText>{product.name}</EllipsisText>
         </Text>
-        <Text m={{ y: "1rem" }} textAlign="center">
-          NT$ {product.price}
+        <Text m={{ y: "1rem" }} textAlign="center" textColor="info800">
+          <EllipsisText>NT$ {product.price}</EllipsisText>
         </Text>
       </Div>
     </Link>
@@ -77,6 +88,8 @@ Product.propTypes = {
 export default function SingleProductPage() {
   let { id } = useParams()
   const dispatch = useDispatch()
+  const history = useHistory()
+
   const user = useSelector((state) => state.users.user)
   const product = useSelector((state) => state.products.product)
   const vendorProducts = useSelector((state) => state.products.vendorProducts)
@@ -146,9 +159,6 @@ export default function SingleProductPage() {
 
   return (
     <Div w={{ xs: "80%", lg: "60%" }} m={{ y: "2rem", x: "auto" }}>
-      <Div d="flex" p={{ l: "0.4rem" }}>
-        <Text>Home</Text>/<Text>Category</Text>
-      </Div>
       <Div d={{ xs: "block", xl: "flex" }} w={{ xs: "100%", lg: "24rem" }}>
         <div>
           <Col>
@@ -157,66 +167,77 @@ export default function SingleProductPage() {
               bgSize="cover"
               bgPos="center"
               h={{ xs: "20rem", lg: "30rem" }}
-              w={{ xs: "20rem", lg: "30rem" }}
-              m={{ t: "1rem" }}
+              w={{ xs: "100%", lg: "30rem" }}
+              m={{ xs: "0rem", lg: { t: "1rem" } }}
               border="1px solid"
               shadow="2"
               borderColor="gray400"
               rounded="sm"
             />
+            <Div
+              border="1px solid"
+              shadow="2"
+              borderColor="gray400"
+              rounded="sm"
+              m={{ t: "2rem" }}
+              w={{ xs: "100%", lg: "30rem" }}
+              p={{ x: "1rem", y: "1rem" }}
+            >
+              <Text textSize="title" textWeight="600" m={{ t: "0.5rem" }}>
+                商品資訊
+              </Text>
+              <ProductDetails
+                title="類別"
+                content={
+                  product && (
+                    <Link
+                      key={product.ProductCategory.id}
+                      to={`/products/category/${product.ProductCategory.id}`}
+                      style={{ textDecoration: "none" }}
+                    >
+                      <Text textColor="info600">
+                        {product.ProductCategory.name}
+                      </Text>
+                    </Link>
+                  )
+                }
+              />
+              <ProductDetails
+                title="剩餘數量"
+                content={product && product.quantity}
+              />
+              <ProductDetails
+                title="製造日期"
+                content={
+                  product &&
+                  product.manufactureDate &&
+                  product.manufactureDate.slice(0, 10)
+                }
+              />
+              <ProductDetails
+                title="有效期限"
+                content={
+                  product &&
+                  product.manufactureDate &&
+                  product.expiryDate.slice(0, 10)
+                }
+              />
+            </Div>
+            <Div
+              border="1px solid"
+              shadow="2"
+              borderColor="gray400"
+              rounded="sm"
+              m={{ t: "2rem" }}
+              w={{ xs: "100%", lg: "30rem" }}
+              p={{ x: "1rem", y: "1rem" }}
+            >
+              <Text textSize="title" textWeight="600" m={{ t: "0.5rem" }}>
+                商品介紹
+              </Text>
+              <Text textSize="subheader">{product && product.description}</Text>
+            </Div>
           </Col>
-
-          <Div
-            border="1px solid"
-            shadow="2"
-            borderColor="gray400"
-            rounded="sm"
-            m={{ t: "2rem", x: "0.5rem" }}
-            w={{ xs: "20rem", lg: "30rem" }}
-            p={{ x: "1rem", y: "1rem" }}
-          >
-            <Text textSize="title" textWeight="600" m={{ t: "0.5rem" }}>
-              商品資訊
-            </Text>
-            <ProductDetails
-              title="類別"
-              content={product && product.ProductCategory.name}
-            />
-            <ProductDetails
-              title="剩餘數量"
-              content={product && product.quantity}
-            />
-            <ProductDetails
-              title="製造日期"
-              content={
-                product &&
-                product.manufactureDate &&
-                product.manufactureDate.slice(0, 10)
-              }
-            />
-            <ProductDetails
-              title="有效期限"
-              content={
-                product &&
-                product.manufactureDate &&
-                product.expiryDate.slice(0, 10)
-              }
-            />
-          </Div>
-          <Div
-            border="1px solid"
-            shadow="2"
-            borderColor="gray400"
-            rounded="sm"
-            m={{ t: "2rem", x: "0.5rem" }}
-            w={{ xs: "20rem", lg: "30rem" }}
-            p={{ x: "1rem", y: "1rem" }}
-          >
-            <Text textSize="title" textWeight="600" m={{ t: "0.5rem" }}>
-              商品介紹
-            </Text>
-            <Text textSize="subheader">{product && product.description}</Text>
-          </Div>
         </div>
         <Div m={{ l: { xs: "1rem", lg: "5rem" }, t: "2rem" }}>
           <div>
@@ -287,49 +308,81 @@ export default function SingleProductPage() {
               </Button>
             </Div>
           </div>
+
           <Div
-            m={{ t: "2rem" }}
-            minH="10rem"
-            border={{ t: "2px solid" }}
-            borderColor="gray600"
-            d={{ xs: "block", lg: "flex" }}
-            p={{
-              l: { lg: "2rem", xs: "3.2rem" },
-              y: { lg: "2rem", xs: "2rem" },
-              r: { lg: "2rem", xs: "2rem" },
-            }}
+            border="1px solid"
+            borderColor="gray400"
+            p="1rem"
+            rounded="sm"
+            shadow="2"
           >
-            <Col>
+            <Div
+              minH="10rem"
+              d="flex"
+              flexDir={{ xs: "column", lg: "row" }}
+              align={{ xs: "center" }}
+              p={{
+                l: { lg: "2rem", xs: "1rem" },
+                y: { lg: "1rem", xs: "1rem" },
+                r: { lg: "2rem", xs: "1rem" },
+              }}
+            >
+              <Col>
+                <Div
+                  bgImg={product && product.Vendor.avatarUrl}
+                  bgSize="cover"
+                  bgPos="center"
+                  w="8rem"
+                  h="8rem"
+                  rounded="circle"
+                />
+              </Col>
               <Div
-                bgImg={product && product.Vendor.avatarUrl}
-                bgSize="cover"
-                bgPos="center"
-                w="8rem"
-                h="8rem"
-                rounded="circle"
-                m={{ t: "1rem" }}
-              />
-            </Col>
-            <Div minH="8rem" minW="12rem" m={{ l: "2rem" }}>
-              <Text textSize="title" m={{ t: "1rem" }}>
-                {product && product.Vendor.vendorName}
-              </Text>
-              <Div d="flex">
-                <Text
-                  textColor="gray900"
-                  m={{ y: "0rem", r: "1rem" }}
-                  textWeight="600"
-                >
-                  賣家分類
+                minH="8rem"
+                minW="12rem"
+                m={{ xs: "0rem", lg: { l: "2rem" } }}
+              >
+                <Text textSize="title" m={{ t: "1rem" }}>
+                  {product && product.Vendor.vendorName}
                 </Text>
-                <Text>{product && product.Vendor.VendorCategory.name}</Text>
+                <Div d="flex">
+                  <Text
+                    textColor="gray900"
+                    m={{ y: "0rem", r: "1rem" }}
+                    textWeight="600"
+                  >
+                    賣家分類
+                  </Text>
+                  <Text>{product && product.Vendor.VendorCategory.name}</Text>
+                </Div>
               </Div>
             </Div>
-          </Div>
-          <Div border={{ t: "2px solid" }} borderColor="gray600" p="1rem">
-            <Text textSize="subheader" m="1rem">
-              此賣家其他食物
-            </Text>
+            <Div d="flex" align="center" flexDir={{ xs: "column", lg: "row" }}>
+              <Text
+                textSize="subheader"
+                m="1rem"
+                textAlign={{ xs: "center", lg: "left" }}
+              >
+                此賣家其他食物
+              </Text>
+              <Button
+                bg="white"
+                textColor="info700"
+                hoverTextColor="info900"
+                hoverBg="info200"
+                border="1px solid"
+                borderColor="info700"
+                hoverBorderColor="info900"
+                rounded="circle"
+                onClick={() =>
+                  history.push(`/store/${product && product.vendorId}`)
+                }
+              >
+                <Text m={{ r: "0.5rem" }}>看更多</Text>
+                <Icon name="External" size="1rem" color="info700" />
+              </Button>
+            </Div>
+
             <Div d={{ xs: "block", lg: "flex" }}>
               {product &&
                 vendorProducts &&
@@ -341,27 +394,51 @@ export default function SingleProductPage() {
                   ))}
             </Div>
           </Div>
-          <Div border={{ t: "2px solid" }} borderColor="gray600" p="1rem">
-            <Text textSize="subheader" m="1rem">
-              此分類其他食物
-            </Text>
+          <Div
+            border="1px solid"
+            borderColor="gray400"
+            p="1rem"
+            rounded="sm"
+            shadow="2"
+            m={{ t: "2rem" }}
+          >
+            <Div d="flex" align="center" flexDir={{ xs: "column", lg: "row" }}>
+              <Text
+                textSize="subheader"
+                m="1rem"
+                textAlign={{ xs: "center", lg: "left" }}
+              >
+                此分類其他食物
+              </Text>
+              <Button
+                bg="white"
+                textColor="info700"
+                hoverTextColor="info900"
+                hoverBg="info200"
+                border="1px solid"
+                borderColor="info700"
+                hoverBorderColor="info900"
+                rounded="circle"
+                onClick={() =>
+                  history.push(
+                    `/products/category/${product && product.categoryId}`
+                  )
+                }
+              >
+                <Text m={{ r: "0.5rem" }}>看更多</Text>
+                <Icon name="External" size="1rem" color="info700" />
+              </Button>
+            </Div>
             <Div d={{ xs: "block", lg: "flex" }}>
               {product &&
                 categoryProducts &&
-                categoryProducts
+                categoryProducts.rows
                   .filter((item) => item.id !== product.id)
                   .slice(0, 3)
                   .map((product) => (
                     <Product key={product.id} product={product} />
                   ))}
             </Div>
-            <Button
-              onClick={() => {
-                dispatch(getCartData(user.id))
-              }}
-            >
-              get cart api!
-            </Button>
           </Div>
         </Div>
       </Div>

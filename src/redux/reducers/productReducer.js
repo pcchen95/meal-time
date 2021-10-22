@@ -163,7 +163,7 @@ export const getCategoryProducts = (id, queryParameters) => (dispatch) => {
     .then((products) => {
       dispatch(setIsLoading(false))
 
-      dispatch(setCategoryProduct(products.rows))
+      dispatch(setCategoryProduct(products))
     })
     .catch((err) => {
       console.log(err)
@@ -185,6 +185,10 @@ export const searchProducts = (keyword, queryParameters) => (dispatch) => {
       dispatch(setSearchedProduct(products))
     })
     .catch((err) => console.log(err))
+}
+
+export const cleanSearchProducts = () => (dispatch) => {
+  dispatch(setSearchedProduct(null))
 }
 
 export const getProductCategories = () => (dispatch) => {

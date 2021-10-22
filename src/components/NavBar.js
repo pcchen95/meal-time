@@ -1,31 +1,37 @@
-import React from "react"
+import React, { useState } from "react"
 import { Div, Input, Icon, Image, Button } from "atomize"
-import { Link } from "react-router-dom"
+import { Link, useHistory } from "react-router-dom"
+import PropTypes from "prop-types"
 import { getProductCategories } from "../redux/reducers/productReducer"
 import { useSelector, useDispatch } from "react-redux"
 import { useEffect } from "react"
-const InputWithRightIcon = () => {
+const InputWithRightIcon = ({ searchContent, setSarchContent, search }) => {
   return (
-    <Div d='flex'>
+    <Div d="flex">
       <Image
-        transform='translateY(-25%)'
-        rounded='circle'
-        h='5rem'
-        w='5rem'
-        src='https://i.pinimg.com/564x/82/ba/7d/82ba7db3760b88da021a340ee9eb861e.jpg'
+        transform="translateY(-25%)"
+        rounded="circle"
+        h="5rem"
+        w="5rem"
+        src="https://i.pinimg.com/564x/82/ba/7d/82ba7db3760b88da021a340ee9eb861e.jpg"
       />
       <Input
-        placeholder='Search'
+        value={searchContent}
+        onChange={(e) => {
+          setSarchContent(e.target.value)
+        }}
+        onKeyPress={(e) => e.key === "Enter" && search()}
+        placeholder="Search"
         suffix={
           <Icon
-            name='Search'
-            size='20px'
-            cursor='pointer'
-            onClick={() => console.log("clicked")}
-            pos='absolute'
-            top='25%'
-            right='1rem'
-            transform='translateY(-50%)'
+            name="Search"
+            size="20px"
+            cursor="pointer"
+            onClick={() => search()}
+            pos="absolute"
+            top="25%"
+            right="1rem"
+            transform="translateY(-50%)"
           />
         }
       />
@@ -33,9 +39,15 @@ const InputWithRightIcon = () => {
   )
 }
 
+InputWithRightIcon.propTypes = {
+  searchContent: PropTypes.string,
+  setSarchContent: PropTypes.func,
+  search: PropTypes.func,
+}
+
 const CategoryButton = ({ categories }) => {
   return (
-    <Div d='flex'>
+    <Div d="flex">
       {categories &&
         categories.map((category) => {
           return (
@@ -45,17 +57,17 @@ const CategoryButton = ({ categories }) => {
               style={{ textDecoration: "none" }}
             >
               <Button
-                h='2.5rem'
+                h="2.5rem"
                 p={{ x: "1.25rem" }}
-                textSize='body'
-                bg='white'
-                hoverBg='warning300'
-                rounded='circle'
+                textSize="body"
+                bg="white"
+                hoverBg="warning300"
+                rounded="circle"
                 m={{ r: "1rem" }}
-                fontFamily='code'
-                textColor='info700'
-                border='1px solid'
-                borderColor='info500'
+                fontFamily="code"
+                textColor="info700"
+                border="1px solid"
+                borderColor="info500"
               >
                 {category.name}
               </Button>
@@ -73,13 +85,13 @@ CategoryButton.propTypes = {
 const LikeButton = () => {
   return (
     <Button
-      h='2.5rem'
-      w='2.5rem'
-      bg='white'
-      hoverBg='warning400'
-      rounded='circle'
+      h="2.5rem"
+      w="2.5rem"
+      bg="white"
+      hoverBg="warning400"
+      rounded="circle"
     >
-      <Icon name='HeartSolid' size='20px' color='danger700' />
+      <Icon name="HeartSolid" size="20px" color="danger700" />
     </Button>
   )
 }
@@ -87,13 +99,13 @@ const LikeButton = () => {
 const NotiButton = () => {
   return (
     <Button
-      h='2.5rem'
-      w='2.5rem'
-      bg='white'
-      hoverBg='warning400'
-      rounded='circle'
+      h="2.5rem"
+      w="2.5rem"
+      bg="white"
+      hoverBg="warning400"
+      rounded="circle"
     >
-      <Icon name='Notification' size='20px' color='black700' />
+      <Icon name="Notification" size="20px" color="black700" />
     </Button>
   )
 }
@@ -101,13 +113,13 @@ const NotiButton = () => {
 const MenuButton = () => {
   return (
     <Button
-      h='2.5rem'
-      w='2.5rem'
-      bg='white'
-      hoverBg='warning400'
-      rounded='circle'
+      h="2.5rem"
+      w="2.5rem"
+      bg="white"
+      hoverBg="warning400"
+      rounded="circle"
     >
-      <Icon name='Menu' size='20px' color='black700' />
+      <Icon name="Menu" size="20px" color="black700" />
     </Button>
   )
 }
@@ -115,14 +127,14 @@ const MenuButton = () => {
 const UserButton = () => {
   return (
     <Button
-      h='2.5rem'
-      w='2.5rem'
-      bg='white'
-      hoverBg='warning600'
-      rounded='circle'
+      h="2.5rem"
+      w="2.5rem"
+      bg="white"
+      hoverBg="warning600"
+      rounded="circle"
       m={{ l: "1rem" }}
     >
-      <Icon name='UserCircle' size='30px' color='black900' />
+      <Icon name="UserCircle" size="30px" color="black900" />
     </Button>
   )
 }
@@ -130,6 +142,14 @@ const UserButton = () => {
 const NavBar = () => {
   const dispatch = useDispatch()
   const categories = useSelector((store) => store.products.productCategories)
+  const history = useHistory()
+  const [searchContent, setSarchContent] = useState("")
+  const search = () => {
+    if (!searchContent) {
+      return
+    }
+    history.push(`/products/search/${searchContent}`)
+  }
   useEffect(() => {
     dispatch(getProductCategories())
   }, [dispatch])
@@ -137,15 +157,19 @@ const NavBar = () => {
     <Div
       m={{ t: "1.5rem", l: "1.5rem", r: "1.5rem", b: "3rem" }}
       p={{ t: "2rem", l: "2rem", r: "2rem" }}
-      d='flex'
-      justify='space-between'
+      d="flex"
+      justify="space-between"
       border={{ b: "1px solid" }}
-      borderColor='info400'
-      shadow='2'
+      borderColor="info400"
+      shadow="2"
     >
-      <InputWithRightIcon></InputWithRightIcon>
+      <InputWithRightIcon
+        searchContent={searchContent}
+        setSarchContent={setSarchContent}
+        search={search}
+      ></InputWithRightIcon>
       <CategoryButton categories={categories}></CategoryButton>
-      <Div d='flex'>
+      <Div d="flex">
         <LikeButton></LikeButton>
         <NotiButton></NotiButton>
         <MenuButton></MenuButton>

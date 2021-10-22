@@ -5,6 +5,8 @@ import { useDispatch } from "react-redux"
 
 import { getMe } from "./redux/reducers/userReducer"
 import HomePage from "./pages/HomePage"
+import ProductsSearchedPage from "./pages/ProductsSearchedPage"
+import ProductsByCategoryPage from "./pages/ProductsByCategoryPage"
 import ProductsPage from "./pages/ProductsPage"
 import ProductEdit from "./pages/ProductEdit"
 import SingleProductPage from "./pages/SingleProductPage"
@@ -46,6 +48,12 @@ function App() {
         <Switch>
           <Route exact path="/">
             <HomePage />
+          </Route>
+          <Route path="/products/search/:keyword">
+            <ProductsSearchedPage />
+          </Route>
+          <Route path="/products/category/:id">
+            <ProductsByCategoryPage />
           </Route>
           <Route path="/products">
             <ProductsPage />
