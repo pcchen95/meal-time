@@ -1,7 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import BookingButton from "../../Components/CartSystem/BookingButton";
-import { Div, Text, Input, Textarea } from "atomize";
+import { Div, Text, Input, Textarea, Button } from "atomize";
 import OpeningHour from "./OpeningHour";
 
 const Booking = styled.div`
@@ -50,13 +49,13 @@ const BookingProducts = styled.div`
   `}
 `;
 
-const BookingBoard = ({ vendorById, isShow, handleIsShow }) => {
+const BookingBoard = ({ vendorById, isShow, handleIsShow, handleSubmit }) => {
   return (
     <Booking $isShow={isShow}>
       <BookingProducts $isShow={isShow}>
-        <Div fontFamily="code" textAlign="center">
+        <Div fontFamily="code" yI textAlign="center">
           <OpeningHour vendorById={vendorById} />
-          <form>
+          <form onSubmit={handleSubmit}>
             <Div border={{ t: "3px solid" }} borderColor="gray200">
               <Text textSize="heading" m="1rem" textColor="info800">
                 預約時間
@@ -74,7 +73,40 @@ const BookingBoard = ({ vendorById, isShow, handleIsShow }) => {
                 備註
               </Text>
               <Textarea m="1rem" maxH="8rem" />
-              <BookingButton handleIsShow={handleIsShow} />
+              <Div d="flex" w="26rem" justify="center">
+                <Button
+                  h="3rem"
+                  p={{ x: "1.25rem" }}
+                  textSize="body"
+                  textColor="info700"
+                  hoverTextColor="warning800"
+                  bg="white"
+                  hoverBg="warning300"
+                  border="1px solid"
+                  borderColor="info700"
+                  hoverBorderColor="warning800"
+                  m={{ r: "0.5rem", t: "1rem" }}
+                  type="submit"
+                >
+                  確定
+                </Button>
+                <Button
+                  h="3rem"
+                  p={{ x: "1.25rem" }}
+                  textSize="body"
+                  textColor="info700"
+                  hoverTextColor="brand800"
+                  bg="white"
+                  hoverBg="warning300"
+                  border="1px solid"
+                  borderColor="info700"
+                  hoverBorderColor="danger800"
+                  m={{ r: "0.5rem", t: "1rem" }}
+                  onClick={() => handleIsShow("cancel")}
+                >
+                  取消
+                </Button>
+              </Div>
             </Div>
           </form>
         </Div>
