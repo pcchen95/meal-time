@@ -1,16 +1,12 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { getProduct as getProductApi } from "../../WebAPI/productAPI";
+import { getCartData as getCartDataApi } from "../../WebAPI/cartAPI";
 import { setErrorMessage } from "./notificationReducer";
 
 const initialState = {
   cart: null,
-  cartData: null,
-  isChecked: false,
-  isShow: false,
   isSelect: null,
   isLoading: false,
-  vendorId: null,
-  productId: null,
+  vendorById: null,
 };
 
 export const cartReducer = createSlice({
@@ -20,81 +16,49 @@ export const cartReducer = createSlice({
     setCart: (state, action) => {
       state.cart = action.payload;
     },
-    setCartData: (state, action) => {
-      state.cartData = action.payload;
-    },
-    setIsChecked: (state, action) => {
-      state.isChecked = action.payload;
-    },
-    setIsShow: (state, action) => {
-      state.isShow = action.payload;
-    },
     setIsSelect: (state, action) => {
       state.isSelect = action.payload;
     },
     setIsLoading: (state, action) => {
       state.isLoading = action.payload;
     },
-    setVendorId: (state) => {
-      state.vendorId = localStorage.getItem("vendorId");
-    },
-    setProductId: (state) => {
-      state.productId = localStorage.getItem("productId");
+    setVendorById: (state, action) => {
+      state.vendorById = action.payload;
     },
   },
 });
 
-export const {
-  setCart,
-  setCartData,
-  setIsChecked,
-  setIsShow,
-  setIsSelect,
-  setIsLoading,
-  setVendorId,
-  setProductId,
-} = cartReducer.actions;
+export const { setCart, setIsSelect, setIsLoading, setVendorById } =
+  cartReducer.actions;
 
-export const getCartFromLocalStorage = (userId) => (dispatch) => {
-  const cartArray = JSON.parse(localStorage.getItem(`cartId${userId}`));
-  if (cartArray) dispatch(setCart(cartArray));
+export const getCartData = (userId) => (dispatch) => {
+  const cart = localStorage.getItem(`cartId${userId}`);
+  let cartArray;
+  if (cart) {
+    cartArray = JSON.parse(cart);
+  }
+  return getCartDataApi({ cart: cartArray })
+    .then((res) => {
+      if (!res.ok) {
+        return dispatch(setErrorMessage(res ? res.message : "something wrong"));
+      }
+      return res.data;
+    })
+    .then((cartData) => {
+      return dispatch(setCart(cartData));
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 };
 
-export const cleanCart = () => (dispatch) => {
+export const cleanCartData = () => (dispatch) => {
   dispatch(setCart(null));
 };
 
-export const getCartData = (userId) => (dispatch) => {
-  const cartArray = JSON.parse(localStorage.getItem(`cartId${userId}`));
-  const newCartData = [];
-
-  try {
-    cartArray.forEach((cartByVendor) =>
-      cartByVendor.cartItems.forEach(async (product) => {
-        const res = await getProductApi(product.productId);
-        if (!res.ok) {
-          return dispatch(
-            setErrorMessage(res ? res.message : "something wrong")
-          );
-        }
-        let productData = res.data;
-        productData = { ...productData, cartQuantity: product.quantity };
-        newCartData.push(productData);
-        // dispatch(setCartData(newCartData))
-        console.log(newCartData);
-      })
-    );
-  } catch (err) {
-    console.log(err);
-  }
-  return newCartData;
-};
-
-export const selectIsChecked = (state) => state.cart.isChecked;
-export const selectIsShow = (state) => state.cart.isShow;
+export const selectCart = (state) => state.cart.cart;
 export const selectIsSelect = (state) => state.cart.isSelect;
 export const selectIsLoading = (state) => state.cart.isLoading;
-export const selectVendorId = (state) => state.cart.vendorId;
-export const selectProductId = (state) => state.cart.productId;
+export const selectVendorById = (state) => state.cart.vendorById;
 
 export default cartReducer.reducer;
