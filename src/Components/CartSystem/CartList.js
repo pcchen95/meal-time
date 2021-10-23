@@ -13,36 +13,39 @@ const CheckItem = styled.input`
 `;
 
 const CartList = ({
-  vendorId,
-  isChecked,
   isSelect,
+  isChecked,
   handleCheckedClick,
   handleDeleteClick,
+  cart,
 }) => {
   return (
     <Div p={{ x: { xs: "1rem", lg: "5rem" }, t: { xs: "3rem", lg: "2rem" } }}>
-      {["賣家A", "賣家B", "賣家C"].map((name, index) => (
-        <Div key={index}>
-          <Div
-            d="flex"
-            p="1rem"
-            bg="gray400"
-            m={{ t: "2rem" }}
-            textAlign="center"
-            rounded="md"
-          >
-            <CheckItem
-              type="checkbox"
-              value={vendorId}
-              onClick={handleCheckedClick}
-              disabled={isChecked && isSelect !== vendorId}
+      {cart &&
+        Object.values(cart).map((cartItem) => (
+          <Div key={cartItem[0].id}>
+            <Div
+              d="flex"
+              p="1rem"
+              bg="gray400"
+              m={{ t: "2rem" }}
+              textAlign="center"
+              rounded="md"
+            >
+              <CheckItem
+                type="checkbox"
+                value={cartItem[0].vendorId}
+                onClick={handleCheckedClick}
+                disabled={isChecked && isSelect != cartItem[0].vendorId}
+              />
+              <Text p="0.3rem">{cartItem[0].Vendor.vendorName}</Text>
+            </Div>
+            <CartItem
+              cartItem={cartItem}
+              handleDeleteClick={handleDeleteClick}
             />
-            <Text p="0.3rem">{name}</Text>
           </Div>
-          <CartItem handleDeleteClick={handleDeleteClick} />
-          <CartItem handleDeleteClick={handleDeleteClick} />
-        </Div>
-      ))}
+        ))}
     </Div>
   );
 };
