@@ -22,7 +22,7 @@ const CartList = ({
   return (
     <Div p={{ x: { xs: "1rem", lg: "5rem" }, t: { xs: "3rem", lg: "2rem" } }}>
       {cart &&
-        Object.values(cart).map((cartItem) => (
+        cart.map((cartItem) => (
           <Div key={cartItem[0].id}>
             <Div
               d="flex"

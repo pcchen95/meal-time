@@ -36,12 +36,7 @@ const CartItem = ({ cartItem, handleDeleteClick }) => {
                 <Text>NT. {item.price}</Text>
               </Div>
             </Div>
-            <DeleteItem
-              onClick={() => {
-                handleDeleteClick();
-              }}
-              title="刪除"
-            >
+            <DeleteItem onClick={handleDeleteClick} title="刪除">
               <Icon name="Close" size="26px" hoverColor="danger700" />
             </DeleteItem>
           </Div>
