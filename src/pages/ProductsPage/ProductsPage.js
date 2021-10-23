@@ -1,15 +1,12 @@
-import React from "react"
+import React, { useState } from "react"
 import { Div } from "atomize"
 
 import { useEffect } from "react"
-import {
-  getProducts,
-  cleanProducts,
-  setPage,
-} from "../../redux/reducers/productReducer"
+import { getProducts, cleanProducts } from "../../redux/reducers/productReducer"
 import { useDispatch, useSelector } from "react-redux"
 import PaginationButton from "../../Components/PaginationButton/PaginationButton"
 import ProductCard from "../../Components/ProductSystem/ProductCard"
+import ProductsPageHeader from "../../Components/ProductSystem/ProductsPageHeader"
 
 export default function ProductsPage() {
   const dispatch = useDispatch()
@@ -19,27 +16,26 @@ export default function ProductsPage() {
   if (productsData) {
     products = productsData.rows
   }
-  const page = useSelector((state) => state.products.page)
-  const sort = useSelector((state) => state.products.sort)
-  const limit = useSelector((state) => state.products.limit)
+  const [page, setPage] = useState(1)
+  const [sort, setSort] = useState("id")
+  const limit = 10
+  const [order, setOrder] = useState("DESC")
+  const queryParameters = { page, sort, limit, order }
   let totalPages
   if (productsData) {
     count = productsData.count
     totalPages = Math.ceil(count / limit)
   }
   useEffect(() => {
-    dispatch(getProducts({ page, sort, limit }))
-
+    dispatch(getProducts(queryParameters))
+    window.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: "instant",
+    })
     return () => dispatch(cleanProducts())
-  }, [page, dispatch])
+  }, [page, sort, order, dispatch])
 
-  const clickPagination = (action) => {
-    if (action === "next") {
-      dispatch(setPage(page + 1))
-    } else if (action === "back") {
-      dispatch(setPage(page - 1))
-    }
-  }
   return (
     <>
       <Div
@@ -47,26 +43,24 @@ export default function ProductsPage() {
         w="78%"
         m={{ x: "auto", y: "4rem" }}
         minH="60rem"
-        p={{ b: { xs: "3rem" } }}
+        p={{ b: { xs: "5rem" } }}
       >
+        <ProductsPageHeader
+          headerText={<Div />}
+          setPage={setPage}
+          setSort={setSort}
+          setOrder={setOrder}
+        />
         {products &&
           products.map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}
 
-        <Div
-          m={{ t: "1rem" }}
-          pos="absolute"
-          right="2rem"
-          bottom="1rem"
-          d="flex"
-        >
-          <PaginationButton
-            page={page}
-            handlePageClick={clickPagination}
-            limit={totalPages}
-          />
-        </Div>
+        <PaginationButton
+          page={page}
+          setPage={setPage}
+          totalPages={totalPages}
+        />
       </Div>
     </>
   )

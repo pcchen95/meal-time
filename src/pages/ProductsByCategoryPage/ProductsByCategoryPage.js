@@ -1,29 +1,49 @@
-import React from "react"
-import { Div } from "atomize"
+import React, { useState } from "react"
+import { Div, Text } from "atomize"
 import { useEffect } from "react"
 import { useParams } from "react-router"
 import {
   getCategoryProducts,
   cleanCategoryProducts,
-  setPage,
 } from "../../redux/reducers/productReducer"
 import { useDispatch, useSelector } from "react-redux"
 import PaginationButton from "../../Components/PaginationButton/PaginationButton"
 import ProductCard from "../../Components/ProductSystem/ProductCard"
+import ProductsPageHeader from "../../Components/ProductSystem/ProductsPageHeader"
+
+const NoProductHint = () => {
+  return (
+    <Div
+      m={{ t: "5rem" }}
+      w="100%"
+      d="flex"
+      justify="center"
+      textSize="display1"
+      textColor="gray600"
+    >
+      沒有相關產品
+    </Div>
+  )
+}
 
 export default function ProductsPage() {
   let { id } = useParams()
   const dispatch = useDispatch()
   const productsData = useSelector((state) => state.products.categoryProducts)
+  const producctCategories = useSelector(
+    (state) => state.products.productCategories
+  )
   let products
   let count
   if (productsData) {
     products = productsData.rows
   }
-  const page = useSelector((state) => state.products.page)
-  const sort = useSelector((state) => state.products.sort)
-  const limit = useSelector((state) => state.products.limit)
-  const queryParameters = { page, sort, limit }
+
+  const [page, setPage] = useState(1)
+  const [sort, setSort] = useState("id")
+  const limit = 10
+  const [order, setOrder] = useState("DESC")
+  const queryParameters = { page, sort, limit, order }
   let totalPages
   if (productsData) {
     count = productsData.count
@@ -31,16 +51,14 @@ export default function ProductsPage() {
   }
   useEffect(() => {
     dispatch(getCategoryProducts(id, queryParameters))
+    window.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: "instant",
+    })
     return () => dispatch(cleanCategoryProducts())
-  }, [id, page, dispatch])
+  }, [id, page, sort, order, dispatch])
 
-  const clickPagination = (action) => {
-    if (action === "next") {
-      dispatch(setPage(page + 1))
-    } else if (action === "back") {
-      dispatch(setPage(page - 1))
-    }
-  }
   return (
     <>
       <Div
@@ -48,37 +66,35 @@ export default function ProductsPage() {
         w="78%"
         m={{ x: "auto", y: "4rem" }}
         minH="60rem"
-        p={{ b: { xs: "3rem" } }}
+        p={{ b: { xs: "5rem" } }}
       >
-        {products && count === 0 && (
-          <Div
-            w="100%"
-            d="flex"
-            justify="center"
-            textSize="display1"
-            textColor="gray600"
-          >
-            沒有相關產品
-          </Div>
-        )}
+        <ProductsPageHeader
+          headerText={
+            <Text textSize="title" textColor="gray600">
+              分類：
+              {producctCategories &&
+                producctCategories.find(
+                  (category) => category.id === Number(id)
+                ).name}
+            </Text>
+          }
+          setPage={setPage}
+          setSort={setSort}
+          setOrder={setOrder}
+        />
+
+        {products && count === 0 && <NoProductHint />}
+
         {products &&
           products.map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}
 
-        <Div
-          m={{ t: "1rem" }}
-          pos="absolute"
-          right="2rem"
-          bottom="1rem"
-          d="flex"
-        >
-          <PaginationButton
-            page={page}
-            handlePageClick={clickPagination}
-            limit={totalPages}
-          />
-        </Div>
+        <PaginationButton
+          page={page}
+          setPage={setPage}
+          totalPages={totalPages}
+        />
       </Div>
     </>
   )

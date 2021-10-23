@@ -114,8 +114,13 @@ export default function SingleProductPage() {
     if (product) {
       dispatch(getCategoryProducts(product.categoryId, queryParameters))
       dispatch(getVendorProducts(product.vendorId, queryParameters))
+      window.scrollTo({
+        top: 0,
+        left: 0,
+        behavior: "instant",
+      })
     }
-  }, [product, dispatch])
+  }, [id, product, dispatch])
 
   useEffect(() => {
     if (product && productCoount > product.quantity) {
@@ -248,7 +253,7 @@ export default function SingleProductPage() {
         <Div m={{ l: { xs: "0rem", lg: "0rem" }, t: "2rem" }}>
           <div>
             <Text textSize="display1" textWeight="600">
-              {product && product.name}
+              {(product && product.name) || "載入中"}
             </Text>
             <Text textSize="heading" m={{ y: "1rem" }}>
               NT$ {product && product.price}
@@ -335,7 +340,9 @@ export default function SingleProductPage() {
             >
               <Col>
                 <Div
-                  bgImg={product && product.Vendor.avatarUrl}
+                  bgImg={
+                    (product && product.Vendor.avatarUrl) || "defaultImage.png"
+                  }
                   bgSize="cover"
                   bgPos="center"
                   w="8rem"
