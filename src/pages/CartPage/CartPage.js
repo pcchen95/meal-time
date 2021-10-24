@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { Div, Button, Text, Icon } from "atomize";
-import CartList from "../../Components/CartSystem/CartList";
-import BookingBoard from "../../Components/CartSystem/BookingBoard";
-import LoadingPage from "../LoadingPage";
+import React, { useEffect, useState } from "react"
+import { useSelector, useDispatch } from "react-redux"
+import { Div, Button, Text, Icon } from "atomize"
+import CartList from "../../Components/CartSystem/CartList"
+import BookingBoard from "../../Components/CartSystem/BookingBoard"
+import LoadingPage from "../LoadingPage"
 import {
   getMe,
   selectCart,
@@ -14,76 +14,76 @@ import {
   selectCartData,
   setCartData,
   selectUserId,
-} from "../../redux/reducers/cartReducer";
-import { newOrder } from "../../redux/reducers/orderReducer";
-import { getVendorById } from "../../redux/reducers/vendorReducer";
-import { setErrorMessage } from "../../redux/reducers/notificationReducer";
+} from "../../redux/reducers/cartReducer"
+// import { newOrder } from "../../redux/reducers/orderReducer";
+import { getVendorById } from "../../redux/reducers/vendorReducer"
+import { setErrorMessage } from "../../redux/reducers/notificationReducer"
 
 export default function CartPage() {
-  const dispatch = useDispatch();
-  const [isChecked, setIsChecked] = useState(false);
-  const [isShow, setIsShow] = useState(false);
-  const cartData = useSelector(selectCartData);
-  const userId = useSelector(selectUserId);
-  const cart = useSelector(selectCart);
-  const isSelect = useSelector(selectIsSelect);
-  const isLoading = useSelector(selectIsLoading);
-  const vendorById = useSelector((store) => store.vendors.vendorById);
-  const errMessage = useSelector((store) => store.notifications.errMessage);
+  const dispatch = useDispatch()
+  const [isChecked, setIsChecked] = useState(false)
+  const [isShow, setIsShow] = useState(false)
+  const cartData = useSelector(selectCartData)
+  const userId = useSelector(selectUserId)
+  const cart = useSelector(selectCart)
+  const isSelect = useSelector(selectIsSelect)
+  const isLoading = useSelector(selectIsLoading)
+  const vendorById = useSelector((store) => store.vendors.vendorById)
+  const errMessage = useSelector((store) => store.notifications.errMessage)
 
   useEffect(() => {
-    dispatch(getMe());
-    dispatch(getCartData(userId));
-    dispatch(setCartData(localStorage.getItem(`cartId${userId}`)));
+    dispatch(getMe())
+    dispatch(getCartData(userId))
+    dispatch(setCartData(localStorage.getItem(`cartId${userId}`)))
     return () => {
-      dispatch(setErrorMessage(null));
-    };
-  }, [userId, cartData]);
+      dispatch(setErrorMessage(null))
+    }
+  }, [userId, cartData])
 
   const handleIsShow = (type) => {
     if (type === "book") {
       if (isChecked === true) {
-        dispatch(setErrorMessage(null));
-        dispatch(getVendorById(isSelect));
-        setIsShow(true);
+        dispatch(setErrorMessage(null))
+        dispatch(getVendorById(isSelect))
+        setIsShow(true)
       } else {
-        window.scroll(0, 0);
-        dispatch(setErrorMessage("請至少勾選一個購物車才能預訂食物"));
+        window.scroll(0, 0)
+        dispatch(setErrorMessage("請至少勾選一個購物車才能預訂食物"))
       }
     }
     if (type === "cancel") {
-      setIsShow(false);
-      setIsSelect(null);
+      setIsShow(false)
+      setIsSelect(null)
     }
-  };
+  }
 
-  const handleSubmit = ({ value, isSelect, pickupTime, remarks }) => {
-    dispatch(
-      newOrder({
-        orderProducts: value,
-        vendorId: isSelect,
-        pickupTime,
-        remarks,
-      })
-    );
-  };
+  // const handleSubmit = ({ value, isSelect, pickupTime, remarks }) => {
+  //   // dispatch(
+  //   //   newOrder({
+  //   //     orderProducts: value,
+  //   //     vendorId: isSelect,
+  //   //     pickupTime,
+  //   //     remarks,
+  //   //   })
+  //   // );
+  // };
 
   const handleCheckedClick = (e) => {
-    dispatch(setIsSelect(e.target.value));
-    setIsChecked(!isChecked);
-  };
+    dispatch(setIsSelect(e.target.value))
+    setIsChecked(!isChecked)
+  }
 
-  console.log("isSelect", isSelect);
+  console.log("isSelect", isSelect)
 
   const handleDeleteClick = (id, userId) => {
     const newCartData = JSON.stringify(
       JSON.parse(cartData).filter((item) => item.id !== id)
-    );
-    localStorage.setItem(`cartId${userId}`, newCartData);
-  };
+    )
+    localStorage.setItem(`cartId${userId}`, newCartData)
+  }
 
-  console.log("cartData:", cartData);
-  console.log("cart:", cart);
+  console.log("cartData:", cartData)
+  console.log("cart:", cart)
 
   return (
     <Div
@@ -158,8 +158,8 @@ export default function CartPage() {
         vendorById={vendorById}
         isShow={isShow}
         handleIsShow={handleIsShow}
-        handleSubmit={handleSubmit}
+        handleSubmit={() => {}}
       />
     </Div>
-  );
+  )
 }
