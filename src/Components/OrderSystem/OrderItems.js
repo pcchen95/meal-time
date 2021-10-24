@@ -39,7 +39,7 @@ const FilterButton = ({ orderItems }) => {
 };
 
 FilterButton.propTypes = {
-  orderItems: PropTypes.object,
+  orderItems: PropTypes.array,
 };
 
 export default FilterButton;
