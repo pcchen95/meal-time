@@ -5,13 +5,17 @@ import CartList from "../../Components/CartSystem/CartList";
 import BookingBoard from "../../Components/CartSystem/BookingBoard";
 import LoadingPage from "../LoadingPage";
 import {
+  getMe,
   selectCart,
   setIsSelect,
   selectIsSelect,
   selectIsLoading,
   getCartData,
+  selectCartData,
+  setCartData,
+  selectUserId,
 } from "../../redux/reducers/cartReducer";
-//import { newOrder } from "../../redux/reducers/orderReducer";
+import { newOrder } from "../../redux/reducers/orderReducer";
 import { getVendorById } from "../../redux/reducers/vendorReducer";
 import { setErrorMessage } from "../../redux/reducers/notificationReducer";
 
@@ -19,8 +23,8 @@ export default function CartPage() {
   const dispatch = useDispatch();
   const [isChecked, setIsChecked] = useState(false);
   const [isShow, setIsShow] = useState(false);
-  const user = useSelector((state) => state.users.user);
-  const userId = user && user.id;
+  const cartData = useSelector(selectCartData);
+  const userId = useSelector(selectUserId);
   const cart = useSelector(selectCart);
   const isSelect = useSelector(selectIsSelect);
   const isLoading = useSelector(selectIsLoading);
@@ -28,11 +32,13 @@ export default function CartPage() {
   const errMessage = useSelector((store) => store.notifications.errMessage);
 
   useEffect(() => {
+    dispatch(getMe());
     dispatch(getCartData(userId));
+    dispatch(setCartData(localStorage.getItem(`cartId${userId}`)));
     return () => {
       dispatch(setErrorMessage(null));
     };
-  }, [userId]);
+  }, [userId, cartData]);
 
   const handleIsShow = (type) => {
     if (type === "book") {
@@ -51,24 +57,33 @@ export default function CartPage() {
     }
   };
 
-  const handleSubmit = () => {
-    /*dispatch(
+  const handleSubmit = ({ value, isSelect, pickupTime, remarks }) => {
+    dispatch(
       newOrder({
         orderProducts: value,
         vendorId: isSelect,
         pickupTime,
         remarks,
       })
-    )*/
+    );
   };
 
   const handleCheckedClick = (e) => {
     dispatch(setIsSelect(e.target.value));
     setIsChecked(!isChecked);
   };
+
   console.log("isSelect", isSelect);
 
-  const handleDeleteClick = () => {};
+  const handleDeleteClick = (id, userId) => {
+    const newCartData = JSON.stringify(
+      JSON.parse(cartData).filter((item) => item.id !== id)
+    );
+    localStorage.setItem(`cartId${userId}`, newCartData);
+  };
+
+  console.log("cartData:", cartData);
+  console.log("cart:", cart);
 
   return (
     <Div
@@ -113,6 +128,7 @@ export default function CartPage() {
         isSelect={isSelect}
         handleCheckedClick={handleCheckedClick}
         handleDeleteClick={handleDeleteClick}
+        userId={userId}
         cart={cart}
       />
       <Div m={{ t: "4rem" }} border="2px solid" borderColor="warning600" />
