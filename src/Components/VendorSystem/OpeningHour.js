@@ -38,7 +38,9 @@ TimeInput.propTypes = {
 
 const EachDay = ({ name, value, dayENG, newValues, setValues }) => {
   const { start, end, isOpen } = value;
-  const isVendor = useSelector((store) => store.vendors.vendor || false);
+  const isVendor = useSelector(
+    (store) => store.vendors.vendor && store.vendors.vendor !== "not-vendor"
+  );
   const isSuspended = useSelector(
     (store) => store.vendors.vendor && store.vendors.vendor.isSuspended
   );
@@ -46,8 +48,8 @@ const EachDay = ({ name, value, dayENG, newValues, setValues }) => {
     (store) => store.vendors.vendor && store.vendors.vendor.isOpen
   );
   const isDisabled = !isOpen || (isVendor && (!isStoreOpen || isSuspended));
-  // available: 當天 isOpen &&  (還不是賣家 || 賣家 isStoreOpen && 賣家沒有被 isSuspended）
-  // diable: !當天 isOpen || !(還不是賣家 || (賣家 isStoreOpen && 賣家沒有被 isSuspended))
+  // available: 當天 isOpen &&  (還不是賣家 || (賣家 isStoreOpen && 賣家沒有被 isSuspended))
+  // disable: !當天 isOpen || !(還不是賣家 || (賣家 isStoreOpen && 賣家沒有被 isSuspended))
   //      => !當天 isOpen || (是賣家 && (!賣家 isStoreOpen || 賣家被 isSuspended))
 
   const handleEvent = (e) => {

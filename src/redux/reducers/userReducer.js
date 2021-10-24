@@ -102,6 +102,12 @@ export const login = (username, password) => (dispatch) => {
   });
 };
 
+export const logout = () => (dispatch) => {
+  dispatch(setUser("non-login"));
+  setAuthToken("");
+  dispatch(setShowSuccessNotification(true, "已登出"));
+};
+
 export const getMe = () => (dispatch) => {
   dispatch(setIsLoading(true));
   return getMeApi().then((res) => {
@@ -111,6 +117,7 @@ export const getMe = () => (dispatch) => {
         dispatch(setUser("non-login"));
         return;
       }
+      console.log(123);
       dispatch(setIsLoading(false));
       dispatch(setErrorMessage(res.message));
       return;
