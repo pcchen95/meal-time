@@ -42,7 +42,7 @@ const FilterButton = ({ setPage }) => {
 };
 
 FilterButton.propTypes = {
-  setPage: PropTypes.number,
+  setPage: PropTypes.func,
 };
 
 export default FilterButton;
