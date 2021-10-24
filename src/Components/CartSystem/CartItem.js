@@ -1,14 +1,15 @@
-import React from "react";
-import { Div, Col, Icon, Text } from "atomize";
-import styled from "styled-components";
-import ProductCount from "../CartSystem/ProductCount";
+import React from "react"
+import { Div, Col, Icon, Text } from "atomize"
+import styled from "styled-components"
+import ProductCount from "../CartSystem/ProductCount"
+import PropTypes from "prop-types"
 
 const DeleteItem = styled.div`
   position: absolute;
   right: 0rem;
   top: 5.3rem;
   cursor: pointer;
-`;
+`
 
 const CartItem = ({ userId, cartItem, handleDeleteClick }) => {
   return (
@@ -38,7 +39,7 @@ const CartItem = ({ userId, cartItem, handleDeleteClick }) => {
             </Div>
             <DeleteItem
               onClick={() => {
-                handleDeleteClick(item.id, userId);
+                handleDeleteClick(item.id, userId)
               }}
               title="刪除"
             >
@@ -47,7 +48,13 @@ const CartItem = ({ userId, cartItem, handleDeleteClick }) => {
           </Div>
         ))}
     </>
-  );
-};
+  )
+}
 
-export default CartItem;
+CartItem.propTypes = {
+  userId: PropTypes.number,
+  cartItem: PropTypes.object,
+  handleDeleteClick: PropTypes.func,
+}
+
+export default CartItem

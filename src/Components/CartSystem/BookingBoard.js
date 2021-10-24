@@ -1,8 +1,8 @@
-import React from "react";
-import styled from "styled-components";
-import { Div, Text, Input, Textarea, Button } from "atomize";
-import OpeningHour from "./OpeningHour";
-
+import React from "react"
+import styled from "styled-components"
+import { Div, Text, Input, Textarea, Button } from "atomize"
+import OpeningHour from "./OpeningHour"
+import PropTypes from "prop-types"
 const Booking = styled.div`
   display: none;
 
@@ -18,7 +18,7 @@ const Booking = styled.div`
     background: #c7c1c178;
     z-index: 2;
     `}
-`;
+`
 
 const BookingProducts = styled.div`
   display: none;
@@ -47,7 +47,7 @@ const BookingProducts = styled.div`
       width: 100%;
     }
   `}
-`;
+`
 
 const BookingBoard = ({ vendorById, isShow, handleIsShow, handleSubmit }) => {
   return (
@@ -112,7 +112,14 @@ const BookingBoard = ({ vendorById, isShow, handleIsShow, handleSubmit }) => {
         </Div>
       </BookingProducts>
     </Booking>
-  );
-};
+  )
+}
 
-export default BookingBoard;
+BookingBoard.propTypes = {
+  vendorById: PropTypes.number,
+  isShow: PropTypes.bool,
+  handleIsShow: PropTypes.func,
+  handleSubmit: PropTypes.func,
+}
+
+export default BookingBoard
