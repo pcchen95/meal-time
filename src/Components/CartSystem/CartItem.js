@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 import { Div, Col, Icon, Text } from "atomize";
 import styled from "styled-components";
 import ProductCount from "../CartSystem/ProductCount";
@@ -10,7 +11,7 @@ const DeleteItem = styled.div`
   cursor: pointer;
 `;
 
-const CartItem = ({ userId, cartItem, handleDeleteClick }) => {
+const CartItem = ({ userId, cartItem, cartData, handleDeleteClick }) => {
   return (
     <>
       {cartItem &&
@@ -32,7 +33,7 @@ const CartItem = ({ userId, cartItem, handleDeleteClick }) => {
             <Div justify="space-between" m={{ x: "4rem", y: "2rem" }}>
               <Div>
                 <Text>{item && item.name}</Text>
-                <ProductCount item={item} />
+                <ProductCount item={item} cartData={cartData} userId={userId} />
                 <Text>NT. {item.price}</Text>
               </Div>
             </Div>
@@ -48,6 +49,13 @@ const CartItem = ({ userId, cartItem, handleDeleteClick }) => {
         ))}
     </>
   );
+};
+
+CartItem.propTypes = {
+  userId: PropTypes.number,
+  cartItem: PropTypes.array,
+  cartData: PropTypes.string,
+  handleDeleteClick: PropTypes.func,
 };
 
 export default CartItem;

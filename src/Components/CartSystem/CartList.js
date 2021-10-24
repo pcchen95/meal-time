@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 import { Div, Text } from "atomize";
 import styled from "styled-components";
 import CartItem from "./CartItem";
@@ -19,6 +20,7 @@ const CartList = ({
   handleCheckedClick,
   handleDeleteClick,
   cart,
+  cartData,
 }) => {
   return (
     <Div p={{ x: { xs: "1rem", lg: "5rem" }, t: { xs: "3rem", lg: "2rem" } }}>
@@ -45,11 +47,22 @@ const CartList = ({
               cartItem={cartItem}
               handleDeleteClick={handleDeleteClick}
               userId={userId}
+              cartData={cartData}
             />
           </Div>
         ))}
     </Div>
   );
+};
+
+CartList.propTypes = {
+  userId: PropTypes.number,
+  isSelect: PropTypes.number,
+  isChecked: PropTypes.bool,
+  handleCheckedClick: PropTypes.func,
+  handleDeleteClick: PropTypes.func,
+  cart: PropTypes.object,
+  cartData: PropTypes.string,
 };
 
 export default CartList;
