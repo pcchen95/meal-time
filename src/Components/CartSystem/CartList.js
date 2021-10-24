@@ -1,7 +1,8 @@
-import React from "react";
-import { Div, Text } from "atomize";
-import styled from "styled-components";
-import CartItem from "./CartItem";
+import React from "react"
+import { Div, Text } from "atomize"
+import styled from "styled-components"
+import CartItem from "./CartItem"
+import PropTypes from "prop-types"
 
 const CheckItem = styled.input`
   width: 18px;
@@ -10,7 +11,7 @@ const CheckItem = styled.input`
   margin: 8px 11px;
   align-items: center;
   justify-content: center;
-`;
+`
 
 const CartList = ({
   userId,
@@ -49,7 +50,16 @@ const CartList = ({
           </Div>
         ))}
     </Div>
-  );
-};
+  )
+}
 
-export default CartList;
+CartList.propTypes = {
+  userId: PropTypes.number,
+  isSelect: PropTypes.bool,
+  isChecked: PropTypes.bool,
+  handleCheckedClick: PropTypes.func,
+  handleDeleteClick: PropTypes.func,
+  cart: PropTypes.object,
+}
+
+export default CartList

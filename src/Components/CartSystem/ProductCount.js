@@ -1,20 +1,21 @@
-import React, { useState } from "react";
-import { Div, Button, Icon, Input } from "atomize";
+import React, { useState } from "react"
+import { Div, Button, Icon, Input } from "atomize"
+import PropTypes from "prop-types"
 
 const ProductCount = ({ item }) => {
-  const [productCount, setProductCount] = useState(item.cartQuantity);
+  const [productCount, setProductCount] = useState(item.cartQuantity)
 
   const handleMinusClick = () => {
     if (productCount > 1) {
-      setProductCount(Number(productCount) - 1);
+      setProductCount(Number(productCount) - 1)
     }
-  };
+  }
 
   const handlePlusClick = () => {
     if (item && productCount < item.quantity) {
-      setProductCount(Number(productCount) + 1);
+      setProductCount(Number(productCount) + 1)
     }
-  };
+  }
 
   return (
     <Div d="flex" m={{ y: "1rem" }}>
@@ -35,7 +36,7 @@ const ProductCount = ({ item }) => {
         value={productCount}
         textAlign="center"
         onChange={(e) => {
-          setProductCount(e.target.value);
+          setProductCount(e.target.value)
         }}
         min={1}
         max={item && item.quantity}
@@ -53,7 +54,9 @@ const ProductCount = ({ item }) => {
         <Icon name="Plus" size="20px" color="info700" />
       </Button>
     </Div>
-  );
-};
+  )
+}
 
-export default ProductCount;
+ProductCount.propTypes = { item: PropTypes.object }
+
+export default ProductCount
