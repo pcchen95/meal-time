@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 import styled from "styled-components";
 import { Div, Text, Input, Textarea, Button } from "atomize";
 import OpeningHour from "./OpeningHour";
@@ -113,6 +114,13 @@ const BookingBoard = ({ vendorById, isShow, handleIsShow, handleSubmit }) => {
       </BookingProducts>
     </Booking>
   );
+};
+
+BookingBoard.propTypes = {
+  vendorById: PropTypes.number,
+  isShow: PropTypes.bool,
+  handleIsShow: PropTypes.func,
+  handleSubmit: PropTypes.func,
 };
 
 export default BookingBoard;

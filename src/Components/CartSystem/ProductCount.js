@@ -1,18 +1,48 @@
 import React, { useState } from "react";
+import PropTypes from "prop-types";
+import { useDispatch } from "react-redux";
 import { Div, Button, Icon, Input } from "atomize";
+import { setCartData } from "../../redux/reducers/cartReducer";
 
-const ProductCount = ({ item }) => {
+const ProductCount = ({ item, cartData, userId }) => {
+  const dispatch = useDispatch();
   const [productCount, setProductCount] = useState(item.cartQuantity);
 
-  const handleMinusClick = () => {
+  const handleMinusClick = (id) => {
     if (productCount > 1) {
       setProductCount(Number(productCount) - 1);
+      const newCartData = JSON.stringify(
+        JSON.parse(cartData).map((item) => {
+          if (item.id === id) {
+            return {
+              ...item,
+              quantity: item.quantity - 1,
+            };
+          }
+          return item;
+        })
+      );
+      localStorage.setItem(`cartId${userId}`, newCartData);
+      dispatch(setCartData(newCartData));
     }
   };
 
-  const handlePlusClick = () => {
+  const handlePlusClick = (id) => {
     if (item && productCount < item.quantity) {
       setProductCount(Number(productCount) + 1);
+      const newCartData = JSON.stringify(
+        JSON.parse(cartData).map((item) => {
+          if (item.id === id) {
+            return {
+              ...item,
+              quantity: item.quantity + 1,
+            };
+          }
+          return item;
+        })
+      );
+      localStorage.setItem(`cartId${userId}`, newCartData);
+      dispatch(setCartData(newCartData));
     }
   };
 
@@ -24,7 +54,9 @@ const ProductCount = ({ item }) => {
         bg="transparent"
         hoverBg="info300"
         rounded="sm"
-        onClick={handleMinusClick}
+        onClick={() => {
+          handleMinusClick(item.id);
+        }}
       >
         <Icon name="Minus" size="20px" color="info700" />
       </Button>
@@ -48,12 +80,20 @@ const ProductCount = ({ item }) => {
         bg="transparent"
         hoverBg="info300"
         rounded="sm"
-        onClick={handlePlusClick}
+        onClick={() => {
+          handlePlusClick(item.id);
+        }}
       >
         <Icon name="Plus" size="20px" color="info700" />
       </Button>
     </Div>
   );
+};
+
+ProductCount.propTypes = {
+  item: PropTypes.object,
+  cartData: PropTypes.string,
+  userId: PropTypes.number,
 };
 
 export default ProductCount;

@@ -73,17 +73,13 @@ export default function CartPage() {
     setIsChecked(!isChecked);
   };
 
-  console.log("isSelect", isSelect);
-
   const handleDeleteClick = (id, userId) => {
     const newCartData = JSON.stringify(
       JSON.parse(cartData).filter((item) => item.id !== id)
     );
     localStorage.setItem(`cartId${userId}`, newCartData);
+    dispatch(setCartData(newCartData));
   };
-
-  console.log("cartData:", cartData);
-  console.log("cart:", cart);
 
   return (
     <Div
@@ -130,6 +126,7 @@ export default function CartPage() {
         handleDeleteClick={handleDeleteClick}
         userId={userId}
         cart={cart}
+        cartData={cartData}
       />
       <Div m={{ t: "4rem" }} border="2px solid" borderColor="warning600" />
       <Div m={{ y: "2rem" }} p={{ xs: "1rem", lg: "2rem" }} pos="relative">
