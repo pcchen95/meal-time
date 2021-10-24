@@ -14,7 +14,7 @@ import {
   setErrorMessage,
   setShowWarningNotification,
 } from "../../redux/reducers/notificationReducer";
-import { Div } from "atomize";
+import { Div, Text } from "atomize";
 import { remindText, inputRule } from "../../constants/inputText";
 import SuccessNotification from "../../Components/Notifications/SuccessNotification";
 import WarningNotification from "../../Components/Notifications/WarningNotification";
@@ -215,7 +215,7 @@ export default function UpdateStorePage() {
   }, [dispatch]);
 
   useEffect(() => {
-    if (vendor) {
+    if (vendor && vendor !== "not-vendor") {
       setVendorName(vendor.vendorName);
       setAddress(vendor.address);
       setLatLng({
@@ -232,7 +232,7 @@ export default function UpdateStorePage() {
   }, [vendor]);
 
   useEffect(() => {
-    if (vendor) {
+    if (vendor && vendor !== "not-vendor") {
       vendorName !== vendor.vendorName ||
       address !== vendor.address ||
       latlng.lat !== vendor.position.coordinates[0] ||
@@ -259,6 +259,14 @@ export default function UpdateStorePage() {
     <>
       {vendor && (
         <Div w="80%" m={{ y: "4rem", x: "auto" }}>
+          <Text
+            textSize="heading"
+            w="100%"
+            textAlign="center"
+            textColor="info900"
+          >
+            {vendor === "not-vendor" ? "註冊為賣家" : "更新賣家資料"}
+          </Text>
           <form onSubmit={handleSubmit}>
             <Div w="100%">
               <BannerPreview

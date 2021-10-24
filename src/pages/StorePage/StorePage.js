@@ -3,18 +3,17 @@ import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useParams, useHistory } from "react-router-dom";
 import { setCurrentPosition } from "../../redux/reducers/userReducer";
-import {
-  getVendorById,
-  cleanVendorById,
-} from "../../redux/reducers/vendorReducer";
+import { getVendorById } from "../../redux/reducers/vendorReducer";
 import {
   getVendorProducts,
-  getProductCategories,
+  getVendorProductCategories,
 } from "../../redux/reducers/productReducer";
-import { Div, Text } from "atomize";
+import { Div } from "atomize";
+import LoadingPage from "../LoadingPage/LoadingPage";
 import StoreBanner from "../../Components/VendorSystem/StoreBanner";
 import StoreDropdown from "../../Components/VendorSystem/StoreDropdown";
 import StoreInfo from "../../Components/VendorSystem/StoreInfo";
+import PaginationButton from "../../Components/VendorSystem/PaginationButton";
 
 const ProductsList = ({ products, hoverItem, setHoverItem }) => {
   return products.map((product) => (
@@ -24,7 +23,7 @@ const ProductsList = ({ products, hoverItem, setHoverItem }) => {
       key={product.id}
       onMouseEnter={() => setHoverItem(product.id)}
       onMouseLeave={() => setHoverItem(null)}
-      transform={product.id === hoverItem && "scale(1.05)"}
+      transform={product.id === hoverItem && "scale(1.02)"}
     >
       <Link to={`/product/${product.id}`}>
         <Div
@@ -40,7 +39,7 @@ const ProductsList = ({ products, hoverItem, setHoverItem }) => {
           borderColor="gray300"
         />
       </Link>
-      <Div d={{ xs: "block", xl: "flex" }} justify="space-between">
+      <Div>
         <Link to={`/product/${product.id}`} style={{ textDecoration: "none" }}>
           <Div
             w="100%"
@@ -76,37 +75,70 @@ export default function StorePage() {
   const dispatch = useDispatch();
   const [hoverItem, setHoverItem] = useState(null);
   const [categoryId, setCategoryId] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
+  const [page, setPage] = useState(1);
   const vendor = useSelector((store) => store.vendors.vendorById);
+  const isLoadingVendor = useSelector((store) => store.vendors.isLoading);
   const products = useSelector((store) => store.products.vendorProducts);
-  const productCategories = useSelector(
-    (store) => store.products.productCategories
-  );
+  const isLoadingProduct = useSelector((store) => store.products.isLoading);
+  const count = useSelector((store) => store.products.count);
   const { id } = useParams();
   const history = useHistory();
+  const limit = 5;
+
+  const getProducts = (id, categoryId, page) => {
+    if (categoryId === 0) {
+      dispatch(getVendorProducts(id, { limit, page }));
+    }
+    if (categoryId !== 0) {
+      dispatch(
+        getVendorProducts(id, {
+          limit,
+          category: categoryId,
+          page,
+        })
+      );
+    }
+  };
 
   useEffect(() => {
     dispatch(getVendorById(id));
     dispatch(getVendorProducts(id));
-    dispatch(getProductCategories());
     navigator?.geolocation.getCurrentPosition(
       ({ coords: { latitude: lat, longitude: lng } }) => {
         const position = { lat, lng };
         dispatch(setCurrentPosition(position));
       }
     );
-    return () => {
-      dispatch(cleanVendorById());
-    };
   }, []);
 
   useEffect(() => {
-    if (vendor && vendor === "no-result") {
-      return history.push("/");
+    if (vendor) {
+      if (vendor === "no-result") {
+        return history.push("/");
+      }
+      dispatch(getVendorProductCategories(vendor.id));
+      getProducts(vendor.id, categoryId, page);
     }
   }, [vendor]);
 
+  useEffect(() => {
+    if (vendor) {
+      getProducts(vendor.id, categoryId, page);
+    }
+  }, [vendor, page, categoryId]);
+
+  useEffect(() => {
+    setPage(1);
+  }, [categoryId]);
+
+  useEffect(() => {
+    if (count) setTotalPages(Math.ceil(count / 8));
+  }, [count]);
+
   return (
     <>
+      {(isLoadingVendor || isLoadingProduct) && <LoadingPage />}
       {vendor && vendor !== "no-result" && (
         <>
           <StoreBanner
@@ -122,16 +154,10 @@ export default function StorePage() {
             <StoreInfo />
             <Div d="flex" flexDir="column" align="center">
               <Div d="flex" p="1rem" w="100%" justify="flex-start">
-                <Text p="0.5rem">選擇分類</Text>
-                <Div m={{ l: "1rem" }}>
-                  {productCategories && (
-                    <StoreDropdown
-                      categories={productCategories}
-                      categoryId={categoryId}
-                      setCategoryId={setCategoryId}
-                    />
-                  )}
-                </Div>
+                <StoreDropdown
+                  categoryId={categoryId}
+                  setCategoryId={setCategoryId}
+                />
               </Div>
               <Div
                 w={{ xs: "100%", md: "540px", lg: "720px", xl: "900px" }}
@@ -147,6 +173,11 @@ export default function StorePage() {
                 )}
               </Div>
             </Div>
+            <PaginationButton
+              setPage={setPage}
+              page={page}
+              totalPages={totalPages}
+            />
           </Div>
         </>
       )}

@@ -14,6 +14,7 @@ import InputField from "../../Components/UserSystem/InputField";
 import ButtonGroup from "../../Components/UserSystem/ButtonGroup";
 import SuccessNotification from "../../Components/Notifications/SuccessNotification";
 import WarningNotification from "../../Components/Notifications/WarningNotification";
+import LoadingPage from "../LoadingPage/LoadingPage";
 import { remindText, inputRule } from "../../constants/inputText";
 
 const MemberEdit = () => {
@@ -107,6 +108,7 @@ const MemberEdit = () => {
 
   return (
     <>
+      {isLoading && <LoadingPage />}
       {user && user !== "non-login" && (
         <Div
           w={{ xs: "100%", md: "70%" }}

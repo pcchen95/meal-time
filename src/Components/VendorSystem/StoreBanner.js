@@ -3,7 +3,6 @@ import PropTypes from "prop-types";
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { GoogleMap, DistanceMatrixService } from "@react-google-maps/api";
-import { Link } from "react-router-dom";
 import { Icon, Div } from "atomize";
 
 const Banner = ({ banner }) => {
@@ -64,9 +63,7 @@ const Category = () => {
   return (
     <Div textSize="12px" m={{ t: "1rem" }} d="flex" textColor="gray800">
       分類・
-      <Link to="/" style={{ textDecoration: "none" }}>
-        <Div textColor="info700">{vendor && vendor.VendorCategory.name}</Div>
-      </Link>
+      <Div textColor="info700">{vendor && vendor.VendorCategory.name}</Div>
     </Div>
   );
 };

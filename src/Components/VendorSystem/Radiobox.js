@@ -4,7 +4,9 @@ import { useSelector } from "react-redux";
 import { Radiobox, Label, Text } from "atomize";
 
 export default function CustomRaios({ isOpen, handleEvent }) {
-  const isVendor = useSelector((store) => store.vendors.vendor || false);
+  const isVendor = useSelector(
+    (store) => store.vendors.vendor && store.vendors.vendor !== "not-vendor"
+  );
   const isStoreOpen = useSelector(
     (store) => store.vendors.vendor && store.vendors.vendor.isOpen
   );

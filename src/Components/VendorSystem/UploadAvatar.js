@@ -5,7 +5,9 @@ import { Div } from "atomize";
 import UploadButton from "../../Components/VendorSystem/UploadButton";
 
 const InputField = ({ name, avatarInput, handleAvatar }) => {
-  const isVendor = useSelector((store) => store.vendors.vendor || false);
+  const isVendor = useSelector(
+    (store) => store.vendors.vendor && store.vendors.vendor !== "not-vendor"
+  );
   const isOpen = useSelector(
     (store) => store.vendors.vendor && store.vendors.vendor.isOpen
   );

@@ -38,9 +38,20 @@ const InputField = ({
           w={`${titleLength}rem`}
           textAlign={{ xs: "left", md: "justify" }}
           style={{ textAlignLast: "justify" }}
+          pos="relative"
         >
           {name}
+          <Div
+            textColor="red"
+            m={{ l: "0.5rem" }}
+            pos="absolute"
+            right="-10px"
+            top="0"
+          >
+            {required && "*"}
+          </Div>
         </Div>
+
         <Div
           w={{ xs: "100%", md: `calc(100% - ${titleLength}rem)` }}
           m={{ l: { xs: "0", md: "1rem" } }}

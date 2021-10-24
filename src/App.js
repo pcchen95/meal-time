@@ -1,43 +1,44 @@
-import "./App.css"
-import React from "react"
-import { HashRouter as Router, Switch, Route } from "react-router-dom"
-import { useDispatch } from "react-redux"
+import "./App.css";
+import React from "react";
+import { HashRouter as Router, Switch, Route } from "react-router-dom";
+import { useDispatch } from "react-redux";
 
-import { getMe } from "./redux/reducers/userReducer"
-import HomePage from "./pages/HomePage"
-import ProductsPage from "./pages/ProductsPage"
-import ProductEdit from "./pages/ProductEdit"
-import SingleProductPage from "./pages/SingleProductPage"
-import OrderDetailsPage from "./pages/OrderDetailsPage"
-import OrdersPage from "./pages/OrdersPage"
-import StorePage from "./pages/StorePage"
-import UpdateStorePage from "./pages/UpdateStorePage"
-import MapPage from "./pages/MapPage"
-import CartPage from "./pages/CartPage"
-import Navbar from "./Components/NavBar"
-import Footer from "./Components/Footer"
-import AdminMemberPage from "./pages/AdminMemberPage"
-import AdminOrderPage from "./pages/AdminOrderPage"
-import AdminProductTypePage from "./pages/AdminProductTypePage"
-import AdminStoreTypePage from "./pages/AdminStoreTypePage"
-import Entrance from "./pages/Entrance"
-import FAQPage from "./pages/FAQPage"
-import MemberEdit from "./pages/MemberEdit"
-import PasswordEdit from "./pages/PasswordEdit"
-import RulesPage from "./pages/RulesPage"
-import SignIn from "./pages/SignIn"
-import SignUp from "./pages/SignUp"
+import { getMe } from "./redux/reducers/userReducer";
+import HomePage from "./pages/HomePage";
+import ProductsPage from "./pages/ProductsPage";
+import ProductManagePage from "./pages/ProductManagePage";
+import ProductEdit from "./pages/ProductEdit";
+import SingleProductPage from "./pages/SingleProductPage";
+import OrderDetailsPage from "./pages/OrderDetailsPage";
+import OrdersPage from "./pages/OrdersPage";
+import StorePage from "./pages/StorePage";
+import UpdateStorePage from "./pages/UpdateStorePage";
+import MapPage from "./pages/MapPage";
+import CartPage from "./pages/CartPage";
+import Navbar from "./Components/NavBar";
+import Footer from "./Components/Footer";
+import AdminMemberPage from "./pages/AdminMemberPage";
+import AdminOrderPage from "./pages/AdminOrderPage";
+import AdminProductTypePage from "./pages/AdminProductTypePage";
+import AdminStoreTypePage from "./pages/AdminStoreTypePage";
+import Entrance from "./pages/Entrance";
+import FAQPage from "./pages/FAQPage";
+import MemberEdit from "./pages/MemberEdit";
+import PasswordEdit from "./pages/PasswordEdit";
+import RulesPage from "./pages/RulesPage";
+import SignIn from "./pages/SignIn";
+import SignUp from "./pages/SignUp";
 
 function App() {
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
   React.useEffect(() => {
     window.scrollTo({
       top: 0,
       left: 0,
       behavior: "instant",
-    })
-    dispatch(getMe())
-  }, [dispatch])
+    });
+    dispatch(getMe());
+  }, [dispatch]);
 
   return (
     <div>
@@ -52,6 +53,9 @@ function App() {
           </Route>
           <Route path="/product/:id">
             <SingleProductPage />
+          </Route>
+          <Route path="/product_manage">
+            <ProductManagePage />
           </Route>
           <Route path="/product_edit/:id">
             <ProductEdit />
@@ -114,7 +118,7 @@ function App() {
         <Footer />
       </Router>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
