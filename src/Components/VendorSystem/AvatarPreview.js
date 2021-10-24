@@ -51,7 +51,9 @@ Delete.propTypes = {
 
 const AvatarPreview = ({ image, handleDelete }) => {
   const location = useLocation();
-  const isVendor = useSelector((store) => store.vendors.vendor || false);
+  const isVendor = useSelector(
+    (store) => store.vendors.vendor && store.vendors.vendor !== "not-vendor"
+  );
   const isOpen = useSelector(
     (store) => store.vendors.vendor && store.vendors.vendor.isOpen
   );

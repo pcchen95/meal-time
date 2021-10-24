@@ -41,7 +41,9 @@ lists.propTypes = {
 export function SmallDropdown({ categoryId, setCategoryId }) {
   const [showDropdown, setShowDropdown] = useState(false);
   const [name, setName] = useState("");
-  const categories = useSelector((store) => store.vendors.categories);
+  const categories = useSelector(
+    (store) => store.products.vendorProductCategories
+  );
 
   const handleToggleDropdown = () => {
     setShowDropdown(!showDropdown);
@@ -58,7 +60,7 @@ export function SmallDropdown({ categoryId, setCategoryId }) {
 
   return (
     <Div d="flex" align="center">
-      <Text textSize="14px">賣場分類</Text>
+      <Text textSize="14px">分類</Text>
       <Dropdown
         w="fit-content"
         h="2rem"

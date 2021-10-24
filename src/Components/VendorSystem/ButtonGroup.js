@@ -9,7 +9,9 @@ export function ButtonGroup({
   vendor,
   handleToggleOpen,
 }) {
-  const isVendor = useSelector((store) => store.vendors.vendor || false);
+  const isVendor = useSelector(
+    (store) => store.vendors.vendor && store.vendors.vendor !== "not-vendor"
+  );
   const isOpen = useSelector(
     (store) => store.vendors.vendor && store.vendors.vendor.isOpen
   );
@@ -42,7 +44,7 @@ export function ButtonGroup({
           hoverBorderColor={!isDisabled && "info900"}
           disabled={isDisabled}
         >
-          {vendor ? "提交修改" : "註冊"}
+          {vendor && vendor !== "not-vendor" ? "提交修改" : "註冊"}
         </Button>
         <Button
           type="button"
@@ -127,7 +129,7 @@ export function ButtonGroup({
 ButtonGroup.propTypes = {
   isDisabled: PropTypes.bool,
   handleBack: PropTypes.func,
-  vendor: PropTypes.object,
+  vendor: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
   handleToggleOpen: PropTypes.func,
 };
 

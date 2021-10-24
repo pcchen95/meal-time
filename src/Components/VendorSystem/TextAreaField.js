@@ -4,7 +4,9 @@ import { useSelector } from "react-redux";
 import { Textarea } from "atomize";
 
 const TextAreaField = ({ name, value, handleEvent }) => {
-  const isVendor = useSelector((store) => store.vendors.vendor || false);
+  const isVendor = useSelector(
+    (store) => store.vendors.vendor && store.vendors.vendor !== "not-vendor"
+  );
   const isOpen = useSelector(
     (store) => store.vendors.vendor && store.vendors.vendor.isOpen
   );

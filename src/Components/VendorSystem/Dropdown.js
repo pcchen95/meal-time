@@ -41,7 +41,9 @@ export function SmallDropdown({ value: categoryId, setCategoryId }) {
   const [showDropdown, setShowDropdown] = useState(false);
   const [name, setName] = useState("");
   const categories = useSelector((store) => store.vendors.categories);
-  const isVendor = useSelector((store) => store.vendors.vendor || false);
+  const isVendor = useSelector(
+    (store) => store.vendors.vendor && store.vendors.vendor !== "not-vendor"
+  );
   const isOpen = useSelector(
     (store) => store.vendors.vendor && store.vendors.vendor.isOpen
   );

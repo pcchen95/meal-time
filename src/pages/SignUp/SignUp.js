@@ -7,7 +7,7 @@ import {
   setErrorMessage,
   setShowWarningNotification,
 } from "../../redux/reducers/notificationReducer";
-import { Row, Col, Div } from "atomize";
+import { Row, Col, Div, Text } from "atomize";
 import { remindText, inputRule } from "../../constants/inputText";
 import PreviewAvatar from "../../Components/UserSystem/PreviewAvatar";
 import InputField from "../../Components/UserSystem/InputField";
@@ -104,6 +104,9 @@ const SignUpInfo = () => {
 
   return (
     <Div w="100%" p="3rem 1rem">
+      <Text textSize="heading" textColor="gray900" m={{ b: "3rem" }}>
+        註冊 Sign Up
+      </Text>
       <form w="100%" onSubmit={handleSubmit}>
         <Div d="flex" w="100%">
           <PreviewAvatar

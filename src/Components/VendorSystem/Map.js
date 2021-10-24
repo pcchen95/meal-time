@@ -23,12 +23,12 @@ export function Map({ completeAddress, latlng, setLatLng }) {
 
   useEffect(() => {
     Geocode.setApiKey(googleMapToken);
-    Geocode.setLanguage("ch");
+    Geocode.setLanguage("zh");
     Geocode.setLocationType("ROOFTOP");
   }, []);
 
   useEffect(() => {
-    if (latlng) setZoom(17);
+    if (latlng) setZoom(15);
   }, [latlng]);
 
   useEffect(() => {

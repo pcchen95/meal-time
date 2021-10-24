@@ -122,13 +122,16 @@ export const register =
 export const getVendor = () => (dispatch) => {
   dispatch(setIsLoading(true));
   return getVendorProfileApi().then((res) => {
+    dispatch(setIsLoading(false));
     if (!res.ok) {
+      console.log(res.message);
+      //if (res.message === 'non-login') dispatch(setVendor(res.data));
       dispatch(setErrorMessage(res.message));
       dispatch(setShowWarningNotification(true));
       return;
     }
+    if (!res.data) return dispatch(setVendor("not-vendor"));
     dispatch(setVendor(res.data));
-    dispatch(setIsLoading(false));
   });
 };
 
@@ -181,6 +184,7 @@ export const updateProfile =
   };
 
 export const setToggleOpen = () => (dispatch) => {
+  dispatch(setIsLoading(true));
   return updateIsOpenApi().then((res) => {
     if (!res.ok) {
       dispatch(setErrorMessage(res.message));
@@ -203,6 +207,7 @@ export const setToggleOpen = () => (dispatch) => {
 export const getAllVendors =
   ({ page, limit, sort, order, role, categoryId }) =>
   (dispatch) => {
+    dispatch(setIsLoading(true));
     return getAvailableVendorProfilesApi({
       page,
       limit,
@@ -211,6 +216,7 @@ export const getAllVendors =
       role,
       categoryId,
     }).then((res) => {
+      dispatch(setIsLoading(false));
       if (!res.ok) {
         dispatch(setErrorMessage(res.message));
         dispatch(setShowWarningNotification(true));
@@ -221,7 +227,9 @@ export const getAllVendors =
   };
 
 export const getVendorById = (id) => (dispatch) => {
+  dispatch(setIsLoading(true));
   return getAvailVendorProfileByIdApi(id).then((res) => {
+    dispatch(setIsLoading(false));
     if (!res.ok) {
       dispatch(setErrorMessage(res.message));
       dispatch(setShowWarningNotification(true));
@@ -238,6 +246,7 @@ export const cleanVendorById = () => (dispatch) => {
 
 export const getVendorOfSearchedProducts = (array) => (dispatch) => {
   if (!array) return dispatch(setSearchedVendors(null));
+  dispatch(setIsLoading(true));
   const result = [];
   Promise.all(
     array.map((id) => {
@@ -252,6 +261,7 @@ export const getVendorOfSearchedProducts = (array) => (dispatch) => {
     })
   )
     .then(() => {
+      dispatch(setIsLoading(false));
       dispatch(setSearchedVendors(result));
     })
     .catch((err) => {
