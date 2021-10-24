@@ -13,6 +13,7 @@ const CheckItem = styled.input`
 `;
 
 const CartList = ({
+  userId,
   isSelect,
   isChecked,
   handleCheckedClick,
@@ -22,7 +23,7 @@ const CartList = ({
   return (
     <Div p={{ x: { xs: "1rem", lg: "5rem" }, t: { xs: "3rem", lg: "2rem" } }}>
       {cart &&
-        cart.map((cartItem) => (
+        Object.values(cart).map((cartItem) => (
           <Div key={cartItem[0].id}>
             <Div
               d="flex"
@@ -43,6 +44,7 @@ const CartList = ({
             <CartItem
               cartItem={cartItem}
               handleDeleteClick={handleDeleteClick}
+              userId={userId}
             />
           </Div>
         ))}
