@@ -13,6 +13,9 @@ import {
 import { useEffect } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import styled from "styled-components"
+import SyncSuccessNotification from "../../Components/Notifications/SyncSuccessNotification"
+import SyncWarningNotification from "../../Components/Notifications/SyncWarningNotification"
+
 const ProductDetails = ({ title, content }) => {
   return (
     <Div d="flex" textSize="subheader">
@@ -100,6 +103,8 @@ export default function SingleProductPage() {
   const sort = useSelector((state) => state.products.sort)
   const queryParameters = { page, sort, limit: 4, order: "DESC" }
   const [productCoount, setProductCount] = useState(null)
+  const [showSuccess, setShowSuccess] = useState(false)
+  const [showWarning, setShowWarning] = useState(false)
 
   useEffect(() => {
     dispatch(getProduct(id))
@@ -306,7 +311,12 @@ export default function SingleProductPage() {
               </Div>
               <Button
                 onClick={() => {
-                  addToCart(productCoount)
+                  if (Boolean(productCoount) && user) {
+                    setShowSuccess(true)
+                    addToCart(productCoount)
+                    return
+                  }
+                  setShowWarning(true)
                 }}
                 w="100%"
                 bg="info800"
@@ -455,6 +465,16 @@ export default function SingleProductPage() {
           </Div>
         </Div>
       </Col>
+      <SyncSuccessNotification
+        showSuccess={showSuccess}
+        setShowSuccess={setShowSuccess}
+        successMessage={`成功加入購物車`}
+      />
+      <SyncWarningNotification
+        showWarning={showWarning}
+        setShowWarning={setShowWarning}
+        warningMessage={(user === null && "請登入") || "請加入數量"}
+      />
     </Div>
   )
 }
