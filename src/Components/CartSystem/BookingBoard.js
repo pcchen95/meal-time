@@ -1,8 +1,9 @@
-import React from "react"
-import styled from "styled-components"
-import { Div, Text, Input, Textarea, Button } from "atomize"
-import OpeningHour from "./OpeningHour"
-import PropTypes from "prop-types"
+import React from 'react'
+import PropTypes from 'prop-types'
+import styled from 'styled-components'
+import { Div, Text, Input, Textarea, Button } from 'atomize'
+import OpeningHour from './OpeningHour'
+
 const Booking = styled.div`
   display: none;
 
@@ -56,7 +57,7 @@ const BookingBoard = ({ vendorById, isShow, handleIsShow, handleSubmit }) => {
         <Div fontFamily="code" yI textAlign="center">
           <OpeningHour vendorById={vendorById} />
           <form onSubmit={handleSubmit}>
-            <Div border={{ t: "3px solid" }} borderColor="gray200">
+            <Div border={{ t: '3px solid' }} borderColor="gray200">
               <Text textSize="heading" m="1rem" textColor="info800">
                 預約時間
               </Text>
@@ -66,7 +67,7 @@ const BookingBoard = ({ vendorById, isShow, handleIsShow, handleSubmit }) => {
               <Input
                 type="datetime-local"
                 m="1rem"
-                min={new Date().toISOString().split(".")[0]}
+                min={new Date().toISOString().split('.')[0]}
                 required
               />
               <Text textSize="heading" m="1rem" textColor="gray800">
@@ -76,7 +77,7 @@ const BookingBoard = ({ vendorById, isShow, handleIsShow, handleSubmit }) => {
               <Div d="flex" w="26rem" justify="center">
                 <Button
                   h="3rem"
-                  p={{ x: "1.25rem" }}
+                  p={{ x: '1.25rem' }}
                   textSize="body"
                   textColor="info700"
                   hoverTextColor="warning800"
@@ -85,14 +86,14 @@ const BookingBoard = ({ vendorById, isShow, handleIsShow, handleSubmit }) => {
                   border="1px solid"
                   borderColor="info700"
                   hoverBorderColor="warning800"
-                  m={{ r: "0.5rem", t: "1rem" }}
+                  m={{ r: '0.5rem', t: '1rem' }}
                   type="submit"
                 >
                   確定
                 </Button>
                 <Button
                   h="3rem"
-                  p={{ x: "1.25rem" }}
+                  p={{ x: '1.25rem' }}
                   textSize="body"
                   textColor="info700"
                   hoverTextColor="brand800"
@@ -101,8 +102,8 @@ const BookingBoard = ({ vendorById, isShow, handleIsShow, handleSubmit }) => {
                   border="1px solid"
                   borderColor="info700"
                   hoverBorderColor="danger800"
-                  m={{ r: "0.5rem", t: "1rem" }}
-                  onClick={() => handleIsShow("cancel")}
+                  m={{ r: '0.5rem', t: '1rem' }}
+                  onClick={() => handleIsShow('cancel')}
                 >
                   取消
                 </Button>
