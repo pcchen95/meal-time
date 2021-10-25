@@ -15,7 +15,7 @@ const CheckItem = styled.input`
 
 const CartList = ({
   userId,
-  isSelect,
+  vendorId,
   isChecked,
   handleCheckedClick,
   handleDeleteClick,
@@ -39,7 +39,7 @@ const CartList = ({
                 type="checkbox"
                 value={cartItem[0].vendorId}
                 onClick={handleCheckedClick}
-                disabled={isChecked && isSelect != cartItem[0].vendorId}
+                disabled={isChecked && vendorId != cartItem[0].vendorId}
               />
               <Text p="0.3rem">{cartItem[0].Vendor.vendorName}</Text>
             </Div>
@@ -57,7 +57,7 @@ const CartList = ({
 
 CartList.propTypes = {
   userId: PropTypes.number,
-  isSelect: PropTypes.number,
+  vendorId: PropTypes.string,
   isChecked: PropTypes.bool,
   handleCheckedClick: PropTypes.func,
   handleDeleteClick: PropTypes.func,
