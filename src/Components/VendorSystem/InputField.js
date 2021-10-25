@@ -1,6 +1,5 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { useSelector } from "react-redux";
 import styled from "styled-components";
 import { Input, Div } from "atomize";
 import Dropdown from "./Dropdown";
@@ -30,17 +29,8 @@ const InputField = ({
   remind,
   rule,
   required,
+  isDisabled,
 }) => {
-  const isVendor = useSelector(
-    (store) => store.vendors.vendor && store.vendors.vendor !== "not-vendor"
-  );
-  const isOpen = useSelector(
-    (store) => store.vendors.vendor && store.vendors.vendor.isOpen
-  );
-  const isSuspended = useSelector(
-    (store) => store.vendors.vendor && store.vendors.vendor.isSuspended
-  );
-  const isDisabled = isVendor && (!isOpen || isSuspended);
   return (
     <Div
       d="flex"
@@ -63,10 +53,15 @@ const InputField = ({
             textColor={isDisabled && "gray600"}
             required={required}
             disabled={isDisabled}
+            cursor={isDisabled && "not-allowed"}
           />
         )}
         {type === "dropdown" && (
-          <Dropdown value={value} setCategoryId={setCategoryId} />
+          <Dropdown
+            value={value}
+            setCategoryId={setCategoryId}
+            isDisabled={isDisabled}
+          />
         )}
       </Div>
     </Div>
@@ -82,6 +77,7 @@ InputField.propTypes = {
   setCategoryId: PropTypes.func,
   rule: PropTypes.string,
   required: PropTypes.bool,
+  isDisabled: PropTypes.bool,
 };
 
 export default InputField;

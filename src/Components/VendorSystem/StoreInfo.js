@@ -80,7 +80,7 @@ const MapArea = ({ latlng }) => {
   return (
     <Div
       w={{ xs: "100%", sm: "60%" }}
-      maxW="400px"
+      maxW={{ sm: "400px" }}
       h={{ xs: "18rem", sm: "100%" }}
       border={{ t: { xs: "4px solid", sm: "" } }}
       borderColor="gray400"

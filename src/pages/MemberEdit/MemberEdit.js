@@ -120,9 +120,15 @@ const MemberEdit = () => {
           align="center"
           justify="center"
         >
+          {user.role === "suspended" && (
+            <Div tag="h4" textColor="danger800">
+              您已被停權！
+            </Div>
+          )}
           <Div w="100%" tag="h2" m={{ b: "1.5rem" }}>
             基本資料
           </Div>
+
           <form style={{ width: "100%" }} onSubmit={handleSubmit}>
             <Div
               d="flex"
@@ -143,6 +149,7 @@ const MemberEdit = () => {
                 <PreviewAvatar
                   img={img}
                   defaultImg={"defaultAvatar.png"}
+                  isDisabled={user.role === "suspended"}
                   handleEvent={() => {
                     setFileInfo(null);
                     setImg(null);
@@ -155,7 +162,9 @@ const MemberEdit = () => {
                     }
                   }}
                 />
-                <UploadButton fileInput={fileInput} handleEvent={handleImg} />
+                {user.role !== "suspended" && (
+                  <UploadButton fileInput={fileInput} handleEvent={handleImg} />
+                )}
               </Div>
             </Div>
             <Div w="100%" h="auto">
@@ -167,6 +176,7 @@ const MemberEdit = () => {
                 remind={remindText.nickname}
                 rule={inputRule.nickname}
                 required={true}
+                isDisabled={user.role === "suspended"}
               />
               <InputField
                 name={"電子信箱"}
@@ -176,6 +186,7 @@ const MemberEdit = () => {
                 remind={remindText.email}
                 rule={inputRule.email}
                 required={true}
+                isDisabled={user.role === "suspended"}
               />
               <InputField
                 name={"手機號碼"}
@@ -185,6 +196,7 @@ const MemberEdit = () => {
                 remind={remindText.phone}
                 rule={inputRule.phone}
                 required={true}
+                isDisabled={user.role === "suspended"}
               />
             </Div>
             <ButtonGroup

@@ -76,7 +76,7 @@ const PasswordInfo = () => {
           </Div>
           <form style={{ width: "100%" }} onSubmit={handleSubmit}>
             <InputField
-              name="輸入原密碼："
+              name="輸入原密碼"
               type="password"
               value={oldPassword}
               handleEvent={(e) => setOldPassword(e.target.value)}
@@ -85,7 +85,7 @@ const PasswordInfo = () => {
               required={true}
             />
             <InputField
-              name="輸入新密碼："
+              name="輸入新密碼"
               type="password"
               value={newPassword}
               handleEvent={(e) => setNewPassword(e.target.value)}
@@ -94,7 +94,7 @@ const PasswordInfo = () => {
               required={true}
             />
             <InputField
-              name="再次輸入新密碼："
+              name="再次輸入新密碼"
               type="password"
               value={confirmPassword}
               handleEvent={(e) => setConfirmPassword(e.target.value)}

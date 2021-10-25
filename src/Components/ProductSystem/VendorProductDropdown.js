@@ -38,7 +38,7 @@ lists.propTypes = {
   setShowDropdown: PropTypes.func,
 };
 
-export function SmallDropdown({ categoryId, setCategoryId }) {
+export function SmallDropdown({ categoryId, setCategoryId, isDisabled }) {
   const [showDropdown, setShowDropdown] = useState(false);
   const [name, setName] = useState("");
   const categories = useSelector(
@@ -65,7 +65,8 @@ export function SmallDropdown({ categoryId, setCategoryId }) {
         w="fit-content"
         h="2rem"
         textSize="12px"
-        isOpen={showDropdown}
+        textColor={isDisabled ? "disabled" : "medium"}
+        isOpen={!isDisabled && showDropdown}
         m={{ l: "0.5rem" }}
         onClick={handleToggleDropdown}
         menu={lists({
@@ -74,6 +75,7 @@ export function SmallDropdown({ categoryId, setCategoryId }) {
           setCategoryId,
           setShowDropdown,
         })}
+        cursor={isDisabled ? "not-allowed" : "pointer"}
       >
         {categoryId ? name : "全部"}
       </Dropdown>
@@ -84,6 +86,7 @@ export function SmallDropdown({ categoryId, setCategoryId }) {
 SmallDropdown.propTypes = {
   categoryId: PropTypes.number,
   setCategoryId: PropTypes.func,
+  isDisabled: PropTypes.bool,
 };
 
 export default SmallDropdown;

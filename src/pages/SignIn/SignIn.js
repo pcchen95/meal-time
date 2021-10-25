@@ -57,7 +57,6 @@ const SignInInfo = () => {
           value={username}
           handleEvent={(e) => setUsername(e.target.value)}
           placeholder="請輸入帳號"
-          required={true}
         />
         <InputField
           name="密碼"
@@ -65,7 +64,6 @@ const SignInInfo = () => {
           value={password}
           handleEvent={(e) => setPassword(e.target.value)}
           placeholder="請輸入密碼"
-          required={true}
         />
         <SignUpButtons
           handleEvent={() => history.goBack()}

@@ -1,26 +1,9 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { useSelector } from "react-redux";
 import { useLocation } from "react-router";
 import { Icon, Div } from "atomize";
 import styled from "styled-components";
 import UploadButton from "../../Components/VendorSystem/UploadButton";
-
-const PreviewImg = ({ banner }) => {
-  return (
-    <Div
-      pos="relative"
-      w="100%"
-      h="15rem"
-      rounded="10px"
-      bgImg={banner || "defaultBanner.jpg"}
-    ></Div>
-  );
-};
-
-PreviewImg.propTypes = {
-  banner: PropTypes.string,
-};
 
 const DeleteBtn = styled.div`
   height: 2.5rem;
@@ -52,40 +35,36 @@ Delete.propTypes = {
   handleDelete: PropTypes.func,
 };
 
-const PreviewArea = ({ banner, handleDelete }) => {
-  const isOpen = useSelector(
-    (store) => store.vendors.vendor && store.vendors.vendor.isOpen
-  );
-  const isSuspended = useSelector(
-    (store) => store.vendors.vendor && store.vendors.vendor.isSuspended
-  );
-  const isDisabled = !isOpen || isSuspended;
+const PreviewArea = ({ banner, handleDelete, isDisabled }) => {
   return (
-    <PreviewImg banner={banner}>
+    <Div
+      pos="relative"
+      w="100%"
+      h="15rem"
+      rounded="10px"
+      bgImg={banner || "defaultBanner.jpg"}
+    >
       <Div pos="absolute" top="1rem" left="1rem" d="flex">
         {banner && !isDisabled && <Delete handleDelete={handleDelete} />}
       </Div>
-    </PreviewImg>
+    </Div>
   );
 };
 
 PreviewArea.propTypes = {
   banner: PropTypes.string,
   handleDelete: PropTypes.func,
+  isDisabled: PropTypes.bool,
 };
 
-const BannerPreview = ({ banner, handleBanner, bannerInput, handleDelete }) => {
+const BannerPreview = ({
+  banner,
+  handleBanner,
+  bannerInput,
+  handleDelete,
+  isDisabled,
+}) => {
   const location = useLocation();
-  const isVendor = useSelector(
-    (store) => store.vendors.vendor && store.vendors.vendor !== "not-vendor"
-  );
-  const isOpen = useSelector(
-    (store) => store.vendors.vendor && store.vendors.vendor.isOpen
-  );
-  const isSuspended = useSelector(
-    (store) => store.vendors.vendor && store.vendors.vendor.isSuspended
-  );
-  const isDisabled = isVendor && (!isOpen || isSuspended);
   return (
     <Div>
       {location.pathname === "/update_store" && (
@@ -110,7 +89,11 @@ const BannerPreview = ({ banner, handleBanner, bannerInput, handleDelete }) => {
           )}
         </Div>
       )}
-      <PreviewArea banner={banner} handleDelete={handleDelete} />
+      <PreviewArea
+        banner={banner}
+        handleDelete={handleDelete}
+        isDisabled={isDisabled}
+      />
     </Div>
   );
 };
@@ -120,6 +103,7 @@ BannerPreview.propTypes = {
   handleBanner: PropTypes.func,
   bannerInput: PropTypes.object,
   handleDelete: PropTypes.func,
+  isDisabled: PropTypes.bool,
 };
 
 export default BannerPreview;
