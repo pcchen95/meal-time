@@ -1,19 +1,8 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { useSelector } from "react-redux";
 import { Textarea } from "atomize";
 
-const TextAreaField = ({ name, value, handleEvent }) => {
-  const isVendor = useSelector(
-    (store) => store.vendors.vendor && store.vendors.vendor !== "not-vendor"
-  );
-  const isOpen = useSelector(
-    (store) => store.vendors.vendor && store.vendors.vendor.isOpen
-  );
-  const isSuspended = useSelector(
-    (store) => store.vendors.vendor && store.vendors.vendor.isSuspended
-  );
-  const isDisabled = isVendor && (!isOpen || isSuspended);
+const TextAreaField = ({ name, value, handleEvent, isDisabled }) => {
   return (
     <Textarea
       h="12rem"
@@ -26,6 +15,7 @@ const TextAreaField = ({ name, value, handleEvent }) => {
       textSize="subheader"
       disabled={isDisabled}
       textColor={isDisabled && "gray600"}
+      cursor={isDisabled && "not-allowed"}
     />
   );
 };
@@ -34,6 +24,7 @@ TextAreaField.propTypes = {
   name: PropTypes.string,
   value: PropTypes.string,
   handleEvent: PropTypes.func,
+  isDisabled: PropTypes.bool,
 };
 
 export default TextAreaField;

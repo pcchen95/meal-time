@@ -125,7 +125,6 @@ export const getVendor = () => (dispatch) => {
     dispatch(setIsLoading(false));
     if (!res.ok) {
       console.log(res.message);
-      //if (res.message === 'non-login') dispatch(setVendor(res.data));
       dispatch(setErrorMessage(res.message));
       dispatch(setShowWarningNotification(true));
       return;

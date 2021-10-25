@@ -3,6 +3,7 @@ import {
   getProducts as getProductsApi,
   getProduct as getProductApi,
   getProductsByVendor as getProductsByVendorApi,
+  getOwnProducts as getOwnProductsApi,
   getProductsByCategory as getProductsByCategoryApi,
   getProductCategories as getProductCategoriesApi,
   searchProduct as searchProductApi,
@@ -21,6 +22,7 @@ const initialState = {
   products: null,
   product: null,
   vendorProducts: null,
+  myVendorProducts: null,
   vendorProductCategories: null,
   categoryProducts: null,
   searchedProducts: null,
@@ -48,6 +50,9 @@ export const productReducer = createSlice({
     },
     setVendorProduct: (state, action) => {
       state.vendorProducts = action.payload;
+    },
+    setMyVendorProduct: (state, action) => {
+      state.myVendorProducts = action.payload;
     },
     setVendorProductCategories: (state, action) => {
       state.vendorProductCategories = action.payload;
@@ -80,6 +85,7 @@ export const {
   setProduct,
   setErrMessage,
   setVendorProduct,
+  setMyVendorProduct,
   setCategoryProduct,
   setSearchedProduct,
   setProductCategories,
@@ -160,6 +166,55 @@ export const getVendorProductCategories = (id) => (dispatch) => {
   dispatch(setIsLoading(true));
 
   return getProductsByVendorApi(id)
+    .then((res) => {
+      if (!res.ok) {
+        return dispatch(setErrMessage(res ? res.message : "something wrong"));
+      }
+      return res.data;
+    })
+    .then((products) => {
+      const array = [];
+      products.rows.forEach((product) => {
+        if (array.map((item) => item.id).indexOf(product.categoryId) < 0)
+          array.push({
+            id: product.categoryId,
+            name: product.ProductCategory.name,
+          });
+      });
+      dispatch(setIsLoading(false));
+      dispatch(setVendorProductCategories(array));
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
+
+export const getMyVendorProducts = (id, queryParameters) => (dispatch) => {
+  dispatch(setIsLoading(true));
+  return getOwnProductsApi(id, queryParameters)
+    .then((res) => {
+      if (!res.ok) {
+        return dispatch(setErrMessage(res ? res.message : "something wrong"));
+      }
+      return res.data;
+    })
+    .then((products) => {
+      dispatch(setIsLoading(false));
+      dispatch(setCount(products.count));
+      dispatch(setMyVendorProduct(products.rows));
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
+export const cleanMyVendorProducts = () => (dispatch) => {
+  dispatch(setMyVendorProduct(null));
+};
+
+export const getMyProductCategories = (id) => (dispatch) => {
+  dispatch(setIsLoading(true));
+
+  return getOwnProductsApi(id)
     .then((res) => {
       if (!res.ok) {
         return dispatch(setErrMessage(res ? res.message : "something wrong"));

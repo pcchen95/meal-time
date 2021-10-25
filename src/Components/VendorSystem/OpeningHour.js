@@ -1,8 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { useSelector } from "react-redux";
 import { Div, Text, Input } from "atomize";
-import CustomRaios from "./Radiobox";
+import Radiobox from "./Radiobox";
 
 const TimeInput = ({ name, value, isDisabled, required, handleOnChange }) => {
   return (
@@ -23,6 +22,7 @@ const TimeInput = ({ name, value, isDisabled, required, handleOnChange }) => {
         textColor={isDisabled && "gray600"}
         disabled={isDisabled}
         required={required}
+        cursor={isDisabled && "not-allowed"}
       />
     </Div>
   );
@@ -36,21 +36,16 @@ TimeInput.propTypes = {
   required: PropTypes.number,
 };
 
-const EachDay = ({ name, value, dayENG, newValues, setValues }) => {
+const EachDay = ({
+  name,
+  value,
+  dayENG,
+  newValues,
+  setValues,
+  isDisabled: isStoreDisabled,
+}) => {
   const { start, end, isOpen } = value;
-  const isVendor = useSelector(
-    (store) => store.vendors.vendor && store.vendors.vendor !== "not-vendor"
-  );
-  const isSuspended = useSelector(
-    (store) => store.vendors.vendor && store.vendors.vendor.isSuspended
-  );
-  const isStoreOpen = useSelector(
-    (store) => store.vendors.vendor && store.vendors.vendor.isOpen
-  );
-  const isDisabled = !isOpen || (isVendor && (!isStoreOpen || isSuspended));
-  // available: 當天 isOpen &&  (還不是賣家 || (賣家 isStoreOpen && 賣家沒有被 isSuspended))
-  // disable: !當天 isOpen || !(還不是賣家 || (賣家 isStoreOpen && 賣家沒有被 isSuspended))
-  //      => !當天 isOpen || (是賣家 && (!賣家 isStoreOpen || 賣家被 isSuspended))
+  const isDisabled = !isOpen || isStoreDisabled;
 
   const handleEvent = (e) => {
     const targetValue = Number(e.target.value);
@@ -74,13 +69,18 @@ const EachDay = ({ name, value, dayENG, newValues, setValues }) => {
     >
       <Text textSize="title">{name}</Text>
       <Div m={{ l: { xs: "1rem", md: "2rem" }, t: { xs: "1rem", md: "0" } }}>
-        <CustomRaios isOpen={isOpen} handleEvent={handleEvent} />
+        <Radiobox
+          isOpen={isOpen}
+          handleEvent={handleEvent}
+          isStoreDisabled={isStoreDisabled}
+        />
       </Div>
       <TimeInput
         name="Start time"
         value={start}
         isDisabled={isDisabled}
         required={isOpen}
+        cursor={isStoreDisabled && "not-allowed"}
         handleOnChange={(e) => {
           newValues[dayENG].start = e.target.value;
           setValues(newValues);
@@ -91,6 +91,7 @@ const EachDay = ({ name, value, dayENG, newValues, setValues }) => {
         value={end}
         isDisabled={isDisabled}
         required={isOpen}
+        cursor={isStoreDisabled && "not-allowed"}
         handleOnChange={(e) => {
           newValues[dayENG].start = e.target.value;
           setValues(newValues);
@@ -106,9 +107,10 @@ EachDay.propTypes = {
   dayENG: PropTypes.string,
   newValues: PropTypes.object,
   setValues: PropTypes.func,
+  isDisabled: PropTypes.bool,
 };
 
-const OpeningHour = ({ daysCH, values, setValues }) => {
+const OpeningHour = ({ daysCH, values, setValues, isDisabled }) => {
   const newValues = { ...values };
   const timeOfDay = Object.entries(newValues);
   // [['Monday', {start: 0900, end: 1900}], ['Tuesday', {start: 0900, end: 1900}], ....]
@@ -133,6 +135,7 @@ const OpeningHour = ({ daysCH, values, setValues }) => {
               dayENG={day[0]}
               value={day[1]}
               setValues={setValues}
+              isDisabled={isDisabled}
             />
           );
         })}
@@ -145,6 +148,7 @@ OpeningHour.propTypes = {
   values: PropTypes.object,
   daysCH: PropTypes.array,
   setValues: PropTypes.func,
+  isDisabled: PropTypes.bool,
 };
 
 export default OpeningHour;

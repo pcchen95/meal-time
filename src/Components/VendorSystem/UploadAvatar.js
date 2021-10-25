@@ -1,20 +1,9 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { useSelector } from "react-redux";
 import { Div } from "atomize";
 import UploadButton from "../../Components/VendorSystem/UploadButton";
 
-const InputField = ({ name, avatarInput, handleAvatar }) => {
-  const isVendor = useSelector(
-    (store) => store.vendors.vendor && store.vendors.vendor !== "not-vendor"
-  );
-  const isOpen = useSelector(
-    (store) => store.vendors.vendor && store.vendors.vendor.isOpen
-  );
-  const isSuspended = useSelector(
-    (store) => store.vendors.vendor && store.vendors.vendor.isSuspended
-  );
-  const isDisabled = isVendor && (!isOpen || isSuspended);
+const UploadAvatar = ({ name, avatarInput, handleAvatar, isDisabled }) => {
   return (
     <Div>
       <Div d="flex" flexDir="row" justify="flex-start" align="center" w="100%">
@@ -38,10 +27,11 @@ const InputField = ({ name, avatarInput, handleAvatar }) => {
   );
 };
 
-InputField.propTypes = {
+UploadAvatar.propTypes = {
   name: PropTypes.string,
   avatarInput: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
   handleAvatar: PropTypes.func,
+  isDisabled: PropTypes.bool,
 };
 
-export default InputField;
+export default UploadAvatar;

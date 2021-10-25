@@ -21,6 +21,14 @@ export const notificationReducer = createSlice({
           state.errMessage = "原密碼輸入錯誤";
           return;
         }
+        if (action.payload.includes("password is wrong")) {
+          state.errMessage = "密碼錯誤";
+          return;
+        }
+        if (action.payload.includes("username does not exist")) {
+          state.errMessage = "帳號錯誤";
+          return;
+        }
         state.errMessage = action.payload;
         return;
       }
