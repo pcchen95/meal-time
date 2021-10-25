@@ -5,7 +5,6 @@ import HomePage from "./pages/HomePage";
 import ProductsPage from "./pages/ProductsPage";
 import SingleProductPage from "./pages/SingleProductPage";
 import OrderDetailsPage from "./pages/OrderDetailsPage";
-import OrdersPage from "./pages/OrdersPage";
 import StorePage from "./pages/StorePage";
 import UpdateStorePage from "./pages/UpdateStorePage";
 import MapPage from "./pages/MapPage";
@@ -41,9 +40,6 @@ function App() {
           <Route path="/order_details">
             <OrderDetailsPage />
           </Route>
-          <Route path="/orders">
-            <OrdersPage />
-          </Route>
           <Route path="/store">
             <StorePage />
           </Route>
@@ -52,9 +48,6 @@ function App() {
           </Route>
           <Route path="/map">
             <MapPage />
-          </Route>
-          <Route path="/cart">
-            <CartPage />
           </Route>
           <Route path="/cart">
             <CartPage />
