@@ -8,10 +8,10 @@ const initialState = {
   cart: null,
   cartData: null,
   isShow: false,
-  isSelect: null,
+  vendorId: null,
   isLoading: false,
-  vendorById: null,
   userId: null,
+  orderProducts: [],
 };
 
 export const cartReducer = createSlice({
@@ -27,29 +27,29 @@ export const cartReducer = createSlice({
     setIsShow: (state, action) => {
       state.isShow = action.payload;
     },
-    setIsSelect: (state, action) => {
-      state.isSelect = action.payload;
+    setVendorId: (state, action) => {
+      state.vendorId = action.payload;
     },
     setIsLoading: (state, action) => {
       state.isLoading = action.payload;
     },
-    setVendorById: (state, action) => {
-      state.vendorById = action.payload;
-    },
     setUserId: (state, action) => {
       state.userId = action.payload;
     },
+    setOrderProducts: (state,action) => {
+      state.orderProducts = action.payload;
+    }
   },
 });
 
 export const {
   setCart,
   setCartData,
-  setIsSelect,
+  setVendorId,
   setIsShow,
   setIsLoading,
-  setVendorById,
   setUserId,
+  setOrderProducts,
 } = cartReducer.actions;
 
 export const getMe = () => (dispatch) => {
@@ -91,8 +91,8 @@ export const selectCart = (state) => state.cart.cart;
 export const selectCartData = (state) => state.cart.cartData;
 export const selectIsShow = (state) => state.cart.isShow;
 export const selectIsLoading = (state) => state.cart.isLoading;
-export const selectVendorById = (state) => state.cart.vendorById;
-export const selectIsSelect = (state) => state.cart.isSelect;
+export const selectVendorId = (state) => state.cart.vendorId;
 export const selectUserId = (state) => state.cart.userId;
+export const selectOrderProducts = (state) => state.cart.orderProducts;
 
 export default cartReducer.reducer;

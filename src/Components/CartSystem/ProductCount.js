@@ -62,7 +62,6 @@ const ProductCount = ({ item, cartData, userId }) => {
       </Button>
       <Input
         type="number"
-        name="quantity"
         rounded="sm"
         value={productCount}
         textAlign="center"

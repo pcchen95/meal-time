@@ -7,17 +7,21 @@ import LoadingPage from "../LoadingPage";
 import {
   getMe,
   selectCart,
-  setIsSelect,
-  selectIsSelect,
+  setVendorId,
+  selectVendorId,
   selectIsLoading,
   getCartData,
   selectCartData,
   setCartData,
   selectUserId,
+  selectOrderProducts,
+  setOrderProducts,
 } from "../../redux/reducers/cartReducer";
 import { newOrder } from "../../redux/reducers/orderReducer";
 import { getVendorById } from "../../redux/reducers/vendorReducer";
 import { setErrorMessage } from "../../redux/reducers/notificationReducer";
+import SuccessNotification from "../../Components/Notifications/SuccessNotification";
+import WarningNotification from "../../Components/Notifications/WarningNotification";
 
 export default function CartPage() {
   const dispatch = useDispatch();
@@ -26,8 +30,9 @@ export default function CartPage() {
   const cartData = useSelector(selectCartData);
   const userId = useSelector(selectUserId);
   const cart = useSelector(selectCart);
-  const isSelect = useSelector(selectIsSelect);
+  const vendorId = useSelector(selectVendorId);
   const isLoading = useSelector(selectIsLoading);
+  const orderProducts = useSelector(selectOrderProducts);
   const vendorById = useSelector((store) => store.vendors.vendorById);
   const errMessage = useSelector((store) => store.notifications.errMessage);
 
@@ -44,33 +49,44 @@ export default function CartPage() {
     if (type === "book") {
       if (isChecked === true) {
         dispatch(setErrorMessage(null));
-        dispatch(getVendorById(isSelect));
+        dispatch(getVendorById(vendorId));
         setIsShow(true);
       } else {
         window.scroll(0, 0);
         dispatch(setErrorMessage("請至少勾選一個購物車才能預訂食物"));
       }
+      if (vendorId) {
+        let isSelectFood = [];
+        let result = [];
+        if (vendorId) {
+          vendorId &&
+            cart[vendorId].forEach((item) => isSelectFood.push(item.id));
+          for (let i = 0; i < isSelectFood.length; i++) {
+            result.push(
+              JSON.parse(cartData).find((item) => item.id == isSelectFood[i])
+            );
+          }
+          console.log("vendorId", vendorId);
+          console.log("orderProducts:", orderProducts);
+
+          dispatch(setOrderProducts(result));
+        }
+      }
     }
     if (type === "cancel") {
       setIsShow(false);
-      setIsSelect(null);
+      setVendorId(null);
     }
   };
 
-  const handleSubmit = ({ value, isSelect, pickupTime, remarks }) => {
-    dispatch(
-      newOrder({
-        orderProducts: value,
-        vendorId: isSelect,
-        pickupTime,
-        remarks,
-      })
-    );
-  };
-
   const handleCheckedClick = (e) => {
-    dispatch(setIsSelect(e.target.value));
+    dispatch(setVendorId(e.target.value));
     setIsChecked(!isChecked);
+
+    if (isChecked) {
+      dispatch(setVendorId(null));
+      dispatch(setOrderProducts([]));
+    }
   };
 
   const handleDeleteClick = (id, userId) => {
@@ -79,6 +95,17 @@ export default function CartPage() {
     );
     localStorage.setItem(`cartId${userId}`, newCartData);
     dispatch(setCartData(newCartData));
+  };
+
+  const handleSubmit = (orderProducts, vendorId, pickupTime, remarks) => {
+    dispatch(
+      newOrder({
+        orderProducts,
+        vendorId,
+        pickupTime,
+        remarks,
+      })
+    );
   };
 
   return (
@@ -121,7 +148,7 @@ export default function CartPage() {
       <CartList
         setErrorMessage={setErrorMessage}
         isChecked={isChecked}
-        isSelect={isSelect}
+        vendorId={vendorId}
         handleCheckedClick={handleCheckedClick}
         handleDeleteClick={handleDeleteClick}
         userId={userId}
@@ -157,6 +184,8 @@ export default function CartPage() {
         handleIsShow={handleIsShow}
         handleSubmit={handleSubmit}
       />
+      <SuccessNotification />
+      <WarningNotification />
     </Div>
   );
 }
