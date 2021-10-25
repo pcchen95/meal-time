@@ -1,18 +1,18 @@
-import React from "react"
-import { Div, Button, Icon } from "atomize"
-import PropTypes from "prop-types"
+import React from 'react'
+import { Div, Button, Icon } from 'atomize'
+import PropTypes from 'prop-types'
 const PaginationButton = ({ setPage, page, totalPages }) => {
   const handlePageClick = (type) => {
-    if (type === "first") {
+    if (type === 'first') {
       setPage(1)
     }
-    if (type === "back") {
+    if (type === 'back') {
       setPage(page - 1)
     }
-    if (type === "next") {
+    if (type === 'next') {
       setPage(page + 1)
     }
-    if (type === "last") {
+    if (type === 'last') {
       setPage(totalPages)
     }
   }
@@ -27,7 +27,7 @@ const PaginationButton = ({ setPage, page, totalPages }) => {
       {totalPages !== 0 && (
         <Div d="flex">
           {page === 1 ? (
-            ""
+            ''
           ) : (
             <>
               <Button
@@ -37,8 +37,8 @@ const PaginationButton = ({ setPage, page, totalPages }) => {
                 hoverTextColor="info900"
                 bg="white"
                 hoverBg="info200"
-                m={{ r: "0.5rem" }}
-                onClick={() => handlePageClick("first")}
+                m={{ r: '0.5rem' }}
+                onClick={() => handlePageClick('first')}
               >
                 <Icon name="Back" size="20px" color="info700" />
               </Button>
@@ -49,8 +49,8 @@ const PaginationButton = ({ setPage, page, totalPages }) => {
                 hoverTextColor="info900"
                 bg="white"
                 hoverBg="info200"
-                m={{ r: "0.5rem" }}
-                onClick={() => handlePageClick("back")}
+                m={{ r: '0.5rem' }}
+                onClick={() => handlePageClick('back')}
               >
                 <Icon name="LeftArrow" size="20px" color="info700" />
               </Button>
@@ -59,16 +59,16 @@ const PaginationButton = ({ setPage, page, totalPages }) => {
 
           <Div
             h="2rem"
-            p={{ x: "1rem" }}
+            p={{ x: '1rem' }}
             textSize="title"
             textColor="info700"
-            m={{ r: "0.5rem" }}
+            m={{ r: '0.5rem' }}
           >
             {page} / {totalPages} 頁
           </Div>
 
           {page === totalPages ? (
-            ""
+            ''
           ) : (
             <>
               <Button
@@ -78,8 +78,8 @@ const PaginationButton = ({ setPage, page, totalPages }) => {
                 hoverTextColor="info900"
                 bg="white"
                 hoverBg="info200"
-                m={{ r: "0.5rem" }}
-                onClick={() => handlePageClick("next")}
+                m={{ r: '0.5rem' }}
+                onClick={() => handlePageClick('next')}
               >
                 <Icon name="RightArrow" size="20px" color="info700" />
               </Button>
@@ -90,8 +90,8 @@ const PaginationButton = ({ setPage, page, totalPages }) => {
                 hoverTextColor="info900"
                 bg="white"
                 hoverBg="info200"
-                m={{ r: "0.5rem" }}
-                onClick={() => handlePageClick("last")}
+                m={{ r: '0.5rem' }}
+                onClick={() => handlePageClick('last')}
               >
                 <Icon name="Next" size="20px" color="info700" />
               </Button>
