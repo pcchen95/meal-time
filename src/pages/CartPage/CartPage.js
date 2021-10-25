@@ -51,26 +51,18 @@ export default function CartPage() {
         dispatch(setErrorMessage(null));
         dispatch(getVendorById(vendorId));
         setIsShow(true);
+        let isSelectFood = [];
+        let result = [];
+        cart && cart[vendorId].forEach((item) => isSelectFood.push(item.id));
+        for (let i = 0; i < isSelectFood.length; i++) {
+          result.push(
+            JSON.parse(cartData).find((item) => item.id == isSelectFood[i])
+          );
+        }
+        dispatch(setOrderProducts(result));
       } else {
         window.scroll(0, 0);
         dispatch(setErrorMessage("請至少勾選一個購物車才能預訂食物"));
-      }
-      if (vendorId) {
-        let isSelectFood = [];
-        let result = [];
-        if (vendorId) {
-          vendorId &&
-            cart[vendorId].forEach((item) => isSelectFood.push(item.id));
-          for (let i = 0; i < isSelectFood.length; i++) {
-            result.push(
-              JSON.parse(cartData).find((item) => item.id == isSelectFood[i])
-            );
-          }
-          console.log("vendorId", vendorId);
-          console.log("orderProducts:", orderProducts);
-
-          dispatch(setOrderProducts(result));
-        }
       }
     }
     if (type === "cancel") {
@@ -78,15 +70,13 @@ export default function CartPage() {
       setVendorId(null);
     }
   };
+  console.log("cart[vendorId]", cart && cart[vendorId]);
+  console.log("vendorId", vendorId);
+  console.log("orderProducts:", orderProducts);
 
   const handleCheckedClick = (e) => {
     dispatch(setVendorId(e.target.value));
     setIsChecked(!isChecked);
-
-    if (isChecked) {
-      dispatch(setVendorId(null));
-      dispatch(setOrderProducts([]));
-    }
   };
 
   const handleDeleteClick = (id, userId) => {

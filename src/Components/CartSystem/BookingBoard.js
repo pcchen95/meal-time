@@ -76,16 +76,18 @@ const BookingBoard = ({ vendorById, isShow, handleIsShow, handleSubmit }) => {
                 min={new Date().toISOString().slice(0, 16)}
                 required
               />
-              <Text
-                textSize="heading"
-                m="1rem"
-                textColor="gray800"
-                value={remarks}
-                onChange={(e) => setRemarks(e.target.value)}
-              >
+              {console.log("pickupTime:", pickupTime)}
+              <Text textSize="heading" m="1rem" textColor="gray800">
                 備註
               </Text>
-              <Textarea m="1rem" maxH="8rem" name="remarks" />
+              {console.log("remarks:", remarks)}
+              <Textarea
+                m="1rem"
+                maxH="8rem"
+                name="remarks"
+                value={remarks}
+                onChange={(e) => setRemarks(e.target.value)}
+              />
               <Div d="flex" w="26rem" justify="center">
                 <Button
                   h="3rem"
