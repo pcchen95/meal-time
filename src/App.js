@@ -1,8 +1,13 @@
 import "./App.css";
 import React from "react";
 import { HashRouter as Router, Switch, Route } from "react-router-dom";
+import { useDispatch } from "react-redux";
+
+import { getMe } from "./redux/reducers/userReducer";
 import HomePage from "./pages/HomePage";
 import ProductsPage from "./pages/ProductsPage";
+import ProductManagePage from "./pages/ProductManagePage";
+import ProductEdit from "./pages/ProductEdit";
 import SingleProductPage from "./pages/SingleProductPage";
 import OrderDetailsPage from "./pages/OrderDetailsPage";
 import OrdersPage from "./pages/OrdersPage";
@@ -19,11 +24,22 @@ import AdminStoreTypePage from "./pages/AdminStoreTypePage";
 import Entrance from "./pages/Entrance";
 import FAQPage from "./pages/FAQPage";
 import MemberEdit from "./pages/MemberEdit";
+import PasswordEdit from "./pages/PasswordEdit";
 import RulesPage from "./pages/RulesPage";
 import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
 
 function App() {
+  const dispatch = useDispatch();
+  React.useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: "instant",
+    });
+    dispatch(getMe());
+  }, [dispatch]);
+
   return (
     <div>
       <Router>
@@ -35,8 +51,14 @@ function App() {
           <Route path="/products">
             <ProductsPage />
           </Route>
-          <Route path="/product">
+          <Route path="/product/:id">
             <SingleProductPage />
+          </Route>
+          <Route path="/product_manage">
+            <ProductManagePage />
+          </Route>
+          <Route path="/product_edit/:id">
+            <ProductEdit />
           </Route>
           <Route path="/order_details">
             <OrderDetailsPage />
@@ -44,7 +66,7 @@ function App() {
           <Route path="/orders">
             <OrdersPage />
           </Route>
-          <Route path="/store">
+          <Route path="/store/:id">
             <StorePage />
           </Route>
           <Route path="/update_store">
@@ -79,6 +101,9 @@ function App() {
           </Route>
           <Route path="/member_edit">
             <MemberEdit />
+          </Route>
+          <Route path="/member_password">
+            <PasswordEdit />
           </Route>
           <Route path="/rules">
             <RulesPage />
