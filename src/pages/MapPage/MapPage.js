@@ -17,7 +17,7 @@ import {
   setShowWarningNotification,
 } from "../../redux/reducers/notificationReducer";
 import { Div, Text } from "atomize";
-import Geocode from "react-geocode";
+import { AddressToLatLng } from "../../utils";
 import LoadingPage from "../LoadingPage/LoadingPage";
 import Map from "../../Components/MapSystem/Map";
 import Dropdown from "../../Components/MapSystem/Dropdown";
@@ -33,7 +33,8 @@ export default function MapPage() {
   const [categoryId, setCategoryId] = useState(0);
   const [input, setInput] = useState("");
   const [address, setAddress] = useState("");
-  const currentPosition = useSelector((store) => store.users.position);
+  const [isLocationUsed, setIsLocationUsed] = useState(false);
+
   const isLoadingVendor = useSelector((store) => store.vendors.isLoading);
   const products = useSelector((store) => store.products.vendorProducts);
   const searchedProducts = useSelector(
@@ -56,6 +57,14 @@ export default function MapPage() {
     setVendorOfMap(null);
   };
 
+  const handleKeyPressSearch = (e) => {
+    if (e.key === "Enter") {
+      dispatch(searchProducts(input));
+      setCategoryId(0);
+      setVendorOfMap(null);
+    }
+  };
+
   const handleClearSearch = () => {
     setInput("");
     dispatch(getVendorOfSearchedProducts());
@@ -63,17 +72,27 @@ export default function MapPage() {
   };
 
   const handleEnter = () => {
-    Geocode.fromAddress(address).then(
-      (response) => {
-        const { lat, lng } = response.results[0].geometry.location;
-        dispatch(setCurrentPosition({ lat, lng }));
-      },
-      (error) => {
-        console.log(error);
+    AddressToLatLng(address).then((res) => {
+      const { lat, lng } = res;
+      if (lat && lng) {
+        return dispatch(setCurrentPosition({ lat, lng }));
+      }
+      dispatch(setErrMessage("找不到地址"));
+      dispatch(setShowWarningNotification(true));
+    });
+  };
+
+  const handleOnKeyPress = (e) => {
+    if (e.key === "Enter") {
+      AddressToLatLng(address).then((res) => {
+        const { lat, lng } = res;
+        if (lat && lng) {
+          return dispatch(setCurrentPosition({ lat, lng }));
+        }
         dispatch(setErrMessage("找不到地址"));
         dispatch(setShowWarningNotification(true));
-      }
-    );
+      });
+    }
   };
 
   const handleClearAddress = () => {
@@ -81,18 +100,23 @@ export default function MapPage() {
     dispatch(setCurrentPosition(null));
   };
 
+  const geoSuccess = ({ coords: { latitude: lat, longitude: lng } }) => {
+    const pos = { lat, lng };
+    dispatch(setCurrentPosition(pos));
+    setIsLocationUsed(true);
+  };
+
+  const geoError = (err) => {
+    if (err) setIsLocationUsed(false);
+  };
+
   useEffect(() => {
     categoryId !== 0
       ? dispatch(getAllVendors({ categoryId }))
       : dispatch(getAllVendors({}));
     dispatch(getCategories());
-    navigator?.geolocation.getCurrentPosition(
-      ({ coords: { latitude: lat, longitude: lng } }) => {
-        const pos = { lat, lng };
-        dispatch(setCurrentPosition(pos));
-        return pos;
-      }
-    );
+    if (!navigator?.geolocation) return setIsLocationUsed(false);
+    navigator?.geolocation.getCurrentPosition(geoSuccess, geoError);
   }, [categoryId, dispatch]);
 
   useEffect(() => {
@@ -123,14 +147,16 @@ export default function MapPage() {
             input={input}
             handleOnChange={handleOnChange}
             handleSearch={handleSearch}
+            handleKeyPressSearch={handleKeyPressSearch}
             handleClearSearch={handleClearSearch}
           />
         </Div>
-        {!currentPosition && (
+        {!isLocationUsed && (
           <AddressInputBox
             address={address}
             handleOnChange={(e) => setAddress(e.target.value)}
             handleEnter={handleEnter}
+            handleOnKeyPress={handleOnKeyPress}
             handleClear={handleClearAddress}
           />
         )}

@@ -6,6 +6,7 @@ export default function SearchBox({
   input,
   handleOnChange,
   handleSearch,
+  handleKeyPressSearch,
   handleClearSearch,
 }) {
   return (
@@ -15,6 +16,7 @@ export default function SearchBox({
       w={{ xs: "100%", sm: "15rem" }}
       value={input}
       onChange={handleOnChange}
+      onKeyPress={handleKeyPressSearch}
       suffix={
         <>
           {input && (
@@ -52,5 +54,6 @@ SearchBox.propTypes = {
   input: PropTypes.string,
   handleOnChange: PropTypes.func,
   handleSearch: PropTypes.func,
+  handleKeyPressSearch: PropTypes.func,
   handleClearSearch: PropTypes.func,
 };
