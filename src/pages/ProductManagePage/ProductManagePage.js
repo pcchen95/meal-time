@@ -86,11 +86,11 @@ export default function ProductManagePage() {
   }, [categoryId, page, availableFilter]);
 
   useEffect(() => {
-    if (count) setTotalPages(Math.ceil(count / 5));
+    if (count) setTotalPages(Math.ceil(count / limit));
   }, [count]);
 
   useEffect(() => {
-    setPageStart(limit * (page - 1) + 1);
+    setPageStart(() => (count === 0 ? 0 : limit * (page - 1) + 1));
     setPageEnd(() => (limit * page > count ? count : limit * page));
   }, [page, count]);
 
@@ -134,7 +134,7 @@ export default function ProductManagePage() {
           <Div textSize="caption" textColor="gray600" m={{ t: "1rem" }}>
             共 {count} 筆搜尋結果，顯示第 {pageStart} ～ {pageEnd} 筆結果
           </Div>
-          <Div>
+          <Div minH="calc(100vh - 467px)">
             {products &&
               products.map((product) => (
                 <ProductList
@@ -145,11 +145,13 @@ export default function ProductManagePage() {
                 />
               ))}
           </Div>
-          <PaginationButton
-            totalPages={totalPages}
-            page={page}
-            setPage={setPage}
-          />
+          {count > 0 && (
+            <PaginationButton
+              totalPages={totalPages}
+              page={page}
+              setPage={setPage}
+            />
+          )}
         </Div>
       )}
     </>

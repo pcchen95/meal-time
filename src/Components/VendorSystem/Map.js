@@ -1,12 +1,19 @@
 import React from "react";
 import { useState, useEffect, useRef } from "react";
+import { useDispatch } from "react-redux";
 import PropTypes from "prop-types";
 import { GoogleMap, useJsApiLoader, Marker } from "@react-google-maps/api";
 import Geocode from "react-geocode";
 import { Div } from "atomize";
+import { AddressToLatLng } from "../../utils";
+import {
+  setErrMessage,
+  setShowWarningNotification,
+} from "../../redux/reducers/notificationReducer";
 import googleMapToken from "../../constants/googleMapToken";
 
 export function Map({ completeAddress, latlng, setLatLng }) {
+  const dispatch = useDispatch();
   const defaultParams = useRef({
     center: {
       lat: 23.893598219621072,
@@ -34,15 +41,15 @@ export function Map({ completeAddress, latlng, setLatLng }) {
   useEffect(() => {
     completeAddress &&
       setLatLng &&
-      Geocode.fromAddress(completeAddress).then(
-        (response) => {
-          const { lat, lng } = response.results[0].geometry.location;
-          setLatLng({ lat, lng });
-        },
-        (error) => {
-          console.error(error);
+      AddressToLatLng(completeAddress).then((res) => {
+        const { lat, lng } = res;
+        if (lat && lng) {
+          return setLatLng({ lat, lng });
         }
-      );
+        console.log(res);
+        dispatch(setErrMessage("找不到地址"));
+        dispatch(setShowWarningNotification(true));
+      });
   }, [completeAddress]);
 
   return (
