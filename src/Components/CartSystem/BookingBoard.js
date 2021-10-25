@@ -1,8 +1,8 @@
-import React from 'react'
-import PropTypes from 'prop-types'
-import styled from 'styled-components'
-import { Div, Text, Input, Textarea, Button } from 'atomize'
-import OpeningHour from './OpeningHour'
+import React, { useState } from "react"
+import PropTypes from "prop-types"
+import styled from "styled-components"
+import { Div, Text, Input, Textarea, Button } from "atomize"
+import OpeningHour from "./OpeningHour"
 
 const Booking = styled.div`
   display: none;
@@ -51,13 +51,16 @@ const BookingProducts = styled.div`
 `
 
 const BookingBoard = ({ vendorById, isShow, handleIsShow, handleSubmit }) => {
+  const [pickupTime, setPickupTime] = useState("")
+  const [remarks, setRemarks] = useState("")
+
   return (
     <Booking $isShow={isShow}>
       <BookingProducts $isShow={isShow}>
         <Div fontFamily="code" yI textAlign="center">
           <OpeningHour vendorById={vendorById} />
-          <form onSubmit={handleSubmit}>
-            <Div border={{ t: '3px solid' }} borderColor="gray200">
+          <div>
+            <Div border={{ t: "3px solid" }} borderColor="gray200">
               <Text textSize="heading" m="1rem" textColor="info800">
                 預約時間
               </Text>
@@ -66,18 +69,27 @@ const BookingBoard = ({ vendorById, isShow, handleIsShow, handleSubmit }) => {
               </Text>
               <Input
                 type="datetime-local"
+                name="pickupTime"
+                value={pickupTime}
+                onChange={(e) => setPickupTime(e.target.value)}
                 m="1rem"
-                min={new Date().toISOString().split('.')[0]}
+                min={new Date().toISOString().slice(0, 16)}
                 required
               />
-              <Text textSize="heading" m="1rem" textColor="gray800">
+              <Text
+                textSize="heading"
+                m="1rem"
+                textColor="gray800"
+                value={remarks}
+                onChange={(e) => setRemarks(e.target.value)}
+              >
                 備註
               </Text>
-              <Textarea m="1rem" maxH="8rem" />
+              <Textarea m="1rem" maxH="8rem" name="remarks" />
               <Div d="flex" w="26rem" justify="center">
                 <Button
                   h="3rem"
-                  p={{ x: '1.25rem' }}
+                  p={{ x: "1.25rem" }}
                   textSize="body"
                   textColor="info700"
                   hoverTextColor="warning800"
@@ -86,14 +98,15 @@ const BookingBoard = ({ vendorById, isShow, handleIsShow, handleSubmit }) => {
                   border="1px solid"
                   borderColor="info700"
                   hoverBorderColor="warning800"
-                  m={{ r: '0.5rem', t: '1rem' }}
+                  m={{ r: "0.5rem", t: "1rem" }}
                   type="submit"
+                  onClick={handleSubmit}
                 >
                   確定
                 </Button>
                 <Button
                   h="3rem"
-                  p={{ x: '1.25rem' }}
+                  p={{ x: "1.25rem" }}
                   textSize="body"
                   textColor="info700"
                   hoverTextColor="brand800"
@@ -102,14 +115,14 @@ const BookingBoard = ({ vendorById, isShow, handleIsShow, handleSubmit }) => {
                   border="1px solid"
                   borderColor="info700"
                   hoverBorderColor="danger800"
-                  m={{ r: '0.5rem', t: '1rem' }}
-                  onClick={() => handleIsShow('cancel')}
+                  m={{ r: "0.5rem", t: "1rem" }}
+                  onClick={() => handleIsShow("cancel")}
                 >
                   取消
                 </Button>
               </Div>
             </Div>
-          </form>
+          </div>
         </Div>
       </BookingProducts>
     </Booking>
@@ -117,10 +130,12 @@ const BookingBoard = ({ vendorById, isShow, handleIsShow, handleSubmit }) => {
 }
 
 BookingBoard.propTypes = {
-  vendorById: PropTypes.number,
+  vendorById: PropTypes.object,
   isShow: PropTypes.bool,
   handleIsShow: PropTypes.func,
   handleSubmit: PropTypes.func,
+  pickupTime: PropTypes.string,
+  remarks: PropTypes.string,
 }
 
 export default BookingBoard
