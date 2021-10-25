@@ -1,43 +1,53 @@
 import React from "react";
 import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Link, useHistory } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import { getVendor } from "../../redux/reducers/vendorReducer";
 import {
-  getVendorProducts,
-  getVendorProductCategories,
+  getMyVendorProducts,
+  getMyProductCategories,
   deleteProduct,
 } from "../../redux/reducers/productReducer";
-import { Div, Text, Button, Icon } from "atomize";
+import { Div, Text } from "atomize";
 import LoadingPage from "../LoadingPage/LoadingPage";
-import Dropdown from "../../Components/ProductSystem/VendorProductDropdown";
 import PaginationButton from "../../Components/VendorSystem/PaginationButton";
-import VendorProductList from "../../Components/ProductSystem/VendorProductList";
+import ProductList from "../../Components/ProductSystem/VendorProductList";
+import ControlArea from "../../Components/ProductSystem/VendorControlArea";
 
 export default function ProductManagePage() {
   const dispatch = useDispatch();
   const [categoryId, setCategoryId] = useState(0);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(null);
+  const [availableFilter, setAvailableFilter] = useState("all");
+  const [isDisabled, setIsDisabled] = useState(false);
+  const [pageStart, setPageStart] = useState(null);
+  const [pageEnd, setPageEnd] = useState(null);
   const user = useSelector((store) => store.users.user);
   const vendor = useSelector((store) => store.vendors.vendor);
-  const isLoadingVendor = useSelector((store) => store.vendors.isLoading);
-  const products = useSelector((store) => store.products.vendorProducts);
+  const products = useSelector((store) => store.products.myVendorProducts);
   const count = useSelector((store) => store.products.count);
   const isLoadingProduct = useSelector((store) => store.products.isLoading);
   const history = useHistory();
-  const limit = 5;
+  const limit = 10;
 
-  const getProducts = (id, categoryId, page) => {
+  const getProducts = (id) => {
     if (categoryId === 0) {
-      dispatch(getVendorProducts(id, { limit, page }));
+      dispatch(
+        getMyVendorProducts(id, {
+          limit,
+          page,
+          isAvailable: availableFilter,
+        })
+      );
     }
     if (categoryId !== 0) {
       dispatch(
-        getVendorProducts(id, {
+        getMyVendorProducts(id, {
           limit,
           category: categoryId,
           page,
+          isAvailable: availableFilter,
         })
       );
     }
@@ -54,82 +64,94 @@ export default function ProductManagePage() {
   useEffect(() => {
     if (user && user === "non-login") return history.push("/");
     dispatch(getVendor());
-  }, []);
+  }, [user]);
 
   useEffect(() => {
-    if (vendor) {
+    if (vendor && user) {
       if (vendor == "not-vendor") return history.push("/update_store");
-      dispatch(getVendorProductCategories(vendor.id));
-      getProducts(vendor.id, categoryId, page);
+      dispatch(getMyProductCategories(vendor.id));
+      getProducts(vendor.id);
+      if (vendor.isSuspended || user.role === "suspended") {
+        setIsDisabled(true);
+      } else {
+        setIsDisabled(false);
+      }
     }
-  }, [vendor]);
+  }, [vendor, user]);
 
   useEffect(() => {
     if (vendor) {
-      getProducts(vendor.id, categoryId, page);
+      getProducts(vendor.id);
     }
-  }, [vendor, categoryId, page]);
-
-  useEffect(() => {
-    setPage(1);
-  }, [categoryId]);
+  }, [categoryId, page, availableFilter]);
 
   useEffect(() => {
     if (count) setTotalPages(Math.ceil(count / 5));
   }, [count]);
 
+  useEffect(() => {
+    setPageStart(limit * (page - 1) + 1);
+    setPageEnd(() => (limit * page > count ? count : limit * page));
+  }, [page, count]);
+
+  useEffect(() => {
+    setPage(1);
+  }, [categoryId, availableFilter]);
+
   return (
     <>
-      {(isLoadingVendor || isLoadingProduct) && <LoadingPage />}
-      <Div w="80%" m={{ y: "2rem", x: "auto" }}>
-        <Text
-          textSize="heading"
-          textColor="info900"
-          w="100%"
-          textAlign="center"
-        >
-          商品管理
-        </Text>
-        <Div d="flex" flexDir="row" w="100%" justify="space-between">
-          <Dropdown categoryId={categoryId} setCategoryId={setCategoryId} />
-          <Link to="/product_edit/new" style={{ textDecoration: "none" }}>
-            <Button
-              prefix={
-                <Icon
-                  name="Add"
-                  size="16px"
-                  color="white"
-                  m={{ r: "0.5rem" }}
+      {isLoadingProduct && <LoadingPage />}
+      {vendor && (
+        <Div w="80%" m={{ y: "2rem", x: "auto" }}>
+          {isDisabled && (
+            <Div tag="h4" textColor="danger800" w="100%" textAlign="center">
+              您已被停權！
+            </Div>
+          )}
+          <Text
+            textSize="heading"
+            textColor="info900"
+            w="100%"
+            textAlign="center"
+          >
+            商品管理
+          </Text>
+          <Div
+            d="flex"
+            flexDir="row"
+            w="100%"
+            justify="space-between"
+            align="flex-end"
+          >
+            <ControlArea
+              categoryId={categoryId}
+              setCategoryId={setCategoryId}
+              availableFilter={availableFilter}
+              setAvailableFilter={setAvailableFilter}
+              isDisabled={isDisabled}
+            />
+          </Div>
+          <Div textSize="caption" textColor="gray600" m={{ t: "1rem" }}>
+            共 {count} 筆搜尋結果，顯示第 {pageStart} ～ {pageEnd} 筆結果
+          </Div>
+          <Div>
+            {products &&
+              products.map((product) => (
+                <ProductList
+                  key={product.id}
+                  product={product}
+                  handleDelete={handleDelete}
+                  isDisabled={isDisabled}
                 />
-              }
-              h="2rem"
-              bg="warning700"
-              hoverBg="warning800"
-              rounded="md"
-              p={{ r: "1rem", l: "1rem" }}
-              shadow="2"
-              hoverShadow="3"
-            >
-              新增商品
-            </Button>
-          </Link>
+              ))}
+          </Div>
+          <PaginationButton
+            totalPages={totalPages}
+            page={page}
+            setPage={setPage}
+          />
         </Div>
-        <Div>
-          {products &&
-            products.map((product) => (
-              <VendorProductList
-                key={product.id}
-                product={product}
-                handleDelete={handleDelete}
-              />
-            ))}
-        </Div>
-        <PaginationButton
-          totalPages={totalPages}
-          page={page}
-          setPage={setPage}
-        />
-      </Div>
+      )}
     </>
   );
 }

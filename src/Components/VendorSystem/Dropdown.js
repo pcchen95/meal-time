@@ -37,20 +37,14 @@ lists.propTypes = {
   setShowDropdown: PropTypes.func,
 };
 
-export function SmallDropdown({ value: categoryId, setCategoryId }) {
+export function SmallDropdown({
+  value: categoryId,
+  setCategoryId,
+  isDisabled,
+}) {
   const [showDropdown, setShowDropdown] = useState(false);
   const [name, setName] = useState("");
   const categories = useSelector((store) => store.vendors.categories);
-  const isVendor = useSelector(
-    (store) => store.vendors.vendor && store.vendors.vendor !== "not-vendor"
-  );
-  const isOpen = useSelector(
-    (store) => store.vendors.vendor && store.vendors.vendor.isOpen
-  );
-  const isSuspended = useSelector(
-    (store) => store.vendors.vendor && store.vendors.vendor.isSuspended
-  );
-  const isDisabled = isVendor && (!isOpen || isSuspended);
 
   const handleToggleDropdown = () => {
     setShowDropdown(!showDropdown);
@@ -71,6 +65,7 @@ export function SmallDropdown({ value: categoryId, setCategoryId }) {
       onClick={handleToggleDropdown}
       textColor={isDisabled && "gray600"}
       menu={lists({ categories, categoryId, setCategoryId, setShowDropdown })}
+      cursor={isDisabled ? "not-allowed" : "pointer"}
     >
       {name}
     </Dropdown>
@@ -80,6 +75,7 @@ export function SmallDropdown({ value: categoryId, setCategoryId }) {
 SmallDropdown.propTypes = {
   value: PropTypes.number,
   setCategoryId: PropTypes.func,
+  isDisabled: PropTypes.bool,
 };
 
 export default SmallDropdown;

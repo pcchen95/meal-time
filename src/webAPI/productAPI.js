@@ -2,13 +2,15 @@ import BASE_URL from "../constants/apiurl";
 import { getAuthToken } from "../utils";
 
 const getQueryString = (queryParameters) => {
-  const { page, sort, order, limit, category } = queryParameters || {};
+  const { page, sort, order, limit, category, isAvailable } =
+    queryParameters || {};
   let queryString = "";
   if (page) queryString += `&page=${page}`;
   if (sort) queryString += `&sort=${sort}`;
   if (order) queryString += `&order=${order}`;
   if (limit) queryString += `&limit=${limit}`;
   if (category) queryString += `&category=${category}`;
+  if (isAvailable) queryString += `&isAvailable=${isAvailable}`;
   return queryString;
 };
 
@@ -29,6 +31,16 @@ const getProductsByVendor = (id, queryParameters) => {
   return fetch(`${BASE_URL}/products/vendor/${id}?${queryString}`).then((res) =>
     res.json()
   );
+};
+
+const getOwnProducts = (id, queryParameters) => {
+  const token = getAuthToken();
+  const queryString = getQueryString(queryParameters);
+  return fetch(`${BASE_URL}/products/vendor/manage/${id}?${queryString}`, {
+    headers: {
+      authorization: `Bearer ${token}`,
+    },
+  }).then((res) => res.json());
 };
 
 const searchProduct = (keyword, queryParameters) => {
@@ -160,6 +172,7 @@ export {
   getProducts,
   getProductsByCategory,
   getProductsByVendor,
+  getOwnProducts,
   searchProduct,
   getProduct,
   postProduct,

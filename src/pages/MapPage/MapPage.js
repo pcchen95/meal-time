@@ -12,12 +12,19 @@ import {
   getVendorProducts,
   searchProducts,
 } from "../../redux/reducers/productReducer";
+import {
+  setErrMessage,
+  setShowWarningNotification,
+} from "../../redux/reducers/notificationReducer";
 import { Div, Text } from "atomize";
+import Geocode from "react-geocode";
 import LoadingPage from "../LoadingPage/LoadingPage";
 import Map from "../../Components/MapSystem/Map";
 import Dropdown from "../../Components/MapSystem/Dropdown";
 import SearchBox from "../../Components/MapSystem/SearchBox";
 import SelectedVendor from "../../Components/MapSystem/SelectedVendor";
+import AddressInputBox from "../../Components/MapSystem/AddressInputBox";
+import WarningNotification from "../../Components/Notifications/WarningNotification";
 
 export default function MapPage() {
   const dispatch = useDispatch();
@@ -25,6 +32,8 @@ export default function MapPage() {
   const [vendorOfMap, setVendorOfMap] = useState(null);
   const [categoryId, setCategoryId] = useState(0);
   const [input, setInput] = useState("");
+  const [address, setAddress] = useState("");
+  const currentPosition = useSelector((store) => store.users.position);
   const isLoadingVendor = useSelector((store) => store.vendors.isLoading);
   const products = useSelector((store) => store.products.vendorProducts);
   const searchedProducts = useSelector(
@@ -53,6 +62,25 @@ export default function MapPage() {
     dispatch(searchProducts());
   };
 
+  const handleEnter = () => {
+    Geocode.fromAddress(address).then(
+      (response) => {
+        const { lat, lng } = response.results[0].geometry.location;
+        dispatch(setCurrentPosition({ lat, lng }));
+      },
+      (error) => {
+        console.log(error);
+        dispatch(setErrMessage("找不到地址"));
+        dispatch(setShowWarningNotification(true));
+      }
+    );
+  };
+
+  const handleClearAddress = () => {
+    setAddress("");
+    dispatch(setCurrentPosition(null));
+  };
+
   useEffect(() => {
     categoryId !== 0
       ? dispatch(getAllVendors({ categoryId }))
@@ -62,6 +90,7 @@ export default function MapPage() {
       ({ coords: { latitude: lat, longitude: lng } }) => {
         const pos = { lat, lng };
         dispatch(setCurrentPosition(pos));
+        return pos;
       }
     );
   }, [categoryId, dispatch]);
@@ -97,6 +126,14 @@ export default function MapPage() {
             handleClearSearch={handleClearSearch}
           />
         </Div>
+        {!currentPosition && (
+          <AddressInputBox
+            address={address}
+            handleOnChange={(e) => setAddress(e.target.value)}
+            handleEnter={handleEnter}
+            handleClear={handleClearAddress}
+          />
+        )}
         <Div
           w="100%"
           m={{ y: "1rem" }}
@@ -116,6 +153,7 @@ export default function MapPage() {
             searchedProducts={searchedProducts}
           />
         </Div>
+        <WarningNotification />
       </Div>
     </>
   );

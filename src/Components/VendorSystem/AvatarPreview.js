@@ -1,7 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { Div, Icon } from "atomize";
-import { useSelector } from "react-redux";
 import { useLocation } from "react-router";
 import styled from "styled-components";
 
@@ -49,18 +48,8 @@ Delete.propTypes = {
   handleDelete: PropTypes.func,
 };
 
-const AvatarPreview = ({ image, handleDelete }) => {
+const AvatarPreview = ({ image, handleDelete, isDisabled }) => {
   const location = useLocation();
-  const isVendor = useSelector(
-    (store) => store.vendors.vendor && store.vendors.vendor !== "not-vendor"
-  );
-  const isOpen = useSelector(
-    (store) => store.vendors.vendor && store.vendors.vendor.isOpen
-  );
-  const isSuspended = useSelector(
-    (store) => store.vendors.vendor && store.vendors.vendor.isSuspended
-  );
-  const isDisabled = isVendor && (!isOpen || isSuspended);
   return (
     <Div w={{ xs: "100%", md: "auto" }} d="flex" justify="center">
       <PreviewImg image={image}>
@@ -83,6 +72,7 @@ const AvatarPreview = ({ image, handleDelete }) => {
 AvatarPreview.propTypes = {
   image: PropTypes.string,
   handleDelete: PropTypes.func,
+  isDisabled: PropTypes.bool,
 };
 
 export default AvatarPreview;

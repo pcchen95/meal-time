@@ -1,7 +1,7 @@
 import React from "react";
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useParams, useHistory } from "react-router-dom";
+import { useParams, useHistory } from "react-router-dom";
 import { setCurrentPosition } from "../../redux/reducers/userReducer";
 import { getVendorById } from "../../redux/reducers/vendorReducer";
 import {
@@ -13,63 +13,8 @@ import LoadingPage from "../LoadingPage/LoadingPage";
 import StoreBanner from "../../Components/VendorSystem/StoreBanner";
 import StoreDropdown from "../../Components/VendorSystem/StoreDropdown";
 import StoreInfo from "../../Components/VendorSystem/StoreInfo";
+import ProductsList from "../../Components/VendorSystem/StoreProductList";
 import PaginationButton from "../../Components/VendorSystem/PaginationButton";
-
-const ProductsList = ({ products, hoverItem, setHoverItem }) => {
-  return products.map((product) => (
-    <Div
-      w={{ xs: "150px", sm: "150px", md: "180px" }}
-      p={{ x: "0.5rem" }}
-      key={product.id}
-      onMouseEnter={() => setHoverItem(product.id)}
-      onMouseLeave={() => setHoverItem(null)}
-      transform={product.id === hoverItem && "scale(1.02)"}
-    >
-      <Link to={`/product/${product.id}`}>
-        <Div
-          bgImg={product.pictureUrl}
-          bgSize="cover"
-          bgPos="center"
-          rounded="sm"
-          h={{ xs: "150px", sm: "150px", md: "180px" }}
-          w="100%"
-          m={{ t: "1rem" }}
-          cursor="pointer"
-          border="1px solid"
-          borderColor="gray300"
-        />
-      </Link>
-      <Div>
-        <Link to={`/product/${product.id}`} style={{ textDecoration: "none" }}>
-          <Div
-            w="100%"
-            textAlign="center"
-            textSize="14px"
-            textColor="black800"
-            m={{ t: "0.5rem" }}
-            cursor="pointer"
-            style={{
-              whiteSpace: "nowrap",
-              textOverflow: "ellipsis",
-              overflow: "hidden",
-            }}
-          >
-            {product.name}
-          </Div>
-        </Link>
-        <Div
-          w="100%"
-          textAlign="center"
-          textSize="14px"
-          textColor="info800"
-          m={{ t: "0.5rem" }}
-        >
-          ${product.price}
-        </Div>
-      </Div>
-    </Div>
-  ));
-};
 
 export default function StorePage() {
   const dispatch = useDispatch();
@@ -77,14 +22,16 @@ export default function StorePage() {
   const [categoryId, setCategoryId] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [page, setPage] = useState(1);
+  const [pageStart, setPageStart] = useState(null);
+  const [pageEnd, setPageEnd] = useState(null);
+
   const vendor = useSelector((store) => store.vendors.vendorById);
-  const isLoadingVendor = useSelector((store) => store.vendors.isLoading);
   const products = useSelector((store) => store.products.vendorProducts);
   const isLoadingProduct = useSelector((store) => store.products.isLoading);
   const count = useSelector((store) => store.products.count);
   const { id } = useParams();
   const history = useHistory();
-  const limit = 5;
+  const limit = 10;
 
   const getProducts = (id, categoryId, page) => {
     if (categoryId === 0) {
@@ -103,7 +50,6 @@ export default function StorePage() {
 
   useEffect(() => {
     dispatch(getVendorById(id));
-    dispatch(getVendorProducts(id));
     navigator?.geolocation.getCurrentPosition(
       ({ coords: { latitude: lat, longitude: lng } }) => {
         const position = { lat, lng };
@@ -126,19 +72,25 @@ export default function StorePage() {
     if (vendor) {
       getProducts(vendor.id, categoryId, page);
     }
+    setPageStart(limit * (page - 1) + 1);
+    setPageEnd(() => (limit * page > count ? count : limit * page));
   }, [vendor, page, categoryId]);
+
+  useEffect(() => {
+    if (count) setTotalPages(Math.ceil(count / limit));
+  }, [count]);
+
+  useEffect(() => {
+    setPageStart(limit * (page - 1) + 1);
+    setPageEnd(() => (limit * page > count ? count : limit * page));
+  }, [page, count]);
 
   useEffect(() => {
     setPage(1);
   }, [categoryId]);
-
-  useEffect(() => {
-    if (count) setTotalPages(Math.ceil(count / 8));
-  }, [count]);
-
   return (
     <>
-      {(isLoadingVendor || isLoadingProduct) && <LoadingPage />}
+      {isLoadingProduct && <LoadingPage />}
       {vendor && vendor !== "no-result" && (
         <>
           <StoreBanner
@@ -158,6 +110,15 @@ export default function StorePage() {
                   categoryId={categoryId}
                   setCategoryId={setCategoryId}
                 />
+              </Div>
+              <Div
+                textSize="caption"
+                textColor="gray600"
+                p={{ x: "1rem" }}
+                w="100%"
+                textAlign="left"
+              >
+                共 {count} 筆搜尋結果，顯示第 {pageStart} ～ {pageEnd} 筆結果
               </Div>
               <Div
                 w={{ xs: "100%", md: "540px", lg: "720px", xl: "900px" }}

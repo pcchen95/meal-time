@@ -1,33 +1,28 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { Div, Button } from "atomize";
+import { Div, Button, Icon } from "atomize";
 
-const SingleButton = ({ name, handleOnClick }) => {
+const SingleButton = ({ iconName, handleOnClick }) => {
   return (
     <>
       <Button
-        h={{ xs: "1.5rem", sm: "2rem" }}
-        p={{ xs: "14px", sm: "1rem" }}
-        textSize={{ xs: "tiny", sm: "captain" }}
+        h="2rem"
+        textSize="tiny"
         textColor="info700"
         hoverTextColor="info900"
         bg="white"
         hoverBg="info200"
-        border="1px solid"
-        borderColor="info700"
-        hoverBorderColor="info900"
         m={{ r: "0.5rem" }}
-        hoverShadow="4"
         onClick={handleOnClick}
       >
-        {name}
+        <Icon name={iconName} size="20px" color="info700" />
       </Button>
     </>
   );
 };
 
 SingleButton.propTypes = {
-  name: PropTypes.string,
+  iconName: PropTypes.string,
   handleOnClick: PropTypes.func,
 };
 
@@ -54,11 +49,11 @@ const PaginationButton = ({ setPage, page, totalPages }) => {
           {page !== 1 && (
             <>
               <SingleButton
-                name="第一頁"
+                iconName="Back"
                 handleOnClick={() => handlePageClick("first")}
               />
               <SingleButton
-                name="<"
+                iconName="LeftArrow"
                 handleOnClick={() => handlePageClick("back")}
               />
             </>
@@ -67,34 +62,26 @@ const PaginationButton = ({ setPage, page, totalPages }) => {
 
         <Div
           p={{ x: "1rem" }}
-          textSize={{ xs: "tiny", sm: "captain" }}
+          textSize="captain"
           textColor="info700"
-          m={{ x: "0.5rem" }}
+          m={{ r: "0.5rem" }}
         >
-          第 {page} 頁
+          {page} / {totalPages} 頁
         </Div>
         <Div d="flex" w={{ xs: "130px", sm: "145px" }}>
           {page !== totalPages && (
             <>
               <SingleButton
-                name=">"
+                iconName="RightArrow"
                 handleOnClick={() => handlePageClick("next")}
               />
               <SingleButton
-                name="最末頁"
+                iconName="Next"
                 handleOnClick={() => handlePageClick("last")}
               />
             </>
           )}
         </Div>
-      </Div>
-      <Div
-        textAlign="center"
-        textColor="info700"
-        m={{ t: "0.5rem" }}
-        textSize={{ xs: "tiny", sm: "captain" }}
-      >
-        共 {totalPages} 頁
       </Div>
     </>
   );

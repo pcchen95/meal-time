@@ -39,13 +39,13 @@ NameAndPrice.propTypes = {
   price: PropTypes.number,
 };
 
-const Status = ({ isAvailable, quantity }) => {
+const Status = ({ isAvailable, quantity, category }) => {
   return (
     <Div
       d="flex"
       flexDir={{ xs: "row", sm: "column" }}
       align={{ xs: "flex-start" }}
-      w={{ xs: "100%", sm: "60px" }}
+      w={{ xs: "100%", sm: "50%", md: "auto" }}
       textColor="gray700"
       m={{ t: { xs: "1.5rem", sm: "0" } }}
     >
@@ -76,10 +76,10 @@ const Status = ({ isAvailable, quantity }) => {
       </Div>
       <Div>
         <Div textSize="tiny" m={{ y: "0.3rem" }}>
-          商品數量 {quantity}
+          分類 {category}
         </Div>
         <Div textSize="tiny" m={{ y: "0.3rem" }}>
-          已賣出{" "}
+          數量 {quantity}
         </Div>
       </Div>
     </Div>
@@ -89,9 +89,10 @@ const Status = ({ isAvailable, quantity }) => {
 Status.propTypes = {
   isAvailable: PropTypes.bool,
   quantity: PropTypes.number,
+  category: PropTypes.string,
 };
 
-const Buttons = ({ next, handleEvent }) => {
+const Buttons = ({ next, handleEvent, isDisabled }) => {
   return (
     <Div
       m={{
@@ -109,14 +110,16 @@ const Buttons = ({ next, handleEvent }) => {
             p={{ x: "0.75rem" }}
             textSize="caption"
             textColor="info700"
-            hoverTextColor="info900"
+            hoverTextColor={!isDisabled && "info900"}
             bg="white"
-            hoverBg="info200"
+            hoverBg={!isDisabled && "info200"}
             border="1px solid"
             borderColor="info700"
-            hoverBorderColor="info900"
+            hoverBorderColor={!isDisabled && "info900"}
             m={{ r: "0.5rem" }}
             w={{ xs: "100%", md: "5rem" }}
+            disabled={isDisabled}
+            cursor={isDisabled && "not-allowed"}
           >
             編輯
           </Button>
@@ -127,15 +130,17 @@ const Buttons = ({ next, handleEvent }) => {
         p={{ x: "0.75rem" }}
         textSize="caption"
         textColor="danger700"
-        hoverTextColor="danger900"
+        hoverTextColor={!isDisabled && "danger900"}
         bg="white"
-        hoverBg="danger200"
+        hoverBg={!isDisabled && "danger200"}
         border="1px solid"
         borderColor="danger700"
-        hoverBorderColor="danger900"
+        hoverBorderColor={!isDisabled && "danger900"}
         m={{ r: "0.5rem" }}
         w={{ xs: "47%", md: "5rem" }}
         onClick={handleEvent}
+        disabled={isDisabled}
+        cursor={isDisabled && "not-allowed"}
       >
         刪除
       </Button>
@@ -146,9 +151,10 @@ const Buttons = ({ next, handleEvent }) => {
 Buttons.propTypes = {
   next: PropTypes.string,
   handleEvent: PropTypes.func,
+  isDisabled: PropTypes.bool,
 };
 
-export function VendorProductList({ product, handleDelete }) {
+export function VendorProductList({ product, handleDelete, isDisabled }) {
   return (
     <Div
       key={product.id}
@@ -168,15 +174,25 @@ export function VendorProductList({ product, handleDelete }) {
         justify="flex-start"
         w="100%"
       >
-        <Div d="flex" align="center" justify="flex-start">
+        <Div
+          d="flex"
+          align="center"
+          justify="flex-start"
+          w={{ sm: "50%", md: "auto" }}
+        >
           <Picture url={product.pictureUrl} />
           <NameAndPrice name={product.name} price={product.price} />
         </Div>
-        <Status isAvailable={product.isAvailable} quantity={product.quantity} />
+        <Status
+          isAvailable={product.isAvailable}
+          quantity={product.quantity}
+          category={product.ProductCategory.name}
+        />
       </Div>
       <Buttons
         next={`/product_edit/${product.id}`}
         handleEvent={() => handleDelete(product.id)}
+        isDisabled={isDisabled}
       />
     </Div>
   );
@@ -185,6 +201,7 @@ export function VendorProductList({ product, handleDelete }) {
 VendorProductList.propTypes = {
   product: PropTypes.object,
   handleDelete: PropTypes.func,
+  isDisabled: PropTypes.bool,
 };
 
 export default VendorProductList;

@@ -23,7 +23,7 @@ export function Map({ vendorOfMap, handleEvent, setDistance }) {
       lat: 23.893598219621072,
       lng: 121.07164536476822,
     },
-    zoom: 13,
+    zoom: 8,
   });
 
   const { isLoaded } = useJsApiLoader({
@@ -33,7 +33,7 @@ export function Map({ vendorOfMap, handleEvent, setDistance }) {
 
   useEffect(() => {
     Geocode.setApiKey(googleMapToken);
-    Geocode.setLanguage("ch");
+    Geocode.setLanguage("zh");
     Geocode.setLocationType("ROOFTOP");
   }, []);
 
@@ -52,7 +52,7 @@ export function Map({ vendorOfMap, handleEvent, setDistance }) {
         <GoogleMap
           mapContainerStyle={{ width: "100%", height: "100%" }}
           center={currentPosition || defaultParams.current.center}
-          zoom={defaultParams.current.zoom}
+          zoom={currentPosition ? 15 : defaultParams.current.zoom}
         >
           <Marker
             icon={{

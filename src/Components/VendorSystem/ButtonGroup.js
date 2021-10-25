@@ -1,24 +1,16 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { useSelector } from "react-redux";
 import { Div, Button, Icon } from "atomize";
 
 export function ButtonGroup({
-  isDisabled: inputDisabled,
+  isInputDisabled,
+  isStoreOpen,
+  isSuspended,
   handleBack,
   vendor,
   handleToggleOpen,
 }) {
-  const isVendor = useSelector(
-    (store) => store.vendors.vendor && store.vendors.vendor !== "not-vendor"
-  );
-  const isOpen = useSelector(
-    (store) => store.vendors.vendor && store.vendors.vendor.isOpen
-  );
-  const isSuspended = useSelector(
-    (store) => store.vendors.vendor && store.vendors.vendor.isSuspended
-  );
-  const isDisabled = isVendor && (!isOpen || isSuspended || inputDisabled);
+  const isDisabled = isInputDisabled || !isStoreOpen || isSuspended;
   return (
     <Div
       d="flex"
@@ -65,7 +57,7 @@ export function ButtonGroup({
           返回
         </Button>
       </Div>
-      {isVendor && isOpen && !isSuspended && (
+      {vendor && vendor !== "not-vendor" && !isSuspended && isStoreOpen && (
         <Button
           suffix={
             <Icon
@@ -93,7 +85,7 @@ export function ButtonGroup({
           關閉賣場
         </Button>
       )}
-      {isVendor && !isSuspended && !isOpen && (
+      {vendor && vendor !== "not-vendor" && !isSuspended && !isStoreOpen && (
         <Button
           suffix={
             <Icon
@@ -127,7 +119,9 @@ export function ButtonGroup({
 }
 
 ButtonGroup.propTypes = {
-  isDisabled: PropTypes.bool,
+  isInputDisabled: PropTypes.bool,
+  isStoreOpen: PropTypes.bool,
+  isSuspended: PropTypes.bool,
   handleBack: PropTypes.func,
   vendor: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
   handleToggleOpen: PropTypes.func,

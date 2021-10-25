@@ -26,6 +26,7 @@ import TextAreaField from "../../Components/VendorSystem/TextAreaField";
 import OpeningHour from "../../Components/VendorSystem/OpeningHour";
 import UploadAvatar from "../../Components/VendorSystem/UploadAvatar";
 import Map from "../../Components/VendorSystem/Map";
+import LoadingPage from "../LoadingPage/LoadingPage";
 
 const debounce = (fn) => {
   let timer;
@@ -82,6 +83,7 @@ export default function UpdateStorePage() {
   const [isEdited, setIsEdited] = useState(false);
   const [isDeleteAvatar, setIsDeleteAvatar] = useState(false);
   const [isDeleteBanner, setIsDeleteBanner] = useState(false);
+  const [isDisabled, setIsDisabled] = useState(true);
   const avatarInput = createRef();
   const bannerInput = createRef();
   const dispatch = useDispatch();
@@ -212,10 +214,10 @@ export default function UpdateStorePage() {
       setBanner(null);
       dispatch(setErrorMessage(null));
     };
-  }, [dispatch]);
+  }, []);
 
   useEffect(() => {
-    if (vendor && vendor !== "not-vendor") {
+    if (vendor && vendor !== "not-vendor" && user) {
       setVendorName(vendor.vendorName);
       setAddress(vendor.address);
       setLatLng({
@@ -228,8 +230,13 @@ export default function UpdateStorePage() {
       setBanner(vendor.bannerUrl);
       setDescription(vendor.description);
       setCategoryId(vendor.categoryId);
+      if (vendor.isSuspended || !vendor.isOpen || user.role === "suspended") {
+        setIsDisabled(true);
+      } else {
+        setIsDisabled(false);
+      }
     }
-  }, [vendor]);
+  }, [vendor, user]);
 
   useEffect(() => {
     if (vendor && vendor !== "not-vendor") {
@@ -257,8 +264,14 @@ export default function UpdateStorePage() {
 
   return (
     <>
-      {vendor && (
+      {isLoading && <LoadingPage />}
+      {vendor && user && (
         <Div w="80%" m={{ y: "4rem", x: "auto" }}>
+          {(vendor.isSuspended || user.role === "suspended") && (
+            <Div tag="h4" textColor="danger800" w="100%" textAlign="center">
+              您已被停權！
+            </Div>
+          )}
           <Text
             textSize="heading"
             w="100%"
@@ -273,6 +286,7 @@ export default function UpdateStorePage() {
                 banner={banner}
                 handleBanner={handleBanner}
                 bannerInput={bannerInput}
+                isDisabled={isDisabled}
                 handleDelete={() => {
                   setBanner(null);
                   setBannerInfo(null);
@@ -295,6 +309,7 @@ export default function UpdateStorePage() {
                 >
                   <AvatarPreview
                     image={avatar}
+                    isDisabled={isDisabled}
                     handleDelete={() => {
                       setAvatar(null);
                       setAvatarInfo(null);
@@ -318,9 +333,10 @@ export default function UpdateStorePage() {
                     }}
                   >
                     <UploadAvatar
-                      name="個人頭像"
+                      name="賣場頭像"
                       avatarInput={avatarInput}
                       handleAvatar={handleAvatar}
+                      isDisabled={isDisabled}
                     />
                     <InputField
                       name="賣場名稱"
@@ -328,6 +344,7 @@ export default function UpdateStorePage() {
                       value={vendorName}
                       handleEvent={(e) => setVendorName(e.target.value)}
                       required
+                      isDisabled={isDisabled}
                     />
                     <InputField
                       name="聯絡電話"
@@ -337,6 +354,7 @@ export default function UpdateStorePage() {
                       remind={remindText.phone}
                       rule={inputRule.phone}
                       required
+                      isDisabled={isDisabled}
                     />
                     <InputField
                       name="賣場地址"
@@ -346,12 +364,14 @@ export default function UpdateStorePage() {
                       remind={remindText.address}
                       rule={inputRule.address}
                       required
+                      isDisabled={isDisabled}
                     />
                     <InputField
                       name="賣場分類"
                       type="dropdown"
                       value={categoryId}
                       setCategoryId={setCategoryId}
+                      isDisabled={isDisabled}
                     />
                   </Div>
                 </Div>
@@ -369,6 +389,7 @@ export default function UpdateStorePage() {
                       name="向顧客介紹你的賣場吧"
                       value={description}
                       handleEvent={(e) => setDescription(e.target.value)}
+                      isDisabled={isDisabled}
                     />
                   </Div>
                   <Div
@@ -398,9 +419,12 @@ export default function UpdateStorePage() {
                 daysCH={daysCH}
                 values={openingHour}
                 setValues={setOpeningHour}
+                isDisabled={isDisabled}
               />
               <ButtonGroup
-                isDisabled={!isEdited || isLoading}
+                isInputDisabled={!isEdited}
+                isStoreOpen={vendor.isOpen}
+                isSuspended={vendor.isSuspended || user.role === "suspended"}
                 handleSubmit={handleSubmit}
                 handleBack={() => history.goBack()}
                 vendor={vendor}
