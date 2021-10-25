@@ -117,7 +117,6 @@ export const getMe = () => (dispatch) => {
         dispatch(setUser("non-login"));
         return;
       }
-      console.log(123);
       dispatch(setIsLoading(false));
       dispatch(setErrorMessage(res.message));
       return;
