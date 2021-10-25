@@ -15,7 +15,7 @@ const ProductsList = ({ products, hoverItem, setHoverItem }) => {
     >
       <Link to={`/product/${product.id}`}>
         <Div
-          bgImg={product.pictureUrl}
+          bgImg={product.pictureUrl || "defaultImage.png"}
           bgSize="cover"
           bgPos="center"
           rounded="sm"
