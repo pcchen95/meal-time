@@ -3,6 +3,11 @@ import PropTypes from "prop-types"
 import styled from "styled-components"
 import { Div, Text, Input, Textarea, Button } from "atomize"
 import OpeningHour from "./OpeningHour"
+import {
+  selectVendorId,
+  selectOrderProducts,
+} from "../../redux/reducers/cartReducer"
+import { useSelector } from "react-redux"
 
 const Booking = styled.div`
   display: none;
@@ -51,6 +56,8 @@ const BookingProducts = styled.div`
 `
 
 const BookingBoard = ({ vendorById, isShow, handleIsShow, handleSubmit }) => {
+  const vendorId = useSelector(selectVendorId)
+  const orderProducts = useSelector(selectOrderProducts)
   const [pickupTime, setPickupTime] = useState("")
   const [remarks, setRemarks] = useState("")
 
@@ -100,7 +107,9 @@ const BookingBoard = ({ vendorById, isShow, handleIsShow, handleSubmit }) => {
                   hoverBorderColor="warning800"
                   m={{ r: "0.5rem", t: "1rem" }}
                   type="submit"
-                  onClick={handleSubmit}
+                  onClick={() =>
+                    handleSubmit(orderProducts, vendorId, pickupTime, remarks)
+                  }
                 >
                   確定
                 </Button>
