@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 import { Div, Text } from "atomize";
 
 const openingHour = ({ vendorById }) => {
@@ -36,6 +37,10 @@ const openingHour = ({ vendorById }) => {
       </Div>
     </>
   );
+};
+
+openingHour.propTypes = {
+  vendorById: PropTypes.object,
 };
 
 export default openingHour;
