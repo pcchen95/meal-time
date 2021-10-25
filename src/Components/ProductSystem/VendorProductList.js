@@ -5,7 +5,13 @@ import { Div, Icon, Button } from "atomize";
 
 const Picture = ({ url }) => {
   return (
-    <Div w="5rem" h="5rem" bgImg={url} bgSize="cover" bgPos="center"></Div>
+    <Div
+      w="5rem"
+      h="5rem"
+      bgImg={url || "defaultImage.png"}
+      bgSize="cover"
+      bgPos="center"
+    ></Div>
   );
 };
 
