@@ -72,7 +72,7 @@ export default function StorePage() {
     if (vendor) {
       getProducts(vendor.id, categoryId, page);
     }
-    setPageStart(limit * (page - 1) + 1);
+    setPageStart(() => (count === 0 ? 0 : limit * (page - 1) + 1));
     setPageEnd(() => (limit * page > count ? count : limit * page));
   }, [vendor, page, categoryId]);
 
@@ -134,11 +134,13 @@ export default function StorePage() {
                 )}
               </Div>
             </Div>
-            <PaginationButton
-              setPage={setPage}
-              page={page}
-              totalPages={totalPages}
-            />
+            {count > 0 && (
+              <PaginationButton
+                setPage={setPage}
+                page={page}
+                totalPages={totalPages}
+              />
+            )}
           </Div>
         </>
       )}

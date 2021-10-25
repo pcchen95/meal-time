@@ -6,6 +6,7 @@ export default function AddressInputBox({
   address,
   handleOnChange,
   handleEnter,
+  handleOnKeyPress,
   handleClear,
 }) {
   return (
@@ -16,6 +17,7 @@ export default function AddressInputBox({
         w="100%"
         value={address}
         onChange={handleOnChange}
+        onKeyPress={handleOnKeyPress}
         suffix={
           <>
             {address && (
@@ -54,5 +56,6 @@ AddressInputBox.propTypes = {
   address: PropTypes.string,
   handleOnChange: PropTypes.func,
   handleEnter: PropTypes.func,
+  handleOnKeyPress: PropTypes.func,
   handleClear: PropTypes.func,
 };
