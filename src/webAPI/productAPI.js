@@ -1,13 +1,15 @@
-import BASE_URL from "../constants/apiurl"
-import { getAuthToken } from "../utils"
+import BASE_URL from '../constants/apiurl'
+import { getAuthToken } from '../utils'
 
 const getQueryString = (queryParameters) => {
-  const { page, sort, order, limit } = queryParameters || {}
-  let queryString = ""
+  const { page, sort, order, limit, notSupplied } = queryParameters || {}
+  let queryString = ''
   if (page) queryString += `&page=${page}`
   if (sort) queryString += `&sort=${sort}`
   if (order) queryString += `&order=${order}`
   if (limit) queryString += `&limit=${limit}`
+  if (notSupplied) queryString += `&notSupplied=true`
+
   return queryString
 }
 
@@ -55,17 +57,17 @@ const postProduct = (data) => {
   } = data
   const token = getAuthToken()
   const formData = new FormData()
-  formData.append("name", name)
-  formData.append("categoryId", categoryId)
-  formData.append("price", price)
-  formData.append("quantity", quantity)
-  formData.append("manufactureDate", manufactureDate)
-  formData.append("expiryDate", expiryDate)
-  formData.append("description", description)
-  formData.append("isAvailable", isAvailable)
-  formData.append("picture", picture)
+  formData.append('name', name)
+  formData.append('categoryId', categoryId)
+  formData.append('price', price)
+  formData.append('quantity', quantity)
+  formData.append('manufactureDate', manufactureDate)
+  formData.append('expiryDate', expiryDate)
+  formData.append('description', description)
+  formData.append('isAvailable', isAvailable)
+  formData.append('picture', picture)
   return fetch(`${BASE_URL}/products`, {
-    method: "POST",
+    method: 'POST',
     headers: {
       authorization: `Bearer ${token}`,
     },
@@ -87,17 +89,17 @@ const updateProduct = (id, updatedData) => {
   } = updatedData
   const token = getAuthToken()
   const formData = new FormData()
-  formData.append("name", name)
-  formData.append("categoryId", categoryId)
-  formData.append("price", price)
-  formData.append("quantity", quantity)
-  formData.append("manufactureDate", manufactureDate)
-  formData.append("expiryDate", expiryDate)
-  formData.append("description", description)
-  formData.append("isAvailable", isAvailable)
-  formData.append("picture", picture)
+  formData.append('name', name)
+  formData.append('categoryId', categoryId)
+  formData.append('price', price)
+  formData.append('quantity', quantity)
+  formData.append('manufactureDate', manufactureDate)
+  formData.append('expiryDate', expiryDate)
+  formData.append('description', description)
+  formData.append('isAvailable', isAvailable)
+  formData.append('picture', picture)
   return fetch(`${BASE_URL}/products/${id}`, {
-    method: "PATCH",
+    method: 'PATCH',
     headers: {
       authorization: `Bearer ${token}`,
     },
@@ -108,9 +110,9 @@ const updateProduct = (id, updatedData) => {
 const deleteProduct = (id) => {
   const token = getAuthToken()
   return fetch(`${BASE_URL}/products/${id}`, {
-    method: "DELETE",
+    method: 'DELETE',
     headers: {
-      "content-type": "application/json",
+      'content-type': 'application/json',
       authorization: `Bearer ${token}`,
     },
   }).then((res) => res.json())
@@ -123,9 +125,9 @@ const getProductCategories = () => {
 const addProductCategory = (name) => {
   const token = getAuthToken()
   return fetch(`${BASE_URL}/products-categories`, {
-    method: "POST",
+    method: 'POST',
     headers: {
-      "content-type": "application/json",
+      'content-type': 'application/json',
       authorization: `Bearer ${token}`,
     },
     body: JSON.stringify({ name }),
@@ -135,9 +137,9 @@ const addProductCategory = (name) => {
 const updateProductCategory = (id, name) => {
   const token = getAuthToken()
   return fetch(`${BASE_URL}/products-categories/${id}`, {
-    method: "PATCH",
+    method: 'PATCH',
     headers: {
-      "content-type": "application/json",
+      'content-type': 'application/json',
       authorization: `Bearer ${token}`,
     },
     body: JSON.stringify({ name }),
@@ -147,9 +149,9 @@ const updateProductCategory = (id, name) => {
 const deleteProductCategory = (id) => {
   const token = getAuthToken()
   return fetch(`${BASE_URL}/products-categories/${id}`, {
-    method: "DELETE",
+    method: 'DELETE',
     headers: {
-      "content-type": "application/json",
+      'content-type': 'application/json',
       authorization: `Bearer ${token}`,
     },
   }).then((res) => res.json())

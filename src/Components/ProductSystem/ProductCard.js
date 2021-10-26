@@ -12,6 +12,11 @@ const EllipsisText = styled.div`
 `
 
 export default function ProductCard({ product }) {
+  let now = new Date()
+  now.setHours(0)
+  now.setMinutes(0)
+  now.setSeconds(0)
+  const today = now.getTime()
   return (
     <Div
       key={product.id}
@@ -36,7 +41,7 @@ export default function ProductCard({ product }) {
           bgSize="cover"
           bgPos="center"
           opacity={
-            (Date.parse(product.expiryDate) < Date.now() && "0.6") ||
+            (Date.parse(product.expiryDate) <= today && "0.6") ||
             (product.quantity === 0 && "0.6")
           }
           h="13rem"
@@ -56,10 +61,10 @@ export default function ProductCard({ product }) {
               textSize="title"
               rounded="circle"
             >
-              <Div textColor="white">售罄</Div>
+              <Div textColor="white">完售</Div>
             </Div>
           )) ||
-            (Date.parse(product.expiryDate) < Date.now() && (
+            (Date.parse(product.expiryDate) <= today && (
               <Div
                 d="flex"
                 justify="center"

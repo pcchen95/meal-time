@@ -1,21 +1,21 @@
-import React, { useState } from "react"
-import { Div, Text } from "atomize"
-import { useEffect } from "react"
-import { useParams } from "react-router"
+import React, { useState } from 'react'
+import { Div, Text } from 'atomize'
+import { useEffect } from 'react'
+import { useParams } from 'react-router'
 import {
   getCategoryProducts,
   cleanCategoryProducts,
-} from "../../redux/reducers/productReducer"
-import { useDispatch, useSelector } from "react-redux"
-import PaginationButton from "../../Components/PaginationButton/PaginationButton"
-import ProductCard from "../../Components/ProductSystem/ProductCard"
-import ProductsPageHeader from "../../Components/ProductSystem/ProductsPageHeader"
-import LoadingPage from "../LoadingPage"
+} from '../../redux/reducers/productReducer'
+import { useDispatch, useSelector } from 'react-redux'
+import PaginationButton from '../../Components/PaginationButton/PaginationButton'
+import ProductCard from '../../Components/ProductSystem/ProductCard'
+import ProductsPageHeader from '../../Components/ProductSystem/ProductsPageHeader'
+import LoadingPage from '../LoadingPage'
 
 const NoProductHint = () => {
   return (
     <Div
-      m={{ t: "5rem" }}
+      m={{ t: '5rem' }}
       w="100%"
       d="flex"
       justify="center"
@@ -43,10 +43,12 @@ export default function ProductsPage() {
   }
 
   const [page, setPage] = useState(1)
-  const [sort, setSort] = useState("id")
+  const [sort, setSort] = useState('id')
   const limit = 10
-  const [order, setOrder] = useState("DESC")
-  const queryParameters = { page, sort, limit, order }
+  const [order, setOrder] = useState('DESC')
+  const [notSupplied, setNotSupplied] = useState(false)
+
+  const queryParameters = { page, sort, limit, order, notSupplied }
   let totalPages
   if (productsData) {
     count = productsData.count
@@ -57,10 +59,10 @@ export default function ProductsPage() {
     window.scrollTo({
       top: 0,
       left: 0,
-      behavior: "instant",
+      behavior: 'instant',
     })
     return () => dispatch(cleanCategoryProducts())
-  }, [id, page, sort, order, dispatch])
+  }, [id, page, sort, order, notSupplied, dispatch])
 
   return (
     <>
@@ -69,9 +71,9 @@ export default function ProductsPage() {
       <Div
         pos="relative"
         w="78%"
-        m={{ x: "auto", y: "4rem" }}
+        m={{ x: 'auto', y: '4rem' }}
         minH="60rem"
-        p={{ b: { xs: "5rem" } }}
+        p={{ b: { xs: '5rem' } }}
       >
         <ProductsPageHeader
           headerText={
@@ -86,6 +88,8 @@ export default function ProductsPage() {
           setPage={setPage}
           setSort={setSort}
           setOrder={setOrder}
+          setNotSupplied={setNotSupplied}
+          notSupplied={notSupplied}
         />
 
         {products && count === 0 && <NoProductHint />}
