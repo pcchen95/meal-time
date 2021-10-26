@@ -2,7 +2,7 @@ import React from "react";
 import { useState, useEffect, useRef } from "react";
 import { useDispatch } from "react-redux";
 import PropTypes from "prop-types";
-import { GoogleMap, useJsApiLoader, Marker } from "@react-google-maps/api";
+import { GoogleMap, Marker } from "@react-google-maps/api";
 import Geocode from "react-geocode";
 import { Div } from "atomize";
 import { AddressToLatLng } from "../../utils";
@@ -23,10 +23,6 @@ export function Map({ completeAddress, latlng, setLatLng }) {
   });
 
   const [zoom, setZoom] = useState(null);
-  const { isLoaded } = useJsApiLoader({
-    id: "google-map-script",
-    googleMapsApiKey: googleMapToken,
-  });
 
   useEffect(() => {
     Geocode.setApiKey(googleMapToken);
@@ -53,17 +49,15 @@ export function Map({ completeAddress, latlng, setLatLng }) {
   }, [completeAddress]);
 
   return (
-    isLoaded && (
-      <Div w="100%" h="100%">
-        <GoogleMap
-          mapContainerStyle={{ width: "100%", height: "100%" }}
-          center={latlng || defaultParams.current.center}
-          zoom={zoom || defaultParams.current.zoom}
-        >
-          {latlng && <Marker position={latlng} />}
-        </GoogleMap>
-      </Div>
-    )
+    <Div w="100%" h="100%">
+      <GoogleMap
+        mapContainerStyle={{ width: "100%", height: "100%" }}
+        center={latlng || defaultParams.current.center}
+        zoom={zoom || defaultParams.current.zoom}
+      >
+        {latlng && <Marker position={latlng} />}
+      </GoogleMap>
+    </Div>
   );
 }
 
