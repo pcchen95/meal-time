@@ -9,6 +9,8 @@ import {
   getVendorProductCategories,
 } from "../../redux/reducers/productReducer";
 import { Div } from "atomize";
+import { useJsApiLoader } from "@react-google-maps/api";
+import googleMapToken from "../../constants/googleMapToken";
 import LoadingPage from "../LoadingPage/LoadingPage";
 import StoreBanner from "../../Components/VendorSystem/StoreBanner";
 import StoreDropdown from "../../Components/VendorSystem/StoreDropdown";
@@ -31,6 +33,10 @@ export default function StorePage() {
   const count = useSelector((store) => store.products.count);
   const { id } = useParams();
   const history = useHistory();
+  const { isLoaded } = useJsApiLoader({
+    id: "google-map-script",
+    googleMapsApiKey: googleMapToken,
+  });
   const limit = 10;
 
   const getProducts = (id, categoryId, page) => {
@@ -91,7 +97,7 @@ export default function StorePage() {
   return (
     <>
       {isLoadingProduct && <LoadingPage />}
-      {vendor && vendor !== "no-result" && (
+      {vendor && vendor !== "no-result" && isLoaded && (
         <>
           <StoreBanner
             banner={vendor && vendor.bannerUrl}
