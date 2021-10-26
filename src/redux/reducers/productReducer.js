@@ -44,7 +44,7 @@ export const productReducer = createSlice({
       state.page = action.payload;
     },
     setLimit: (state, action) => {
-      state.limit = action.payload
+      state.limit = action.payload;
     },
     setProducts: (state, action) => {
       state.products = action.payload;
@@ -109,8 +109,8 @@ export const getProducts = (queryParameters) => (dispatch) => {
       return res.data;
     })
     .then((products) => {
-      dispatch(setIsLoading(false))
-      dispatch(setProducts(products))
+      dispatch(setIsLoading(false));
+      dispatch(setProducts(products));
     })
     .catch((err) => {
       console.log(err);
@@ -131,9 +131,9 @@ export const getProduct = (id) => (dispatch) => {
       return res.data;
     })
     .then((product) => {
-      dispatch(setIsLoading(false))
-      if (product === null) return dispatch(setProduct(0))
-      dispatch(setProduct(product))
+      dispatch(setIsLoading(false));
+      if (product === null) return dispatch(setProduct(0));
+      dispatch(setProduct(product));
     })
     .catch((err) => {
       console.log(err);
@@ -256,7 +256,7 @@ export const getCategoryProducts = (id, queryParameters) => (dispatch) => {
     .then((products) => {
       dispatch(setIsLoading(false));
 
-      dispatch(setCategoryProduct(products))
+      dispatch(setCategoryProduct(products));
     })
     .catch((err) => {
       console.log(err);
@@ -267,7 +267,7 @@ export const cleanCategoryProducts = () => (dispatch) => {
 };
 
 export const searchProducts = (keyword, queryParameters) => (dispatch) => {
-  dispatch(setIsLoading(true))
+  dispatch(setIsLoading(true));
   return searchProductApi(keyword, queryParameters)
     .then((res) => {
       dispatch(setIsLoading(false));
@@ -277,14 +277,14 @@ export const searchProducts = (keyword, queryParameters) => (dispatch) => {
       return res.data;
     })
     .then((products) => {
-      dispatch(setSearchedProduct(products))
+      dispatch(setSearchedProduct(products));
     })
     .catch((err) => console.log(err));
 };
 
 export const cleanSearchProducts = () => (dispatch) => {
-  dispatch(setSearchedProduct(null))
-}
+  dispatch(setSearchedProduct(null));
+};
 
 export const getProductCategories = () => (dispatch) => {
   return getProductCategoriesApi()
@@ -333,13 +333,15 @@ export const postProduct =
       isAvailable,
       // isDeletePicture,
     }).then((res) => {
+      dispatch(setIsLoading(false));
+
       if (!res.ok) {
         dispatch(setErrorMessage(res.message));
         dispatch(setShowWarningNotification(true));
         return;
       }
       dispatch(setShowSuccessNotification(true, "新增成功！"));
-      return res.data;
+      return res;
     });
   };
 
@@ -373,13 +375,15 @@ export const patchProduct =
       isAvailable,
       // isDeletePicture,
     }).then((res) => {
+      dispatch(setIsLoading(false));
+
       if (!res.ok) {
         dispatch(setErrorMessage(res.message));
         dispatch(setShowWarningNotification(true));
         return;
       }
       dispatch(setShowSuccessNotification(true, "更新成功！"));
-      return res.data;
+      return res;
     });
   };
 
