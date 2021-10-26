@@ -107,6 +107,11 @@ export default function SingleProductPage() {
   const [showSuccess, setShowSuccess] = useState(false)
   const [showWarning, setShowWarning] = useState(false)
   const [productInCart, setProductInCart] = useState(null)
+  let now = new Date()
+  now.setHours(0)
+  now.setMinutes(0)
+  now.setSeconds(0)
+  const today = now.getTime()
 
   useEffect(() => {
     if (user) getProductInCart()
@@ -257,10 +262,10 @@ export default function SingleProductPage() {
               textSize="display1"
               rounded="circle"
             >
-              <Div textColor="white">售罄</Div>
+              <Div textColor="white">完售</Div>
             </Div>
           )) ||
-            (product && Date.parse(product.expiryDate) < Date.now() && (
+            (product && Date.parse(product.expiryDate) <= today && (
               <Div
                 d="flex"
                 justify="center"
@@ -339,7 +344,7 @@ export default function SingleProductPage() {
                 {product &&
                   product.expiryDate &&
                   product.expiryDate.slice(0, 10)}
-                {product && Date.parse(product.expiryDate) < Date.now() && (
+                {product && Date.parse(product.expiryDate) <= today && (
                   <Tag
                     bg={`danger100`}
                     border="1px solid"
