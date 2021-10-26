@@ -44,7 +44,7 @@ const Category = ({ name, distance }) => {
   return (
     <Div textSize="12px" m={{ t: "8px" }} textColor="info600" d="flex">
       {name}
-      <Text textColor="gray800">．{distance}</Text>
+      {distance && <Text textColor="gray800">．{distance}</Text>}
     </Div>
   );
 };
