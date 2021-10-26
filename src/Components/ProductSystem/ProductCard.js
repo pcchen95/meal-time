@@ -29,13 +29,53 @@ export default function ProductCard({ product }) {
     >
       <Link to={`/product/${product.id}`} style={{ textDecoration: "none" }}>
         <Div
+          d="flex"
+          justify="center"
+          align="center"
           bgImg={product.pictureUrl}
           bgSize="cover"
           bgPos="center"
+          opacity={
+            (Date.parse(product.expiryDate) < Date.now() && "0.6") ||
+            (product.quantity === 0 && "0.6")
+          }
           h="13rem"
           w="100%"
           rounded={{ tl: "sm", tr: "sm" }}
-        />
+        >
+          {(product.quantity === 0 && (
+            <Div
+              d="flex"
+              justify="center"
+              align="center"
+              top="0"
+              right="0"
+              bg="black900"
+              h="5rem"
+              w="5rem"
+              textSize="title"
+              rounded="circle"
+            >
+              <Div textColor="white">售罄</Div>
+            </Div>
+          )) ||
+            (Date.parse(product.expiryDate) < Date.now() && (
+              <Div
+                d="flex"
+                justify="center"
+                align="center"
+                top="0"
+                right="0"
+                bg="black900"
+                h="5rem"
+                w="5rem"
+                textSize="title"
+                rounded="circle"
+              >
+                <Div textColor="white">已過期</Div>
+              </Div>
+            ))}
+        </Div>
         <Text
           textSize="title"
           textWeight="400"
