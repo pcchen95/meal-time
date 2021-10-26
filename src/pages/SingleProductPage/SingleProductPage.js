@@ -1,7 +1,7 @@
-import React, { useState } from "react"
-import { Div, Text, Col, Button, Icon, Input, Tag } from "atomize"
-import PropTypes from "prop-types"
-import { Link, useParams, useHistory } from "react-router-dom"
+import React, { useState } from "react";
+import { Div, Text, Col, Button, Icon, Input, Tag } from "atomize";
+import PropTypes from "prop-types";
+import { Link, useParams, useHistory } from "react-router-dom";
 import {
   getProduct,
   cleanProduct,
@@ -9,13 +9,13 @@ import {
   getCategoryProducts,
   cleanVendorProducts,
   cleanCategoryProducts,
-} from "../../redux/reducers/productReducer"
-import { useEffect } from "react"
-import { useDispatch, useSelector } from "react-redux"
-import styled from "styled-components"
-import SyncSuccessNotification from "../../Components/Notifications/SyncSuccessNotification"
-import SyncWarningNotification from "../../Components/Notifications/SyncWarningNotification"
-import LoadingPage from "../LoadingPage"
+} from "../../redux/reducers/productReducer";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import styled from "styled-components";
+import SyncSuccessNotification from "../../Components/Notifications/SyncSuccessNotification";
+import SyncWarningNotification from "../../Components/Notifications/SyncWarningNotification";
+import LoadingPage from "../LoadingPage";
 
 const ProductDetails = ({ title, content }) => {
   return (
@@ -32,19 +32,19 @@ const ProductDetails = ({ title, content }) => {
       </Text>
       <Text>{content}</Text>
     </Div>
-  )
-}
+  );
+};
 
 ProductDetails.propTypes = {
   title: PropTypes.string,
   content: PropTypes.string,
-}
+};
 
 const EllipsisText = styled.div`
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-`
+`;
 
 const Product = ({ product }) => {
   return (
@@ -83,120 +83,121 @@ const Product = ({ product }) => {
         </Text>
       </Div>
     </Link>
-  )
-}
+  );
+};
 Product.propTypes = {
   product: PropTypes.object,
-}
+};
 
 export default function SingleProductPage() {
-  let { id } = useParams()
-  const dispatch = useDispatch()
-  const history = useHistory()
-  const isLoading = useSelector((state) => state.products.isLoading)
-  const user = useSelector((state) => state.users.user)
-  const product = useSelector((state) => state.products.product)
-  const vendorProducts = useSelector((state) => state.products.vendorProducts)
+  let { id } = useParams();
+  const dispatch = useDispatch();
+  const history = useHistory();
+  const isLoading = useSelector((state) => state.products.isLoading);
+  const user = useSelector((state) => state.users.user);
+  const product = useSelector((state) => state.products.product);
+  const vendorProducts = useSelector((state) => state.products.vendorProducts);
   const categoryProducts = useSelector(
     (state) => state.products.categoryProducts
-  )
-  const page = useSelector((state) => state.products.page)
-  const sort = useSelector((state) => state.products.sort)
-  const queryParameters = { page, sort, limit: 4, order: "DESC" }
-  const [productCount, setProductCount] = useState(null)
-  const [showSuccess, setShowSuccess] = useState(false)
-  const [showWarning, setShowWarning] = useState(false)
-  const [productInCart, setProductInCart] = useState(null)
-  let now = new Date()
-  now.setHours(0)
-  now.setMinutes(0)
-  now.setSeconds(0)
-  const today = now.getTime()
+  );
+  const page = useSelector((state) => state.products.page);
+  const sort = useSelector((state) => state.products.sort);
+  const queryParameters = { page, sort, limit: 4, order: "DESC" };
+  const [productCount, setProductCount] = useState(null);
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [showWarning, setShowWarning] = useState(false);
+  const [productInCart, setProductInCart] = useState(null);
+  let now = new Date();
+  now.setHours(0);
+  now.setMinutes(0);
+  now.setSeconds(0);
+  const today = now.getTime();
 
   useEffect(() => {
-    if (user) getProductInCart()
-    dispatch(getProduct(id))
+    if (user) getProductInCart();
+    dispatch(getProduct(id));
     return () => {
-      dispatch(cleanVendorProducts())
-      dispatch(cleanCategoryProducts())
-      dispatch(cleanProduct())
-    }
-  }, [id, dispatch])
+      dispatch(cleanVendorProducts());
+      dispatch(cleanCategoryProducts());
+      dispatch(cleanProduct());
+    };
+  }, [id, dispatch]);
 
   useEffect(() => {
     if (product === 0) {
-      return history.push("/")
+      return history.push("/");
     }
     if (product) {
-      dispatch(getCategoryProducts(product.categoryId, queryParameters))
-      dispatch(getVendorProducts(product.vendorId, queryParameters))
+      dispatch(getCategoryProducts(product.categoryId, queryParameters));
+      dispatch(getVendorProducts(product.vendorId, queryParameters));
       window.scrollTo({
         top: 0,
         left: 0,
         behavior: "instant",
-      })
+      });
     }
-  }, [product])
+  }, [product]);
 
   useEffect(() => {
-    getProductInCart()
+    getProductInCart();
     if (productInCart && productInCart + productCount > product.quantity) {
-      setShowWarning(true)
-      setProductCount(product.quantity - productInCart)
+      setShowWarning(true);
+      setProductCount(product.quantity - productInCart);
     }
     if (product && productCount > product.quantity) {
-      setProductCount(product.quantity)
+      setProductCount(product.quantity);
     }
     if (productCount < 0) {
-      setProductCount(0)
+      setProductCount(0);
     }
-  }, [productCount])
+  }, [productCount]);
 
   const getProductInCart = () => {
     if (user && product) {
-      let cart = localStorage.getItem(`cartId${user.id}`) || null
-      if (!cart) return
+      let cart = localStorage.getItem(`cartId${user.id}`) || null;
+      if (!cart) return;
       const cartProduct = JSON.parse(cart).find(
         (item) => item.id === product.id
-      )
+      );
       if (cartProduct) {
         if (cartProduct.quantity > product.quantity) {
-          setShowWarning(true)
-          setCartCountToLimit()
+          setShowWarning(true);
+          setCartCountToLimit();
+          return;
         }
-        setProductInCart(cartProduct.quantity)
+        setProductInCart(cartProduct.quantity);
       }
     }
-  }
+  };
 
   const setCartCountToLimit = () => {
-    const newProductId = product && product.id
-    let cart = localStorage.getItem(`cartId${user.id}`) || null
-    let newCartArray = []
-    const cartArray = JSON.parse(cart)
+    const newProductId = product && product.id;
+    let cart = localStorage.getItem(`cartId${user.id}`) || null;
+    let newCartArray = [];
+    const cartArray = JSON.parse(cart);
     cartArray.forEach((item) => {
       if (item.id === newProductId) {
         newCartArray.push({
           id: newProductId,
           quantity: product.quantity,
-        })
+        });
       } else {
-        newCartArray.push(item)
+        newCartArray.push(item);
       }
-    })
+    });
 
-    localStorage.setItem(`cartId${user.id}`, JSON.stringify(newCartArray))
-    setProductCount(0)
-  }
+    localStorage.setItem(`cartId${user.id}`, JSON.stringify(newCartArray));
+    setProductCount(0);
+  };
 
   const addToCart = (value) => {
-    const newProductId = product && product.id
-    let cart = localStorage.getItem(`cartId${user.id}`) || null
-    let newCartArray = []
-    const cartArray = JSON.parse(cart)
+    const newProductId = product && product.id;
+    let cart = localStorage.getItem(`cartId${user.id}`) || null;
+    let newCartArray = [];
+    const cartArray = JSON.parse(cart);
     const isProductExist = (product) => {
-      return product.id === newProductId
-    }
+      return product.id === newProductId;
+    };
     if (cart) {
       if (cartArray.find(isProductExist)) {
         cartArray.forEach((item) => {
@@ -204,21 +205,21 @@ export default function SingleProductPage() {
             newCartArray.push({
               id: newProductId,
               quantity: item.quantity + value,
-            })
+            });
           } else {
-            newCartArray.push(item)
+            newCartArray.push(item);
           }
-        })
+        });
       } else {
-        cartArray.forEach((item) => newCartArray.push(item))
-        newCartArray.push({ id: newProductId, quantity: value })
+        cartArray.forEach((item) => newCartArray.push(item));
+        newCartArray.push({ id: newProductId, quantity: value });
       }
     } else {
-      newCartArray = [{ id: newProductId, quantity: value }]
+      newCartArray = [{ id: newProductId, quantity: value }];
     }
-    localStorage.setItem(`cartId${user.id}`, JSON.stringify(newCartArray))
-    setProductCount(0)
-  }
+    localStorage.setItem(`cartId${user.id}`, JSON.stringify(newCartArray));
+    setProductCount(0);
+  };
 
   return (
     <Div
@@ -245,7 +246,7 @@ export default function SingleProductPage() {
           borderColor="gray400"
           rounded="sm"
           opacity={
-            (product && Date.parse(product.expiryDate) < Date.now() && "0.6") ||
+            (product && Date.parse(product.expiryDate) <= today && "0.6") ||
             (product && product.quantity === 0 && "0.6")
           }
         >
@@ -371,7 +372,9 @@ export default function SingleProductPage() {
           <Text textSize="title" textWeight="600" m={{ t: "0.5rem" }}>
             商品介紹
           </Text>
-          <Text textSize="subheader">{product && product.description}</Text>
+          <Text textSize="subheader" style={{ "white-space": "pre-line" }}>
+            {product && product.description}
+          </Text>
         </Div>
       </Col>
       <Col>
@@ -397,7 +400,7 @@ export default function SingleProductPage() {
                   m={{ r: "0" }}
                   onClick={() => {
                     if (productCount > 0) {
-                      setProductCount(Number(productCount) - 1)
+                      setProductCount(Number(productCount) - 1);
                     }
                   }}
                 >
@@ -409,7 +412,7 @@ export default function SingleProductPage() {
                   value={productCount}
                   textAlign="center"
                   onChange={(e) => {
-                    setProductCount(e.target.value)
+                    setProductCount(e.target.value);
                   }}
                   min={0}
                   max={product && product.quantity}
@@ -425,7 +428,7 @@ export default function SingleProductPage() {
                   m={{ x: "0" }}
                   onClick={() => {
                     if (product && productCount < product.quantity) {
-                      setProductCount(Number(productCount) + 1)
+                      setProductCount(Number(productCount) + 1);
                     }
                   }}
                 >
@@ -435,11 +438,11 @@ export default function SingleProductPage() {
               <Button
                 onClick={() => {
                   if (Boolean(productCount) && user) {
-                    setShowSuccess(true)
-                    addToCart(productCount)
-                    return
+                    setShowSuccess(true);
+                    addToCart(productCount);
+                    return;
                   }
-                  setShowWarning(true)
+                  setShowWarning(true);
                 }}
                 w="100%"
                 bg="info800"
@@ -449,7 +452,7 @@ export default function SingleProductPage() {
                 m={{ b: "2rem" }}
                 disabled={
                   (product && product.quantity === 0) ||
-                  (product && Date.parse(product.expiryDate) < Date.now()) ||
+                  (product && Date.parse(product.expiryDate) <= today) ||
                   !productCount ||
                   (product && productCount > product.quantity) ||
                   (product && productCount + productInCart > product.quantity)
@@ -478,37 +481,58 @@ export default function SingleProductPage() {
                 r: { lg: "2rem", xs: "1rem" },
               }}
             >
-              <Col>
-                <Div
-                  bgImg={
-                    (product && product.Vendor.avatarUrl) || "defaultImage.png"
-                  }
-                  bgSize="cover"
-                  bgPos="center"
-                  w="8rem"
-                  h="8rem"
-                  rounded="circle"
-                />
-              </Col>
-              <Div
-                minH="8rem"
-                minW="12rem"
-                m={{ xs: "0rem", lg: { l: "2rem" } }}
+              <Link
+                to={`/store/${product && product.vendorId}`}
+                style={{ textDecoration: "none" }}
               >
-                <Text textSize="title" m={{ t: "1rem" }}>
-                  {product && product.Vendor.vendorName}
-                </Text>
-                <Div d="flex">
-                  <Text
-                    textColor="gray900"
-                    m={{ y: "0rem", r: "1rem" }}
-                    textWeight="600"
+                <Div
+                  d="flex"
+                  flexDir={{ xs: "column", lg: "row" }}
+                  align={{ xs: "center", lg: "flex-start" }}
+                >
+                  <Div
+                    bgImg={
+                      (product && product.Vendor.avatarUrl) ||
+                      "defaultImage.png"
+                    }
+                    bgSize="cover"
+                    bgPos="center"
+                    w="8rem"
+                    h="8rem"
+                    rounded="circle"
+                    m={{ r: { xs: "0rem", lg: "2rem" } }}
+                  />
+                  <Div
+                    d="flex"
+                    flexDir="column"
+                    minH="8rem"
+                    minW="12rem"
+                    m={{ xs: "0rem", lg: { l: "2rem" } }}
+                    textAlign={{ xs: "center", lg: "left" }}
+                    align={{ xs: "center", lg: "flex-start" }}
                   >
-                    賣家分類
-                  </Text>
-                  <Text>{product && product.Vendor.VendorCategory.name}</Text>
+                    <Text
+                      textSize="title"
+                      m={{ t: "1rem" }}
+                      textColor="info800"
+                    >
+                      {product && product.Vendor.vendorName}
+                    </Text>
+                    <Div d="flex">
+                      <Text
+                        textColor="gray900"
+                        m={{ y: "0rem", r: "1rem" }}
+                        textWeight="600"
+                      >
+                        賣家分類
+                      </Text>
+                      <Text>
+                        {product && product.Vendor.VendorCategory.name}
+                      </Text>
+                    </Div>
+                  </Div>
                 </Div>
-              </Div>
+              </Link>
             </Div>
             <Div d="flex" align="center" flexDir={{ xs: "column", lg: "row" }}>
               <Text
@@ -606,5 +630,5 @@ export default function SingleProductPage() {
         warningMessage={(user === null && "請登入") || "購物車內數量達上限"}
       />
     </Div>
-  )
+  );
 }

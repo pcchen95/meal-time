@@ -1,7 +1,7 @@
-import React from "react"
-import PropTypes from "prop-types"
-import { Div, Input } from "atomize"
-import { useLocation } from "react-router-dom"
+import React from "react";
+import PropTypes from "prop-types";
+import { Div, Input, Textarea } from "atomize";
+import { useLocation } from "react-router-dom";
 
 const InputField = ({
   name,
@@ -13,16 +13,16 @@ const InputField = ({
   rule,
   required,
 }) => {
-  const location = useLocation()
-  let titleLength = 5
+  const location = useLocation();
+  let titleLength = 5;
   if (location.pathname === "/member_edit") {
-    titleLength = 9
+    titleLength = 9;
   }
   if (location.pathname === "/signup") {
-    titleLength = 7
+    titleLength = 7;
   }
   const marginLength =
-    location.pathname === "/member_password" ? 0 : titleLength + 1
+    location.pathname === "/member_password" ? 0 : titleLength + 1;
 
   return (
     <Div d="flex" flexDir="column" m={{ y: "1rem" }}>
@@ -45,21 +45,33 @@ const InputField = ({
           w={{ xs: "100%", md: `calc(100% - ${titleLength}rem)` }}
           m={{ l: { xs: "0", md: "1rem" } }}
         >
-          <Input
-            type={type}
-            value={value}
-            pattern={rule || null}
-            onChange={handleEvent}
-            placeholder={placeholder}
-            m={{ t: "0.5rem" }}
-            w={{ xs: "100%", md: "100%" }}
-            required={required}
-            min={
-              (name === "有效期限" && new Date().toISOString().slice(0, 10)) ||
-              ((name === "價錢" || name === "數量") && 0)
-            }
-            max={name === "製造日期" && new Date().toISOString().slice(0, 10)}
-          />
+          {(type === "textarea" && (
+            <Textarea
+              value={value}
+              pattern={rule || null}
+              onChange={handleEvent}
+              placeholder={placeholder}
+              w={{ xs: "100%", md: "100%" }}
+              m={{ t: "0.5rem" }}
+            />
+          )) || (
+            <Input
+              type={type}
+              value={value}
+              pattern={rule || null}
+              onChange={handleEvent}
+              placeholder={placeholder}
+              m={{ t: "0.5rem" }}
+              w={{ xs: "100%", md: "100%" }}
+              required={required}
+              min={
+                (name === "有效期限" &&
+                  new Date().toISOString().slice(0, 10)) ||
+                ((name === "價錢" || name === "數量") && 0)
+              }
+              max={name === "製造日期" && new Date().toISOString().slice(0, 10)}
+            />
+          )}
         </Div>
       </Div>
       <Div
@@ -70,8 +82,8 @@ const InputField = ({
         {remind}
       </Div>
     </Div>
-  )
-}
+  );
+};
 
 InputField.propTypes = {
   name: PropTypes.string,
@@ -82,6 +94,6 @@ InputField.propTypes = {
   remind: PropTypes.string,
   rule: PropTypes.string,
   required: PropTypes.bool,
-}
+};
 
-export default InputField
+export default InputField;
