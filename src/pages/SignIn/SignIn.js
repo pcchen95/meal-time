@@ -7,7 +7,7 @@ import {
   setErrorMessage,
   setShowWarningNotification,
 } from "../../redux/reducers/notificationReducer";
-import { Row, Col, Div } from "atomize";
+import { Row, Col, Div, Text } from "atomize";
 import InputField from "../../Components/UserSystem/InputField";
 import SignUpButtons from "../../Components/UserSystem/SignUpButtons";
 import SuccessNotification from "../../Components/Notifications/SuccessNotification";
@@ -47,6 +47,9 @@ const SignInInfo = () => {
 
   return (
     <Div w="100%">
+      <Text textSize="heading" textColor="gray900" m={{ b: "3rem" }}>
+        登入 Sign In
+      </Text>
       <form style={{ width: "100%" }} onSubmit={handleSubmit}>
         <InputField
           name="帳號"
@@ -54,7 +57,6 @@ const SignInInfo = () => {
           value={username}
           handleEvent={(e) => setUsername(e.target.value)}
           placeholder="請輸入帳號"
-          required={true}
         />
         <InputField
           name="密碼"
@@ -62,7 +64,6 @@ const SignInInfo = () => {
           value={password}
           handleEvent={(e) => setPassword(e.target.value)}
           placeholder="請輸入密碼"
-          required={true}
         />
         <SignUpButtons
           handleEvent={() => history.goBack()}

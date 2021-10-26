@@ -12,11 +12,12 @@ const InputField = ({
   remind,
   rule,
   required,
+  isDisabled,
 }) => {
   const location = useLocation();
   let titleLength = 5;
   if (location.pathname === "/member_password") {
-    titleLength = 9;
+    titleLength = 8;
   }
   if (location.pathname === "/signup") {
     titleLength = 7;
@@ -38,9 +39,20 @@ const InputField = ({
           w={`${titleLength}rem`}
           textAlign={{ xs: "left", md: "justify" }}
           style={{ textAlignLast: "justify" }}
+          pos="relative"
         >
           {name}
+          <Div
+            textColor="red"
+            m={{ l: "0.5rem" }}
+            pos="absolute"
+            right="-10px"
+            top="0"
+          >
+            {required && "*"}
+          </Div>
         </Div>
+
         <Div
           w={{ xs: "100%", md: `calc(100% - ${titleLength}rem)` }}
           m={{ l: { xs: "0", md: "1rem" } }}
@@ -54,6 +66,8 @@ const InputField = ({
             m={{ t: "0.5rem" }}
             w={{ xs: "100%", md: "100%" }}
             required={required}
+            disabled={isDisabled}
+            textColor={isDisabled && "disable"}
           />
         </Div>
       </Div>
@@ -77,6 +91,7 @@ InputField.propTypes = {
   remind: PropTypes.string,
   rule: PropTypes.string,
   required: PropTypes.bool,
+  isDisabled: PropTypes.bool,
 };
 
 export default InputField;

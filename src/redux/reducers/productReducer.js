@@ -1,19 +1,21 @@
-import { createSlice } from "@reduxjs/toolkit"
+import { createSlice } from "@reduxjs/toolkit";
 import {
   getProducts as getProductsApi,
   getProduct as getProductApi,
   getProductsByVendor as getProductsByVendorApi,
+  getOwnProducts as getOwnProductsApi,
   getProductsByCategory as getProductsByCategoryApi,
   getProductCategories as getProductCategoriesApi,
   searchProduct as searchProductApi,
   postProduct as postProductApi,
   updateProduct as updateProductApi,
-} from "../../WebAPI/productAPI"
+  deleteProduct as deleteProductApi,
+} from "../../WebAPI/productAPI";
 import {
   setErrorMessage,
   setShowSuccessNotification,
   setShowWarningNotification,
-} from "./notificationReducer"
+} from "./notificationReducer";
 const initialState = {
   page: 1,
   sort: "id",
@@ -21,52 +23,64 @@ const initialState = {
   products: null,
   product: null,
   vendorProducts: null,
+  myVendorProducts: null,
+  vendorProductCategories: null,
   categoryProducts: null,
   searchedProducts: null,
   productCategories: null,
   errorMessage: null,
   isLoading: false,
-}
+  count: null,
+};
 
 export const productReducer = createSlice({
   name: "product",
   initialState,
   reducers: {
     setSort: (state, action) => {
-      state.sort = action.payload
+      state.sort = action.payload;
     },
     setPage: (state, action) => {
-      state.page = action.payload
+      state.page = action.payload;
     },
     setLimit: (state, action) => {
       state.limit = action.payload
     },
     setProducts: (state, action) => {
-      state.products = action.payload
+      state.products = action.payload;
     },
     setProduct: (state, action) => {
-      state.product = action.payload
+      state.product = action.payload;
     },
     setVendorProduct: (state, action) => {
-      state.vendorProducts = action.payload
+      state.vendorProducts = action.payload;
+    },
+    setMyVendorProduct: (state, action) => {
+      state.myVendorProducts = action.payload;
+    },
+    setVendorProductCategories: (state, action) => {
+      state.vendorProductCategories = action.payload;
     },
     setCategoryProduct: (state, action) => {
-      state.categoryProducts = action.payload
+      state.categoryProducts = action.payload;
     },
     setSearchedProduct: (state, action) => {
-      state.searchedProducts = action.payload
+      state.searchedProducts = action.payload;
     },
     setProductCategories: (state, action) => {
-      state.productCategories = action.payload
+      state.productCategories = action.payload;
     },
     setErrMessage: (state, action) => {
-      state.errorMessage = action.payload
+      state.errorMessage = action.payload;
     },
     setIsLoading: (state, action) => {
-      state.isLoading = action.payload
+      state.isLoading = action.payload;
+    },
+    setCount: (state, action) => {
+      state.count = action.payload;
     },
   },
-})
+});
 
 export const {
   setSort,
@@ -76,42 +90,45 @@ export const {
   setProduct,
   setErrMessage,
   setVendorProduct,
+  setMyVendorProduct,
   setCategoryProduct,
   setSearchedProduct,
   setProductCategories,
   setIsLoading,
-} = productReducer.actions
+  setCount,
+  setVendorProductCategories,
+} = productReducer.actions;
 
 export const getProducts = (queryParameters) => (dispatch) => {
-  dispatch(setIsLoading(true))
+  dispatch(setIsLoading(true));
   return getProductsApi(queryParameters)
     .then((res) => {
       if (!res.ok) {
-        return dispatch(setErrMessage(res ? res.message : "something wrong"))
+        return dispatch(setErrMessage(res ? res.message : "something wrong"));
       }
-      return res.data
+      return res.data;
     })
     .then((products) => {
       dispatch(setIsLoading(false))
       dispatch(setProducts(products))
     })
     .catch((err) => {
-      console.log(err)
-    })
-}
+      console.log(err);
+    });
+};
 export const cleanProducts = () => (dispatch) => {
-  dispatch(setProducts(null))
-}
+  dispatch(setProducts(null));
+};
 
 export const getProduct = (id) => (dispatch) => {
-  dispatch(setIsLoading(true))
+  dispatch(setIsLoading(true));
 
   return getProductApi(id)
     .then((res) => {
       if (!res.ok) {
-        return dispatch(setErrMessage(res ? res.message : "something wrong"))
+        return dispatch(setErrMessage(res ? res.message : "something wrong"));
       }
-      return res.data
+      return res.data;
     })
     .then((product) => {
       dispatch(setIsLoading(false))
@@ -119,75 +136,151 @@ export const getProduct = (id) => (dispatch) => {
       dispatch(setProduct(product))
     })
     .catch((err) => {
-      console.log(err)
-    })
-}
+      console.log(err);
+    });
+};
 
 export const cleanProduct = () => (dispatch) => {
-  dispatch(setProduct(null))
-}
+  dispatch(setProduct(null));
+};
 
 export const getVendorProducts = (id, queryParameters) => (dispatch) => {
-  dispatch(setIsLoading(true))
+  dispatch(setIsLoading(true));
 
   return getProductsByVendorApi(id, queryParameters)
     .then((res) => {
       if (!res.ok) {
-        return dispatch(setErrMessage(res ? res.message : "something wrong"))
+        return dispatch(setErrMessage(res ? res.message : "something wrong"));
       }
-      return res.data
+      return res.data;
     })
     .then((products) => {
-      dispatch(setIsLoading(false))
-
-      dispatch(setVendorProduct(products.rows))
+      dispatch(setIsLoading(false));
+      dispatch(setCount(products.count));
+      dispatch(setVendorProduct(products.rows));
     })
     .catch((err) => {
-      console.log(err)
-    })
-}
+      console.log(err);
+    });
+};
 export const cleanVendorProducts = () => (dispatch) => {
-  dispatch(setVendorProduct(null))
-}
+  dispatch(setVendorProduct(null));
+};
+
+export const getVendorProductCategories = (id) => (dispatch) => {
+  dispatch(setIsLoading(true));
+
+  return getProductsByVendorApi(id)
+    .then((res) => {
+      if (!res.ok) {
+        return dispatch(setErrMessage(res ? res.message : "something wrong"));
+      }
+      return res.data;
+    })
+    .then((products) => {
+      const array = [];
+      products.rows.forEach((product) => {
+        if (array.map((item) => item.id).indexOf(product.categoryId) < 0)
+          array.push({
+            id: product.categoryId,
+            name: product.ProductCategory.name,
+          });
+      });
+      dispatch(setIsLoading(false));
+      dispatch(setVendorProductCategories(array));
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
+
+export const getMyVendorProducts = (id, queryParameters) => (dispatch) => {
+  dispatch(setIsLoading(true));
+  return getOwnProductsApi(id, queryParameters)
+    .then((res) => {
+      if (!res.ok) {
+        return dispatch(setErrMessage(res ? res.message : "something wrong"));
+      }
+      return res.data;
+    })
+    .then((products) => {
+      dispatch(setIsLoading(false));
+      dispatch(setCount(products.count));
+      dispatch(setMyVendorProduct(products.rows));
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
+export const cleanMyVendorProducts = () => (dispatch) => {
+  dispatch(setMyVendorProduct(null));
+};
+
+export const getMyProductCategories = (id) => (dispatch) => {
+  dispatch(setIsLoading(true));
+
+  return getOwnProductsApi(id)
+    .then((res) => {
+      if (!res.ok) {
+        return dispatch(setErrMessage(res ? res.message : "something wrong"));
+      }
+      return res.data;
+    })
+    .then((products) => {
+      const array = [];
+      products.rows.forEach((product) => {
+        if (array.map((item) => item.id).indexOf(product.categoryId) < 0)
+          array.push({
+            id: product.categoryId,
+            name: product.ProductCategory.name,
+          });
+      });
+      dispatch(setIsLoading(false));
+      dispatch(setVendorProductCategories(array));
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
 
 export const getCategoryProducts = (id, queryParameters) => (dispatch) => {
-  dispatch(setIsLoading(true))
+  dispatch(setIsLoading(true));
 
   return getProductsByCategoryApi(id, queryParameters)
     .then((res) => {
       if (!res.ok) {
-        return dispatch(setErrMessage(res ? res.message : "something wrong"))
+        return dispatch(setErrMessage(res ? res.message : "something wrong"));
       }
-      return res.data
+      return res.data;
     })
     .then((products) => {
-      dispatch(setIsLoading(false))
+      dispatch(setIsLoading(false));
 
       dispatch(setCategoryProduct(products))
     })
     .catch((err) => {
-      console.log(err)
-    })
-}
+      console.log(err);
+    });
+};
 export const cleanCategoryProducts = () => (dispatch) => {
-  dispatch(setCategoryProduct(null))
-}
+  dispatch(setCategoryProduct(null));
+};
 
 export const searchProducts = (keyword, queryParameters) => (dispatch) => {
   dispatch(setIsLoading(true))
   return searchProductApi(keyword, queryParameters)
     .then((res) => {
+      dispatch(setIsLoading(false));
       if (!res.ok) {
-        return dispatch(setErrMessage(res ? res.message : "something wrong"))
+        return dispatch(setErrMessage(res ? res.message : "something wrong"));
       }
-      return res.data
+      return res.data;
     })
     .then((products) => {
-      dispatch(setIsLoading(false))
       dispatch(setSearchedProduct(products))
     })
-    .catch((err) => console.log(err))
-}
+    .catch((err) => console.log(err));
+};
 
 export const cleanSearchProducts = () => (dispatch) => {
   dispatch(setSearchedProduct(null))
@@ -197,21 +290,21 @@ export const getProductCategories = () => (dispatch) => {
   return getProductCategoriesApi()
     .then((res) => {
       if (!res.ok) {
-        return dispatch(setErrMessage(res ? res.message : "something wrong"))
+        return dispatch(setErrMessage(res ? res.message : "something wrong"));
       }
-      return res.data
+      return res.data;
     })
     .then((categories) => {
-      dispatch(setProductCategories(categories))
+      dispatch(setProductCategories(categories));
     })
     .catch((err) => {
-      console.log(err)
-    })
-}
+      console.log(err);
+    });
+};
 
 export const cleanProductCategories = () => (dispatch) => {
-  dispatch(setProductCategories(null))
-}
+  dispatch(setProductCategories(null));
+};
 
 export const postProduct =
   ({
@@ -227,7 +320,7 @@ export const postProduct =
     // isDeletePicture,
   }) =>
   (dispatch) => {
-    dispatch(setIsLoading(true))
+    dispatch(setIsLoading(true));
     return postProductApi({
       picture,
       name,
@@ -241,14 +334,14 @@ export const postProduct =
       // isDeletePicture,
     }).then((res) => {
       if (!res.ok) {
-        dispatch(setErrorMessage(res.message))
-        dispatch(setShowWarningNotification(true))
-        return
+        dispatch(setErrorMessage(res.message));
+        dispatch(setShowWarningNotification(true));
+        return;
       }
-      dispatch(setShowSuccessNotification(true, "新增成功！"))
-      return res.data
-    })
-  }
+      dispatch(setShowSuccessNotification(true, "新增成功！"));
+      return res.data;
+    });
+  };
 
 export const patchProduct =
   (
@@ -267,7 +360,7 @@ export const patchProduct =
     }
   ) =>
   (dispatch) => {
-    dispatch(setIsLoading(true))
+    dispatch(setIsLoading(true));
     return updateProductApi(id, {
       picture,
       name,
@@ -281,13 +374,24 @@ export const patchProduct =
       // isDeletePicture,
     }).then((res) => {
       if (!res.ok) {
-        dispatch(setErrorMessage(res.message))
-        dispatch(setShowWarningNotification(true))
-        return
+        dispatch(setErrorMessage(res.message));
+        dispatch(setShowWarningNotification(true));
+        return;
       }
-      dispatch(setShowSuccessNotification(true, "更新成功！"))
-      return res.data
-    })
-  }
+      dispatch(setShowSuccessNotification(true, "更新成功！"));
+      return res.data;
+    });
+  };
 
-export default productReducer.reducer
+export const deleteProduct = (id) => (dispatch) => {
+  return deleteProductApi(id).then((res) => {
+    if (!res.ok) {
+      dispatch(setErrorMessage(res.message));
+      dispatch(setShowWarningNotification(true));
+      return;
+    }
+    return res;
+  });
+};
+
+export default productReducer.reducer;

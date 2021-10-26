@@ -1,6 +1,6 @@
 import React from "react";
 import { useState, useEffect } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
 import { updatePassword } from "../../redux/reducers/userReducer";
 import {
@@ -19,8 +19,10 @@ const PasswordInfo = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const dispatch = useDispatch();
   const history = useHistory();
+  const user = useSelector((store) => store.users.user);
 
   useEffect(() => {
+    if (user && user === "non-login") return history.push("/");
     window.scrollTo({
       top: 0,
       left: 0,
@@ -58,85 +60,94 @@ const PasswordInfo = () => {
   };
 
   return (
-    <Div
-      w={{ xs: "100%", md: "60%" }}
-      m="0 auto"
-      p={{ xs: "1.5rem", md: "0" }}
-      d="flex"
-      flexDir="column"
-      align="center"
-      justify="center"
-    >
-      <Div tag="h2" m={{ b: "1.5rem" }} w="100%">
-        修改密碼
-      </Div>
-      <form style={{ width: "100%" }} onSubmit={handleSubmit}>
-        <InputField
-          name="輸入原密碼："
-          type="password"
-          value={oldPassword}
-          handleEvent={(e) => setOldPassword(e.target.value)}
-          remind={remindText.password}
-          rule={inputRule.password}
-          required={true}
-        />
-        <InputField
-          name="輸入新密碼："
-          type="password"
-          value={newPassword}
-          handleEvent={(e) => setNewPassword(e.target.value)}
-          remind={remindText.password}
-          rule={inputRule.password}
-          required={true}
-        />
-        <InputField
-          name="再次輸入新密碼："
-          type="password"
-          value={confirmPassword}
-          handleEvent={(e) => setConfirmPassword(e.target.value)}
-          remind={remindText.password}
-          rule={inputRule.password}
-          required={true}
-        />
-        <Text h="20px" textColor="red" m={{ t: "2rem" }} textSize="14px"></Text>
-        <Div d="flex">
-          <Button
-            prefix={
-              <Icon
-                name="LongLeft"
-                size="16px"
-                color="white"
-                m={{ r: "1rem" }}
-              />
-            }
-            type="button"
-            bg="gray700"
-            shadow="1"
-            hoverShadow="2"
-            m={{ t: "1rem", b: "3rem" }}
-            onClick={() => history.push("/member_edit")}
-          >
-            返回
-          </Button>
-          <Button
-            suffix={
-              <Icon
-                name="LongRight"
-                size="16px"
-                color="white"
-                m={{ l: "1rem" }}
-              />
-            }
-            bg="info700"
-            shadow="1"
-            hoverShadow="2"
-            m={{ t: "1rem", b: "3rem", l: "1rem" }}
-          >
-            確認修改密碼
-          </Button>
+    <>
+      {user && (
+        <Div
+          w={{ xs: "100%", md: "60%" }}
+          m="0 auto"
+          p={{ xs: "1.5rem", md: "0" }}
+          d="flex"
+          flexDir="column"
+          align="center"
+          justify="center"
+        >
+          <Div tag="h2" m={{ b: "1.5rem" }} w="100%">
+            修改密碼
+          </Div>
+          <form style={{ width: "100%" }} onSubmit={handleSubmit}>
+            <InputField
+              name="輸入原密碼"
+              type="password"
+              value={oldPassword}
+              handleEvent={(e) => setOldPassword(e.target.value)}
+              remind={remindText.password}
+              rule={inputRule.password}
+              required={true}
+            />
+            <InputField
+              name="輸入新密碼"
+              type="password"
+              value={newPassword}
+              handleEvent={(e) => setNewPassword(e.target.value)}
+              remind={remindText.password}
+              rule={inputRule.password}
+              required={true}
+            />
+            <InputField
+              name="再次輸入新密碼"
+              type="password"
+              value={confirmPassword}
+              handleEvent={(e) => setConfirmPassword(e.target.value)}
+              remind={remindText.password}
+              rule={inputRule.password}
+              required={true}
+            />
+            <Text
+              h="20px"
+              textColor="red"
+              m={{ t: "2rem" }}
+              textSize="14px"
+            ></Text>
+            <Div d="flex">
+              <Button
+                prefix={
+                  <Icon
+                    name="LongLeft"
+                    size="16px"
+                    color="white"
+                    m={{ r: "1rem" }}
+                  />
+                }
+                type="button"
+                bg="gray700"
+                shadow="1"
+                hoverShadow="2"
+                m={{ t: "1rem", b: "3rem" }}
+                onClick={() => history.push("/member_edit")}
+              >
+                返回
+              </Button>
+              <Button
+                suffix={
+                  <Icon
+                    name="LongRight"
+                    size="16px"
+                    color="white"
+                    m={{ l: "1rem" }}
+                  />
+                }
+                bg="info700"
+                shadow="1"
+                hoverShadow="2"
+                m={{ t: "1rem", b: "3rem", l: "1rem" }}
+              >
+                確認修改密碼
+              </Button>
+            </Div>
+          </form>
         </Div>
-      </form>
-    </Div>
+      )}
+    </>
   );
 };
 

@@ -14,6 +14,7 @@ import InputField from "../../Components/UserSystem/InputField";
 import ButtonGroup from "../../Components/UserSystem/ButtonGroup";
 import SuccessNotification from "../../Components/Notifications/SuccessNotification";
 import WarningNotification from "../../Components/Notifications/WarningNotification";
+import LoadingPage from "../LoadingPage/LoadingPage";
 import { remindText, inputRule } from "../../constants/inputText";
 
 const MemberEdit = () => {
@@ -74,6 +75,9 @@ const MemberEdit = () => {
   };
 
   useEffect(() => {
+    if (user === "non-login") {
+      return history.push("/");
+    }
     window.scrollTo({
       top: 0,
       left: 0,
@@ -103,87 +107,110 @@ const MemberEdit = () => {
   }, [user, nickname, email, phone]);
 
   return (
-    <Div
-      w={{ xs: "100%", md: "70%" }}
-      maxW={{ md: "37rem" }}
-      m="0 auto"
-      p={{ xs: "1.5rem", md: "0" }}
-      d="flex"
-      flexDir="column"
-      align="center"
-      justify="center"
-    >
-      <Div w="100%" tag="h2" m={{ b: "1.5rem" }}>
-        基本資料
-      </Div>
-      <form style={{ width: "100%" }} onSubmit={handleSubmit}>
-        <Div d="flex" flexDir="column" align="center" justify="center" w="100%">
-          <Div textSize="subheader" textAlign="left" w="100%">
-            個人頭像
+    <>
+      {isLoading && <LoadingPage />}
+      {user && user !== "non-login" && (
+        <Div
+          w={{ xs: "100%", md: "70%" }}
+          maxW={{ md: "37rem" }}
+          m="0 auto"
+          p={{ xs: "1.5rem", md: "0" }}
+          d="flex"
+          flexDir="column"
+          align="center"
+          justify="center"
+        >
+          {user.role === "suspended" && (
+            <Div tag="h4" textColor="danger800">
+              您已被停權！
+            </Div>
+          )}
+          <Div w="100%" tag="h2" m={{ b: "1.5rem" }}>
+            基本資料
           </Div>
-          <Div
-            d="flex"
-            align="center"
-            justify="center"
-            flexDir={{ xs: "column", md: "row" }}
-          >
-            <PreviewAvatar
-              img={img}
-              defaultImg={"defaultAvatar.png"}
-              handleEvent={() => {
-                setFileInfo(null);
-                setImg(null);
-                if (user.avatarURL) {
-                  setIsDeleteAvatar(true);
-                  setIsEdited(true);
-                }
-                if (!user.avatarURL) {
-                  setIsEdited(false);
-                }
-              }}
+
+          <form style={{ width: "100%" }} onSubmit={handleSubmit}>
+            <Div
+              d="flex"
+              flexDir="column"
+              align="center"
+              justify="center"
+              w="100%"
+            >
+              <Div textSize="subheader" textAlign="left" w="100%">
+                個人頭像
+              </Div>
+              <Div
+                d="flex"
+                align="center"
+                justify="center"
+                flexDir={{ xs: "column", md: "row" }}
+              >
+                <PreviewAvatar
+                  img={img}
+                  defaultImg={"defaultAvatar.png"}
+                  isDisabled={user.role === "suspended"}
+                  handleEvent={() => {
+                    setFileInfo(null);
+                    setImg(null);
+                    if (user.avatarURL) {
+                      setIsDeleteAvatar(true);
+                      setIsEdited(true);
+                    }
+                    if (!user.avatarURL) {
+                      setIsEdited(false);
+                    }
+                  }}
+                />
+                {user.role !== "suspended" && (
+                  <UploadButton fileInput={fileInput} handleEvent={handleImg} />
+                )}
+              </Div>
+            </Div>
+            <Div w="100%" h="auto">
+              <InputField
+                name={"暱稱"}
+                type="text"
+                value={nickname}
+                handleEvent={(e) => setNickname(e.target.value)}
+                remind={remindText.nickname}
+                rule={inputRule.nickname}
+                required={true}
+                isDisabled={user.role === "suspended"}
+              />
+              <InputField
+                name={"電子信箱"}
+                type="email"
+                value={email}
+                handleEvent={(e) => setEmail(e.target.value)}
+                remind={remindText.email}
+                rule={inputRule.email}
+                required={true}
+                isDisabled={user.role === "suspended"}
+              />
+              <InputField
+                name={"手機號碼"}
+                type="tel"
+                value={phone}
+                handleEvent={(e) => setPhone(e.target.value)}
+                remind={remindText.phone}
+                rule={inputRule.phone}
+                required={true}
+                isDisabled={user.role === "suspended"}
+              />
+            </Div>
+            <ButtonGroup
+              handleEvent={() => history.push("/")}
+              isLoading={isLoading}
+              isDisabled={!isEdited || isLoading}
+              nextPath="/member_password"
             />
-            <UploadButton fileInput={fileInput} handleEvent={handleImg} />
-          </Div>
+          </form>
+          <SuccessNotification />
+          <WarningNotification />
         </Div>
-        <Div w="100%" h="auto">
-          <InputField
-            name={"暱稱"}
-            type="text"
-            value={nickname}
-            handleEvent={(e) => setNickname(e.target.value)}
-            remind={remindText.nickname}
-            rule={inputRule.nickname}
-            required={true}
-          />
-          <InputField
-            name={"電子信箱"}
-            type="email"
-            value={email}
-            handleEvent={(e) => setEmail(e.target.value)}
-            remind={remindText.email}
-            rule={inputRule.email}
-            required={true}
-          />
-          <InputField
-            name={"手機號碼"}
-            type="tel"
-            value={phone}
-            handleEvent={(e) => setPhone(e.target.value)}
-            remind={remindText.phone}
-            rule={inputRule.phone}
-            required={true}
-          />
-        </Div>
-        <ButtonGroup
-          handleEvent={() => history.push("/")}
-          isLoading={isLoading}
-          isDisabled={!isEdited || isLoading}
-          nextPath="/member_password"
-        />
-      </form>
-      <SuccessNotification />
-      <WarningNotification />
-    </Div>
+      )}
+    </>
   );
 };
 
