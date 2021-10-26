@@ -1,8 +1,8 @@
-import BASE_URL from "../constants/apiurl";
-import { getAuthToken } from "../utils";
+import BASE_URL from "../constants/apiurl"
+import { getAuthToken } from "../utils"
 
 export const getCartData = ({ cart }) => {
-  const token = getAuthToken();
+  const token = getAuthToken()
   return fetch(`${BASE_URL}/cart`, {
     method: "POST",
     headers: {
@@ -12,5 +12,5 @@ export const getCartData = ({ cart }) => {
     body: JSON.stringify({
       cart,
     }),
-  }).then((res) => res.json());
-};
+  }).then((res) => res.json())
+}
