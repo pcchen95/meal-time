@@ -6,11 +6,12 @@ import { useDispatch } from "react-redux";
 import { getMe } from "./redux/reducers/userReducer";
 import HomePage from "./pages/HomePage";
 import ProductsPage from "./pages/ProductsPage";
+import ProductsSearchedPage from "./pages/ProductsSearchedPage";
+import ProductsByCategoryPage from "./pages/ProductsByCategoryPage";
 import ProductManagePage from "./pages/ProductManagePage";
 import ProductEdit from "./pages/ProductEdit";
 import SingleProductPage from "./pages/SingleProductPage";
 import OrderDetailsPage from "./pages/OrderDetailsPage";
-import OrdersPage from "./pages/OrdersPage";
 import StorePage from "./pages/StorePage";
 import UpdateStorePage from "./pages/UpdateStorePage";
 import MapPage from "./pages/MapPage";
@@ -48,6 +49,12 @@ function App() {
           <Route exact path="/">
             <HomePage />
           </Route>
+          <Route path="/products/search/:keyword">
+            <ProductsSearchedPage />
+          </Route>
+          <Route path="/products/category/:id">
+            <ProductsByCategoryPage />
+          </Route>
           <Route path="/products">
             <ProductsPage />
           </Route>
@@ -62,9 +69,6 @@ function App() {
           </Route>
           <Route path="/order_details">
             <OrderDetailsPage />
-          </Route>
-          <Route path="/orders">
-            <OrdersPage />
           </Route>
           <Route path="/store/:id">
             <StorePage />

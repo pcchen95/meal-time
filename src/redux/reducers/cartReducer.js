@@ -1,10 +1,17 @@
 import { createSlice } from "@reduxjs/toolkit"
-import { getProduct as getProductApi } from "../../WebAPI/productAPI"
+import { getCartData as getCartDataApi } from "../../WebAPI/cartAPI"
+import { getMe as getMeApi } from "../../WebAPI/userAPI"
+
 import { setErrorMessage } from "./notificationReducer"
 
 const initialState = {
   cart: null,
   cartData: null,
+  isShow: false,
+  vendorId: null,
+  isLoading: false,
+  userId: null,
+  orderProducts: [],
 }
 
 export const cartReducer = createSlice({
@@ -17,44 +24,87 @@ export const cartReducer = createSlice({
     setCartData: (state, action) => {
       state.cartData = action.payload
     },
+    setIsShow: (state, action) => {
+      state.isShow = action.payload
+    },
+    setVendorId: (state, action) => {
+      state.vendorId = action.payload
+    },
+    setIsLoading: (state, action) => {
+      state.isLoading = action.payload
+    },
+    setVendorById: (state, action) => {
+      state.vendorById = action.payload
+    },
+    setUserId: (state, action) => {
+      state.userId = action.payload
+    },
+    setOrderProducts: (state, action) => {
+      state.orderProducts = action.payload
+    },
   },
 })
 
-export const { setCart, setCartData } = cartReducer.actions
+export const {
+  setCart,
+  setCartData,
+  setVendorId,
+  setIsShow,
+  setIsLoading,
+  setUserId,
+  setOrderProducts,
+} = cartReducer.actions
 
-export const getCartFromLocalStorage = (userId) => (dispatch) => {
-  const cartArray = JSON.parse(localStorage.getItem(`cartId${userId}`))
-  if (cartArray) dispatch(setCart(cartArray))
+export const getMe = () => (dispatch) => {
+  return getMeApi().then((res) => {
+    if (!res.ok) {
+      dispatch(setErrorMessage(res.message))
+      return
+    }
+    dispatch(setUserId(res.data.id))
+  })
 }
 
-export const cleanCart = () => (dispatch) => {
-  dispatch(setCart(null))
+export const getCartFromLocalStorage = (userId) => (dispatch) => {
+  const cart = localStorage.getItem(`cartId${userId}`)
+  let cartArray
+  if (cart) {
+    cartArray = JSON.parse(cart)
+    dispatch(setCart(cartArray))
+  }
 }
 
 export const getCartData = (userId) => (dispatch) => {
-  const cartArray = JSON.parse(localStorage.getItem(`cartId${userId}`))
-  const newCartData = []
-
-  try {
-    cartArray.forEach((cartByVendor) =>
-      cartByVendor.cartItems.forEach(async (product) => {
-        const res = await getProductApi(product.productId)
-        if (!res.ok) {
-          return dispatch(
-            setErrorMessage(res ? res.message : "something wrong")
-          )
-        }
-        let productData = res.data
-        productData = { ...productData, cartQuantity: product.quantity }
-        newCartData.push(productData)
-        // dispatch(setCartData(newCartData))
-        console.log(newCartData)
-      })
-    )
-  } catch (err) {
-    console.log(err)
+  const cart = localStorage.getItem(`cartId${userId}`)
+  let cartArray
+  if (cart) {
+    cartArray = JSON.parse(cart)
   }
-  return newCartData
+  return getCartDataApi({ cart: cartArray })
+    .then((res) => {
+      if (!res.ok) {
+        return dispatch(setErrorMessage(res ? res.message : "something wrong"))
+      }
+      return res.data
+    })
+    .then((cartData) => {
+      return dispatch(setCart(cartData))
+    })
+    .catch((err) => {
+      console.log(err)
+    })
 }
+
+export const cleanCartData = () => (dispatch) => {
+  dispatch(setCart(null))
+}
+
+export const selectCart = (state) => state.cart.cart
+export const selectCartData = (state) => state.cart.cartData
+export const selectIsShow = (state) => state.cart.isShow
+export const selectIsLoading = (state) => state.cart.isLoading
+export const selectVendorId = (state) => state.cart.vendorId
+export const selectUserId = (state) => state.cart.userId
+export const selectOrderProducts = (state) => state.cart.orderProducts
 
 export default cartReducer.reducer

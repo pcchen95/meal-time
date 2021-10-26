@@ -1,50 +1,51 @@
-import React from "react"
-import { useState, useEffect, createRef } from "react"
-import { useDispatch, useSelector } from "react-redux"
-import { useHistory, useParams } from "react-router-dom"
-import { Div } from "atomize"
+import React from "react";
+import { useState, useEffect, createRef } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useHistory, useParams } from "react-router-dom";
+import { Div } from "atomize";
 import {
   setErrorMessage,
   setShowWarningNotification,
-} from "../../redux/reducers/notificationReducer"
+} from "../../redux/reducers/notificationReducer";
 import {
   postProduct,
   getProductCategories,
   getProduct,
   cleanProduct,
   patchProduct,
-} from "../../redux/reducers/productReducer"
-import UploadButton from "../../Components/ProductSystem/UploadButton"
-import PreviewAvatar from "../../Components/ProductSystem/PreviewAvatar"
-import InputField from "../../Components/ProductSystem/InputField"
-import CategoryDropdown from "../../Components/ProductSystem/DropdownField"
-import RadioField from "../../Components/ProductSystem/RadioField"
-import ButtonGroup from "../../Components/ProductSystem/ButtonGroup"
-import { remindText, inputRule } from "../../constants/inputText"
-import SuccessNotification from "../../Components/Notifications/SuccessNotification"
-import WarningNotification from "../../Components/Notifications/WarningNotification"
-
+} from "../../redux/reducers/productReducer";
+import { getVendor } from "../../redux/reducers/vendorReducer";
+import UploadButton from "../../Components/ProductSystem/UploadButton";
+import PreviewAvatar from "../../Components/ProductSystem/PreviewAvatar";
+import InputField from "../../Components/ProductSystem/InputField";
+import CategoryDropdown from "../../Components/ProductSystem/DropdownField";
+import RadioField from "../../Components/ProductSystem/RadioField";
+import ButtonGroup from "../../Components/ProductSystem/ButtonGroup";
+import { remindText, inputRule } from "../../constants/inputText";
+import SuccessNotification from "../../Components/Notifications/SuccessNotification";
+import WarningNotification from "../../Components/Notifications/WarningNotification";
+import LoadingPage from "../LoadingPage";
 export default function ProductEdit() {
-  let { id } = useParams()
-  const [name, setName] = useState("")
-  const [price, setPrice] = useState("")
-  const [quantity, setQuantity] = useState("")
-  const [categoryId, setCategoryId] = useState("")
-  const [manufactureDate, setManufactureDate] = useState("")
-  const [expiryDate, setExpiryDate] = useState("")
-  const [description, setDescription] = useState("")
-  const [isAvailable, setIsAvailable] = useState(true)
-  const [img, setImg] = useState(null)
-  const [fileInfo, setFileInfo] = useState(null)
-  const [isDeletePicture, setIsDeletePicture] = useState(false)
-  const [isEdited, setIsEdited] = useState(false)
-  const fileInput = createRef()
-  const dispatch = useDispatch()
-  const history = useHistory()
-  const user = useSelector((store) => store.users.user)
-  const product = useSelector((store) => store.products.product)
-  const isLoading = useSelector((store) => store.products.isLoading)
-  let productId = ""
+  let { id } = useParams();
+  const [name, setName] = useState("");
+  const [price, setPrice] = useState("");
+  const [quantity, setQuantity] = useState("");
+  const [categoryId, setCategoryId] = useState("");
+  const [manufactureDate, setManufactureDate] = useState("");
+  const [expiryDate, setExpiryDate] = useState("");
+  const [description, setDescription] = useState("");
+  const [isAvailable, setIsAvailable] = useState(true);
+  const [img, setImg] = useState(null);
+  const [fileInfo, setFileInfo] = useState(null);
+  const [isDeletePicture, setIsDeletePicture] = useState(false);
+  const [isEdited, setIsEdited] = useState(false);
+  const fileInput = createRef();
+  const dispatch = useDispatch();
+  const history = useHistory();
+  const user = useSelector((store) => store.users.user);
+  const product = useSelector((store) => store.products.product);
+  const isLoading = useSelector((store) => store.products.isLoading);
+  const vendor = useSelector((store) => store.vendors.vendor);
   const handleSubmit = () => {
     if (
       !name ||
@@ -53,16 +54,15 @@ export default function ProductEdit() {
       !categoryId ||
       !manufactureDate ||
       !expiryDate ||
-      !description ||
-      !isAvailable
+      !description
     ) {
-      dispatch(setErrorMessage("請填入所有必填欄位"))
-      dispatch(setShowWarningNotification(true))
-      return
+      dispatch(setErrorMessage("請填入所有必填欄位"));
+      dispatch(setShowWarningNotification(true));
+      return;
     }
 
     if (!fileInfo || fileInfo.size <= 1048576) {
-      dispatch(setErrorMessage(null))
+      dispatch(setErrorMessage(null));
       if (id !== "new") {
         dispatch(
           patchProduct(id, {
@@ -76,7 +76,13 @@ export default function ProductEdit() {
             description,
             isAvailable,
           })
-        )
+        ).then((res) => {
+          if (res.ok === 1) {
+            setTimeout(() => {
+              history.push("/product_manage");
+            }, 1000);
+          }
+        });
       } else {
         dispatch(
           postProduct({
@@ -89,105 +95,100 @@ export default function ProductEdit() {
             expiryDate,
             description,
             isAvailable,
-            // isDeletePicture,
+            isDeletePicture,
           })
-        )
+        ).then((res) => {
+          if (res.ok === 1) {
+            setTimeout(() => {
+              history.push("/product_manage");
+            }, 1000);
+          }
+        });
       }
     }
-  }
+  };
 
   if (id !== "new") {
     useEffect(() => {
-      dispatch(getProduct(id))
-      return () => dispatch(cleanProduct())
-    }, [id, dispatch])
+      dispatch(getProduct(id));
+      return () => dispatch(cleanProduct());
+    }, [id, dispatch]);
   }
-
-  console.log(
-    fileInfo,
-    name,
-    price,
-    quantity,
-    categoryId,
-    manufactureDate,
-    expiryDate,
-    description,
-    isAvailable,
-    isDeletePicture
-  )
 
   const handleImg = (e) => {
-    const reader = new FileReader()
-    const file = e.target.files[0]
+    const reader = new FileReader();
+    const file = e.target.files[0];
     if (file) {
       if (file.size > 1048576) {
-        dispatch(setErrorMessage("檔案過大"))
-        dispatch(setShowWarningNotification(true))
-        return
+        dispatch(setErrorMessage("檔案過大"));
+        dispatch(setShowWarningNotification(true));
+        return;
       }
-      setFileInfo(file)
+      setFileInfo(file);
       reader.onload = function (e) {
-        setImg(e.target.result)
-        dispatch(setErrorMessage(null))
-        setIsEdited(true)
-      }
-      reader.readAsDataURL(file)
+        setImg(e.target.result);
+        dispatch(setErrorMessage(null));
+        setIsEdited(true);
+      };
+      reader.readAsDataURL(file);
     } else {
-      setImg(null)
-      dispatch(setErrorMessage(null))
+      setImg(null);
+      dispatch(setErrorMessage(null));
     }
-  }
+  };
   useEffect(() => {
-    dispatch(getProductCategories())
+    dispatch(cleanProduct());
+    if (!user) {
+      return history.push("/");
+    }
+    if (user.role === "member" || user.role === "suspended") {
+      return history.push("/");
+    }
+    dispatch(getVendor());
+    dispatch(getProductCategories());
     window.scrollTo({
       top: 0,
       left: 0,
       behavior: "instant",
-    })
+    });
     return () => {
-      dispatch(setErrorMessage(null))
-    }
-  }, [dispatch])
+      dispatch(setErrorMessage(null));
+    };
+  }, [dispatch]);
 
   useEffect(() => {
-    window.scrollTo({
-      top: 0,
-      left: 0,
-      behavior: "instant",
-    })
-    return () => {
-      setImg(null)
-      dispatch(setErrorMessage(null))
+    if (product === 0) {
+      return history.push("/");
     }
-  }, [dispatch])
-
-  useEffect(() => {
-    if (product) {
-      setName(product.name)
-      setPrice(product.price)
-      setQuantity(product.quantity)
-      setCategoryId(product.categoryId)
+    if (product && vendor) {
+      if (product.vendorId !== vendor.id) {
+        return history.push("/");
+      }
+      setName(product.name);
+      setPrice(product.price);
+      setQuantity(product.quantity);
+      setCategoryId(product.categoryId);
       product.manufactureDate &&
-        setManufactureDate(product.manufactureDate.slice(0, 10))
-      product.expiryDate && setExpiryDate(product.expiryDate.slice(0, 10))
-      setDescription(product.description)
-      setIsAvailable(product.isAvailable)
-      setImg(product.pictureUrl)
+        setManufactureDate(product.manufactureDate.slice(0, 10));
+      product.expiryDate && setExpiryDate(product.expiryDate.slice(0, 10));
+      setDescription(product.description);
+      setIsAvailable(product.isAvailable);
+      setImg(product.pictureUrl);
     }
-  }, [product])
+  }, [vendor, product]);
 
   useEffect(() => {
     if (product) {
       name !== product.name ||
-      price !== product.price ||
-      quantity !== product.quqnaity ||
-      categoryId !== product.categoryId ||
-      manufactureDate !== product.manufactureDate ||
-      expiryDate !== product.expiry.expiryDate ||
+      Number(price) !== product.price ||
+      Number(quantity) !== product.quantity ||
+      Number(categoryId) !== product.categoryId ||
+      manufactureDate !== product.manufactureDate.slice(0, 10) ||
+      expiryDate !== product.expiryDate.slice(0, 10) ||
       description !== product.description ||
       isAvailable !== product.isAvailable
         ? setIsEdited(true)
-        : setIsEdited(false)
+        : setIsEdited(false);
     }
   }, [
     name,
@@ -198,24 +199,7 @@ export default function ProductEdit() {
     expiryDate,
     description,
     isAvailable,
-  ])
-
-  // useEffect(() => {
-  //   if (user) {
-  //     setNickname(user.nickname);
-  //     setEmail(user.email);
-  //     setPhone(user.phone);
-  //     setImg(user.avatarURL);
-  //   }
-  // }, [user]);
-
-  // useEffect(() => {
-  //   if (user) {
-  //     nickname !== user.nickname || email !== user.email || phone !== user.phone
-  //       ? setIsEdited(true)
-  //       : setIsEdited(false);
-  //   }
-  // }, [user, nickname, email, phone]);
+  ]);
 
   return (
     <Div
@@ -228,6 +212,7 @@ export default function ProductEdit() {
       align="center"
       justify="center"
     >
+      {isLoading && <LoadingPage />}
       <Div w="100%" tag="h2" m={{ b: "1.5rem" }}>
         商品資料
       </Div>
@@ -246,14 +231,14 @@ export default function ProductEdit() {
               img={img}
               defaultImg={"defaultImage.png"}
               handleEvent={() => {
-                setFileInfo(null)
-                setImg(null)
+                setFileInfo(null);
+                setImg(null);
                 if (user.avatarURL) {
-                  setIsDeletePicture(true)
-                  setIsEdited(true)
+                  setIsDeletePicture(true);
+                  setIsEdited(true);
                 }
                 if (!user.avatarURL) {
-                  setIsEdited(false)
+                  setIsEdited(false);
                 }
               }}
             />
@@ -330,14 +315,15 @@ export default function ProductEdit() {
         </Div>
 
         <ButtonGroup
-          handleEvent={() => history.push(`/product/${productId}`)}
+          handleEvent={() => history.push(`/product_manage`)}
           isLoading={isLoading}
           isDisabled={!isEdited || isLoading}
-          submitString="新增"
+          submitString={(id === "new" && "新增") || "更新"}
+          key={!isEdited || isLoading}
         />
       </form>
       <SuccessNotification />
       <WarningNotification />
     </Div>
-  )
+  );
 }
