@@ -14,6 +14,7 @@ import {
   cleanProduct,
   patchProduct,
 } from "../../redux/reducers/productReducer"
+import { getVendor } from "../../redux/reducers/vendorReducer"
 import UploadButton from "../../Components/ProductSystem/UploadButton"
 import PreviewAvatar from "../../Components/ProductSystem/PreviewAvatar"
 import InputField from "../../Components/ProductSystem/InputField"
@@ -23,7 +24,7 @@ import ButtonGroup from "../../Components/ProductSystem/ButtonGroup"
 import { remindText, inputRule } from "../../constants/inputText"
 import SuccessNotification from "../../Components/Notifications/SuccessNotification"
 import WarningNotification from "../../Components/Notifications/WarningNotification"
-
+import LoadingPage from "../LoadingPage"
 export default function ProductEdit() {
   let { id } = useParams()
   const [name, setName] = useState("")
@@ -44,6 +45,7 @@ export default function ProductEdit() {
   const user = useSelector((store) => store.users.user)
   const product = useSelector((store) => store.products.product)
   const isLoading = useSelector((store) => store.products.isLoading)
+  const vendor = useSelector((store) => store.vendors.vendor)
   let productId = ""
   const handleSubmit = () => {
     if (
@@ -89,7 +91,7 @@ export default function ProductEdit() {
             expiryDate,
             description,
             isAvailable,
-            // isDeletePicture,
+            isDeletePicture,
           })
         )
       }
@@ -102,19 +104,6 @@ export default function ProductEdit() {
       return () => dispatch(cleanProduct())
     }, [id, dispatch])
   }
-
-  console.log(
-    fileInfo,
-    name,
-    price,
-    quantity,
-    categoryId,
-    manufactureDate,
-    expiryDate,
-    description,
-    isAvailable,
-    isDeletePicture
-  )
 
   const handleImg = (e) => {
     const reader = new FileReader()
@@ -138,6 +127,13 @@ export default function ProductEdit() {
     }
   }
   useEffect(() => {
+    if (!user) {
+      return history.push("/")
+    }
+    if (user.role === "member" || user.role === "suspended") {
+      return history.push("/")
+    }
+    dispatch(getVendor())
     dispatch(getProductCategories())
     window.scrollTo({
       top: 0,
@@ -150,19 +146,13 @@ export default function ProductEdit() {
   }, [dispatch])
 
   useEffect(() => {
-    window.scrollTo({
-      top: 0,
-      left: 0,
-      behavior: "instant",
-    })
-    return () => {
-      setImg(null)
-      dispatch(setErrorMessage(null))
+    if (product === 0) {
+      return history.push("/")
     }
-  }, [dispatch])
-
-  useEffect(() => {
-    if (product) {
+    if (product && vendor) {
+      if (product.vendorId !== vendor.id) {
+        return history.push("/")
+      }
       setName(product.name)
       setPrice(product.price)
       setQuantity(product.quantity)
@@ -174,7 +164,7 @@ export default function ProductEdit() {
       setIsAvailable(product.isAvailable)
       setImg(product.pictureUrl)
     }
-  }, [product])
+  }, [vendor, product])
 
   useEffect(() => {
     if (product) {
@@ -211,6 +201,7 @@ export default function ProductEdit() {
       align="center"
       justify="center"
     >
+      {isLoading && <LoadingPage />}
       <Div w="100%" tag="h2" m={{ b: "1.5rem" }}>
         商品資料
       </Div>

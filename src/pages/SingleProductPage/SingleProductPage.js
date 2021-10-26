@@ -1,5 +1,5 @@
 import React, { useState } from "react"
-import { Div, Text, Col, Button, Icon, Input } from "atomize"
+import { Div, Text, Col, Button, Icon, Input, Tag } from "atomize"
 import PropTypes from "prop-types"
 import { Link, useParams, useHistory } from "react-router-dom"
 import {
@@ -15,6 +15,7 @@ import { useDispatch, useSelector } from "react-redux"
 import styled from "styled-components"
 import SyncSuccessNotification from "../../Components/Notifications/SyncSuccessNotification"
 import SyncWarningNotification from "../../Components/Notifications/SyncWarningNotification"
+import LoadingPage from "../LoadingPage"
 
 const ProductDetails = ({ title, content }) => {
   return (
@@ -92,7 +93,7 @@ export default function SingleProductPage() {
   let { id } = useParams()
   const dispatch = useDispatch()
   const history = useHistory()
-
+  const isLoading = useSelector((state) => state.products.isLoading)
   const user = useSelector((state) => state.users.user)
   const product = useSelector((state) => state.products.product)
   const vendorProducts = useSelector((state) => state.products.vendorProducts)
@@ -102,11 +103,13 @@ export default function SingleProductPage() {
   const page = useSelector((state) => state.products.page)
   const sort = useSelector((state) => state.products.sort)
   const queryParameters = { page, sort, limit: 4, order: "DESC" }
-  const [productCoount, setProductCount] = useState(null)
+  const [productCount, setProductCount] = useState(null)
   const [showSuccess, setShowSuccess] = useState(false)
   const [showWarning, setShowWarning] = useState(false)
+  const [productInCart, setProductInCart] = useState(null)
 
   useEffect(() => {
+    if (user) getProductInCart()
     dispatch(getProduct(id))
     return () => {
       dispatch(cleanVendorProducts())
@@ -116,6 +119,9 @@ export default function SingleProductPage() {
   }, [id, dispatch])
 
   useEffect(() => {
+    if (product === 0) {
+      return history.push("/")
+    }
     if (product) {
       dispatch(getCategoryProducts(product.categoryId, queryParameters))
       dispatch(getVendorProducts(product.vendorId, queryParameters))
@@ -125,16 +131,58 @@ export default function SingleProductPage() {
         behavior: "instant",
       })
     }
-  }, [id, product, dispatch])
+  }, [product])
 
   useEffect(() => {
-    if (product && productCoount > product.quantity) {
+    getProductInCart()
+    if (productInCart && productInCart + productCount > product.quantity) {
+      setShowWarning(true)
+      setProductCount(product.quantity - productInCart)
+    }
+    if (product && productCount > product.quantity) {
       setProductCount(product.quantity)
     }
-    if (productCoount < 0) {
+    if (productCount < 0) {
       setProductCount(0)
     }
-  }, [productCoount])
+  }, [productCount])
+
+  const getProductInCart = () => {
+    if (user && product) {
+      let cart = localStorage.getItem(`cartId${user.id}`) || null
+      if (!cart) return
+      const cartProduct = JSON.parse(cart).find(
+        (item) => item.id === product.id
+      )
+      if (cartProduct) {
+        if (cartProduct.quantity > product.quantity) {
+          setShowWarning(true)
+          setCartCountToLimit()
+        }
+        setProductInCart(cartProduct.quantity)
+      }
+    }
+  }
+
+  const setCartCountToLimit = () => {
+    const newProductId = product && product.id
+    let cart = localStorage.getItem(`cartId${user.id}`) || null
+    let newCartArray = []
+    const cartArray = JSON.parse(cart)
+    cartArray.forEach((item) => {
+      if (item.id === newProductId) {
+        newCartArray.push({
+          id: newProductId,
+          quantity: product.quantity,
+        })
+      } else {
+        newCartArray.push(item)
+      }
+    })
+
+    localStorage.setItem(`cartId${user.id}`, JSON.stringify(newCartArray))
+    setProductCount(0)
+  }
 
   const addToCart = (value) => {
     const newProductId = product && product.id
@@ -174,8 +222,13 @@ export default function SingleProductPage() {
       m={{ y: "2rem", x: "auto" }}
       justify="center"
     >
+      {isLoading && <LoadingPage />}
+
       <Col>
         <Div
+          d="flex"
+          justify="center"
+          align="center"
           bgImg={(product && product.pictureUrl) || "defaultImage.png"}
           bgSize="cover"
           bgPos="center"
@@ -186,7 +239,44 @@ export default function SingleProductPage() {
           shadow="2"
           borderColor="gray400"
           rounded="sm"
-        />
+          opacity={
+            (product && Date.parse(product.expiryDate) < Date.now() && "0.6") ||
+            (product && product.quantity === 0 && "0.6")
+          }
+        >
+          {(product && product.quantity === 0 && (
+            <Div
+              d="flex"
+              justify="center"
+              align="center"
+              top="0"
+              right="0"
+              bg="black900"
+              h="10rem"
+              w="10rem"
+              textSize="display1"
+              rounded="circle"
+            >
+              <Div textColor="white">售罄</Div>
+            </Div>
+          )) ||
+            (product && Date.parse(product.expiryDate) < Date.now() && (
+              <Div
+                d="flex"
+                justify="center"
+                align="center"
+                top="0"
+                right="0"
+                bg="black900"
+                h="10rem"
+                w="10rem"
+                textSize="display1"
+                rounded="circle"
+              >
+                <Div textColor="white">已過期</Div>
+              </Div>
+            ))}
+        </Div>
         <Div
           border="1px solid"
           shadow="2"
@@ -217,7 +307,22 @@ export default function SingleProductPage() {
           />
           <ProductDetails
             title="剩餘數量"
-            content={product && product.quantity}
+            content={
+              <Div>
+                {product && product.quantity}
+                {product && product.quantity === 0 && (
+                  <Tag
+                    bg={`danger100`}
+                    border="1px solid"
+                    borderColor={`danger500`}
+                    textColor={`danger800`}
+                    m={{ l: "0.5rem", b: "0.5rem" }}
+                  >
+                    售罄
+                  </Tag>
+                )}
+              </Div>
+            }
           />
           <ProductDetails
             title="製造日期"
@@ -230,9 +335,22 @@ export default function SingleProductPage() {
           <ProductDetails
             title="有效期限"
             content={
-              product &&
-              product.manufactureDate &&
-              product.expiryDate.slice(0, 10)
+              <Div>
+                {product &&
+                  product.expiryDate &&
+                  product.expiryDate.slice(0, 10)}
+                {product && Date.parse(product.expiryDate) < Date.now() && (
+                  <Tag
+                    bg={`danger100`}
+                    border="1px solid"
+                    borderColor={`danger500`}
+                    textColor={`danger800`}
+                    m={{ l: "0.5rem", b: "0.5rem" }}
+                  >
+                    已過期
+                  </Tag>
+                )}
+              </Div>
             }
           />
         </Div>
@@ -273,8 +391,8 @@ export default function SingleProductPage() {
                   rounded="sm"
                   m={{ r: "0" }}
                   onClick={() => {
-                    if (productCoount > 0) {
-                      setProductCount(Number(productCoount) - 1)
+                    if (productCount > 0) {
+                      setProductCount(Number(productCount) - 1)
                     }
                   }}
                 >
@@ -283,7 +401,7 @@ export default function SingleProductPage() {
                 <Input
                   type="number"
                   rounded="sm"
-                  value={productCoount}
+                  value={productCount}
                   textAlign="center"
                   onChange={(e) => {
                     setProductCount(e.target.value)
@@ -301,8 +419,8 @@ export default function SingleProductPage() {
                   rounded="sm"
                   m={{ x: "0" }}
                   onClick={() => {
-                    if (product && productCoount < product.quantity) {
-                      setProductCount(Number(productCoount) + 1)
+                    if (product && productCount < product.quantity) {
+                      setProductCount(Number(productCount) + 1)
                     }
                   }}
                 >
@@ -311,9 +429,9 @@ export default function SingleProductPage() {
               </Div>
               <Button
                 onClick={() => {
-                  if (Boolean(productCoount) && user) {
+                  if (Boolean(productCount) && user) {
                     setShowSuccess(true)
-                    addToCart(productCoount)
+                    addToCart(productCount)
                     return
                   }
                   setShowWarning(true)
@@ -324,8 +442,15 @@ export default function SingleProductPage() {
                 hoverShadow="2"
                 rounded="sm"
                 m={{ b: "2rem" }}
+                disabled={
+                  (product && product.quantity === 0) ||
+                  (product && Date.parse(product.expiryDate) < Date.now()) ||
+                  !productCount ||
+                  (product && productCount > product.quantity) ||
+                  (product && productCount + productInCart > product.quantity)
+                }
               >
-                新增到購物車
+                {(!productCount && "請加入商品數量") || "新增到購物車"}
               </Button>
             </Div>
           </div>
@@ -473,7 +598,7 @@ export default function SingleProductPage() {
       <SyncWarningNotification
         showWarning={showWarning}
         setShowWarning={setShowWarning}
-        warningMessage={(user === null && "請登入") || "請加入數量"}
+        warningMessage={(user === null && "請登入") || "購物車內數量達上限"}
       />
     </Div>
   )

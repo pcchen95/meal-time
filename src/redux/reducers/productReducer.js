@@ -115,7 +115,7 @@ export const getProduct = (id) => (dispatch) => {
     })
     .then((product) => {
       dispatch(setIsLoading(false))
-
+      if (product === null) return dispatch(setProduct(0))
       dispatch(setProduct(product))
     })
     .catch((err) => {
@@ -174,6 +174,7 @@ export const cleanCategoryProducts = () => (dispatch) => {
 }
 
 export const searchProducts = (keyword, queryParameters) => (dispatch) => {
+  dispatch(setIsLoading(true))
   return searchProductApi(keyword, queryParameters)
     .then((res) => {
       if (!res.ok) {
@@ -182,6 +183,7 @@ export const searchProducts = (keyword, queryParameters) => (dispatch) => {
       return res.data
     })
     .then((products) => {
+      dispatch(setIsLoading(false))
       dispatch(setSearchedProduct(products))
     })
     .catch((err) => console.log(err))

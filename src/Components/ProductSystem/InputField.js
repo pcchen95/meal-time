@@ -54,6 +54,11 @@ const InputField = ({
             m={{ t: "0.5rem" }}
             w={{ xs: "100%", md: "100%" }}
             required={required}
+            min={
+              (name === "有效期限" && new Date().toISOString().slice(0, 10)) ||
+              ((name === "價錢" || name === "數量") && 0)
+            }
+            max={name === "製造日期" && new Date().toISOString().slice(0, 10)}
           />
         </Div>
       </Div>

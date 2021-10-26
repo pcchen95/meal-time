@@ -10,6 +10,7 @@ import { useDispatch, useSelector } from "react-redux"
 import PaginationButton from "../../Components/PaginationButton/PaginationButton"
 import ProductCard from "../../Components/ProductSystem/ProductCard"
 import ProductsPageHeader from "../../Components/ProductSystem/ProductsPageHeader"
+import LoadingPage from "../LoadingPage"
 
 const NoProductHint = () => {
   return (
@@ -30,6 +31,8 @@ export default function ProductsPage() {
   let { keyword } = useParams()
   const dispatch = useDispatch()
   const productsData = useSelector((state) => state.products.searchedProducts)
+
+  const isLoading = useSelector((store) => store.products.isLoading)
   let products
   let count
   if (productsData) {
@@ -58,6 +61,8 @@ export default function ProductsPage() {
 
   return (
     <>
+      {isLoading && <LoadingPage />}
+
       <Div
         pos="relative"
         w="78%"
