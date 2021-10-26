@@ -79,7 +79,7 @@ const CategoryButton = ({ categories }) => {
 };
 
 CategoryButton.propTypes = {
-  categories: PropTypes.object,
+  categories: PropTypes.array,
 };
 
 const LikeButton = () => {
