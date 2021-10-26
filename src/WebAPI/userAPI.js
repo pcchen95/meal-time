@@ -36,7 +36,7 @@ export const login = (username, password) => {
 };
 
 export const getMe = () => {
-  const token = getAuthToken();
+  const token = getAuthToken() || "";
   return fetch(`${BASE_URL}/users/profile/me`, {
     headers: {
       Authorization: `Bearer ${token}`,

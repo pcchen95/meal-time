@@ -1,9 +1,12 @@
 import BASE_URL from "../constants/apiurl";
+import MAP_BASE_URL from "../constants/googleMapApiUrl";
 import { getAuthToken } from "../utils";
+import googleMapToken from "../constants/googleMapToken";
 
 export const register = ({
   vendorName,
   address,
+  latlng,
   phone,
   categoryId,
   description,
@@ -14,6 +17,7 @@ export const register = ({
   const formData = new FormData();
   formData.append("vendorName", vendorName);
   formData.append("address", address);
+  formData.append("latlng", latlng);
   formData.append("phone", phone);
   formData.append("categoryId", categoryId);
   formData.append("description", description);
@@ -43,6 +47,7 @@ export const getVendorProfile = () => {
 export const updateVendorProfile = ({
   vendorName,
   address,
+  latlng,
   phone,
   categoryId,
   description,
@@ -55,6 +60,7 @@ export const updateVendorProfile = ({
   const formData = new FormData();
   formData.append("vendorName", vendorName);
   formData.append("address", address);
+  formData.append("latlng", latlng);
   formData.append("phone", phone);
   formData.append("categoryId", categoryId);
   formData.append("description", description);
@@ -74,12 +80,7 @@ export const updateVendorProfile = ({
 };
 
 export const getAvailVendorProfileById = (id) => {
-  const token = getAuthToken();
-  return fetch(`${BASE_URL}/vendors/profile/${id}`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  }).then((res) => res.json());
+  return fetch(`${BASE_URL}/vendors/profile/${id}`).then((res) => res.json());
 };
 
 export const getVendorProfileById = (id) => {
@@ -141,6 +142,7 @@ export const updateVendorProfileById = ({
   id,
   vendorName,
   address,
+  latlng,
   phone,
   categoryId,
   description,
@@ -151,6 +153,7 @@ export const updateVendorProfileById = ({
   const formData = new FormData();
   formData.append("vendorName", vendorName);
   formData.append("address", address);
+  formData.append("latlng", latlng);
   formData.append("phone", phone);
   formData.append("categoryId", categoryId);
   formData.append("description", description);
@@ -234,4 +237,14 @@ export const deleteVendorCategory = (id) => {
       "content-type": "application/json",
     },
   }).then((res) => res.json());
+};
+
+export const getDistance = ({ origin, destination }) => {
+  console.log(origin.lat, origin.lng);
+  return fetch(
+    `${MAP_BASE_URL}?origins=${origin.lat}%2C${origin.lng}&destinations=${destination.lat}%2C${destination.lng}&key=${googleMapToken}&libraries=places`,
+    {
+      headers: {},
+    }
+  ).then((res) => console.log(res));
 };

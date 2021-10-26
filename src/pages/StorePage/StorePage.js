@@ -1,108 +1,149 @@
 import React from "react";
-import { Div, Col, Text } from "atomize";
-import SmallSizeDropdown from "../../Components/Dropdown";
+import { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useParams, useHistory } from "react-router-dom";
+import { setCurrentPosition } from "../../redux/reducers/userReducer";
+import { getVendorById } from "../../redux/reducers/vendorReducer";
+import {
+  getVendorProducts,
+  getVendorProductCategories,
+} from "../../redux/reducers/productReducer";
+import { Div } from "atomize";
+import LoadingPage from "../LoadingPage/LoadingPage";
+import StoreBanner from "../../Components/VendorSystem/StoreBanner";
+import StoreDropdown from "../../Components/VendorSystem/StoreDropdown";
+import StoreInfo from "../../Components/VendorSystem/StoreInfo";
+import ProductsList from "../../Components/VendorSystem/StoreProductList";
+import PaginationButton from "../../Components/VendorSystem/PaginationButton";
 
 export default function StorePage() {
-  const vendorInfo = (
-    <>
-      {["賣場名稱", "店家地址", "營業時間", "賣場分類"].map((name, index) => (
-        <Div key={index} textSize="subheader" shadow="2">
-          <Text bg="gray400" m={{ b: "0.5rem" }}>
-            {name}
-          </Text>
-        </Div>
-      ))}
-    </>
-  );
+  const dispatch = useDispatch();
+  const [hoverItem, setHoverItem] = useState(null);
+  const [categoryId, setCategoryId] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
+  const [page, setPage] = useState(1);
+  const [pageStart, setPageStart] = useState(null);
+  const [pageEnd, setPageEnd] = useState(null);
 
-  const productsList = (
+  const vendor = useSelector((store) => store.vendors.vendorById);
+  const products = useSelector((store) => store.products.vendorProducts);
+  const isLoadingProduct = useSelector((store) => store.products.isLoading);
+  const count = useSelector((store) => store.products.count);
+  const { id } = useParams();
+  const history = useHistory();
+  const limit = 10;
+
+  const getProducts = (id, categoryId, page) => {
+    if (categoryId === 0) {
+      dispatch(getVendorProducts(id, { limit, page }));
+    }
+    if (categoryId !== 0) {
+      dispatch(
+        getVendorProducts(id, {
+          limit,
+          category: categoryId,
+          page,
+        })
+      );
+    }
+  };
+
+  useEffect(() => {
+    dispatch(getVendorById(id));
+    navigator?.geolocation.getCurrentPosition(
+      ({ coords: { latitude: lat, longitude: lng } }) => {
+        const position = { lat, lng };
+        dispatch(setCurrentPosition(position));
+      }
+    );
+  }, []);
+
+  useEffect(() => {
+    if (vendor) {
+      if (vendor === "no-result") {
+        return history.push("/");
+      }
+      dispatch(getVendorProductCategories(vendor.id));
+      getProducts(vendor.id, categoryId, page);
+    }
+  }, [vendor]);
+
+  useEffect(() => {
+    if (vendor) {
+      getProducts(vendor.id, categoryId, page);
+    }
+    setPageStart(() => (count === 0 ? 0 : limit * (page - 1) + 1));
+    setPageEnd(() => (limit * page > count ? count : limit * page));
+  }, [vendor, page, categoryId]);
+
+  useEffect(() => {
+    if (count) setTotalPages(Math.ceil(count / limit));
+  }, [count]);
+
+  useEffect(() => {
+    setPageStart(limit * (page - 1) + 1);
+    setPageEnd(() => (limit * page > count ? count : limit * page));
+  }, [page, count]);
+
+  useEffect(() => {
+    setPage(1);
+  }, [categoryId]);
+  return (
     <>
-      {["食物名稱", "食物名稱", "食物名稱", "食物名稱", "食物名稱"].map(
-        (name, index) => (
-          <Div key={index} p="1.5rem">
-            <Col>
+      {isLoadingProduct && <LoadingPage />}
+      {vendor && vendor !== "no-result" && (
+        <>
+          <StoreBanner
+            banner={vendor && vendor.bannerUrl}
+            avatar={vendor && vendor.avatarUrl}
+          />
+          <Div
+            w={{ xs: "100%", md: "80%" }}
+            maxW="1100px"
+            m="0 auto"
+            p="0 1.5rem 2rem 1.5rem"
+          >
+            <StoreInfo />
+            <Div d="flex" flexDir="column" align="center">
+              <Div d="flex" p="1rem" w="100%" justify="flex-start">
+                <StoreDropdown
+                  categoryId={categoryId}
+                  setCategoryId={setCategoryId}
+                />
+              </Div>
               <Div
-                bgImg="https://images.unsplash.com/photo-1559963629-38ed0fbd4c86?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1000&q=80"
-                bgSize="cover"
-                bgPos="center"
-                h="15rem"
-                w="15rem"
-                m={{ t: "1rem" }}
-              />
-            </Col>
-            <Div d={{ xs: "block", xl: "flex" }} justify="space-between">
-              <Text>{name}</Text>
-              <Text>距離 km</Text>
+                textSize="caption"
+                textColor="gray600"
+                p={{ x: "1rem" }}
+                w="100%"
+                textAlign="left"
+              >
+                共 {count} 筆搜尋結果，顯示第 {pageStart} ～ {pageEnd} 筆結果
+              </Div>
+              <Div
+                w={{ xs: "100%", md: "540px", lg: "720px", xl: "900px" }}
+                d="flex"
+                flexWrap="wrap"
+              >
+                {products && (
+                  <ProductsList
+                    products={products}
+                    hoverItem={hoverItem}
+                    setHoverItem={setHoverItem}
+                  />
+                )}
+              </Div>
             </Div>
+            {count > 0 && (
+              <PaginationButton
+                setPage={setPage}
+                page={page}
+                totalPages={totalPages}
+              />
+            )}
           </Div>
-        )
+        </>
       )}
     </>
-  );
-
-  return (
-    <Div w="80%" m={{ y: "4rem", x: "auto" }}>
-      <Div d={{ xs: "block", xl: "flex" }}>
-        <Div border={{ b: "4px solid" }} borderColor="gray400">
-          <Div p="1rem" d={{ xs: "block", lg: "flex" }}>
-            <div>
-              <Col>
-                <Div
-                  bgImg="https://images.unsplash.com/photo-1559963629-38ed0fbd4c86?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1000&q=80"
-                  bgSize="cover"
-                  bgPos="center"
-                  w="14rem"
-                  h="14rem"
-                  rounded="circle"
-                  m={{ t: "1rem" }}
-                  shadow="4"
-                />
-              </Col>
-            </div>
-            <div>
-              <Div
-                h={{ xs: "12rem", lg: "14rem" }}
-                w={{ xs: "17rem", lg: "30rem" }}
-                bg="gray400"
-                m={{ t: "1rem", l: { xs: "0", md: "2rem" } }}
-                shadow="4"
-                rounded="sm"
-              >
-                賣場介紹
-              </Div>
-            </div>
-          </Div>
-          <Div
-            w={{ xs: "20rem", md: "30rem" }}
-            h="10rem"
-            p="1.5rem"
-            m={{ y: "2rem", l: { xs: "0", md: "3rem" } }}
-          >
-            {vendorInfo}
-          </Div>
-        </Div>
-        <Div border={{ b: "4px solid" }} borderColor="gray400">
-          <Col>
-            <Div
-              bg="gray400"
-              w={{ xs: "16rem", md: "26rem", lg: "40rem" }}
-              h={{ xs: "16rem", md: "20rem", lg: "25rem" }}
-              m={{ t: "1rem", l: { lg: "5rem", xs: "2rem" }, b: "2rem" }}
-            >
-              地圖
-            </Div>
-          </Col>
-        </Div>
-      </Div>
-      <Div>
-        <Div d="flex" p="1rem">
-          <Text p="0.5rem">目前分類</Text>
-          <Div m={{ l: "1rem" }}>
-            <SmallSizeDropdown />
-          </Div>
-        </Div>
-        <Div d={{ xs: "block", xl: "flex" }}>{productsList}</Div>
-      </Div>
-    </Div>
   );
 }

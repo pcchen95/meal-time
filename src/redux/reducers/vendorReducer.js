@@ -7,6 +7,7 @@ import {
   getAvailableVendorProfiles as getAvailableVendorProfilesApi,
   updateIsOpen as updateIsOpenApi,
   getVendorCategories as getVendorCategoriesApi,
+  getDistance as getDistanceApi,
 } from "../../WebAPI/vendorAPI";
 import { setAuthToken } from "../../utils";
 import {
@@ -17,10 +18,14 @@ import {
 
 const initialState = {
   vendor: null,
+  address: null,
   vendors: null,
   vendorById: null,
   categories: null,
   isLoading: false,
+  vendorOfMap: null,
+  distance: null,
+  searchedVendors: null,
 };
 
 export const vendorReducer = createSlice({
@@ -29,6 +34,9 @@ export const vendorReducer = createSlice({
   reducers: {
     setVendor: (state, action) => {
       state.vendor = action.payload;
+    },
+    setAddress: (state, action) => {
+      state.address = action.payload;
     },
     setVendors: (state, action) => {
       state.vendors = action.payload;
@@ -42,15 +50,29 @@ export const vendorReducer = createSlice({
     setIsLoading: (state, action) => {
       state.isLoading = action.payload;
     },
+    setVendorOfMap: (state, action) => {
+      state.vendorOfMap = action.payload;
+    },
+    setDistance: (state, action) => {
+      state.distance = action.payload;
+    },
+    setSearchedVendors: (state, action) => {
+      state.searchedVendors = action.payload;
+    },
   },
 });
 
 export const {
   setVendor,
+  setAddress,
   setVendors,
   setCategories,
   setVendorById,
   setIsLoading,
+  setDistanceList,
+  setVendorOfMap,
+  setDistance,
+  setSearchedVendors,
 } = vendorReducer.actions;
 
 export const register =
@@ -60,6 +82,7 @@ export const register =
     vendorName,
     phone,
     address,
+    latlng,
     openingHour,
     description,
     categoryId,
@@ -71,6 +94,7 @@ export const register =
       vendorName,
       phone,
       address,
+      latlng,
       openingHour,
       description,
       categoryId,
@@ -98,13 +122,15 @@ export const register =
 export const getVendor = () => (dispatch) => {
   dispatch(setIsLoading(true));
   return getVendorProfileApi().then((res) => {
+    dispatch(setIsLoading(false));
     if (!res.ok) {
+      console.log(res.message);
       dispatch(setErrorMessage(res.message));
       dispatch(setShowWarningNotification(true));
       return;
     }
+    if (!res.data) return dispatch(setVendor("not-vendor"));
     dispatch(setVendor(res.data));
-    dispatch(setIsLoading(false));
   });
 };
 
@@ -115,6 +141,7 @@ export const updateProfile =
     vendorName,
     phone,
     address,
+    latlng,
     openingHour,
     description,
     categoryId,
@@ -129,6 +156,7 @@ export const updateProfile =
       vendorName,
       phone,
       address,
+      latlng,
       openingHour,
       description,
       categoryId,
@@ -155,6 +183,7 @@ export const updateProfile =
   };
 
 export const setToggleOpen = () => (dispatch) => {
+  dispatch(setIsLoading(true));
   return updateIsOpenApi().then((res) => {
     if (!res.ok) {
       dispatch(setErrorMessage(res.message));
@@ -174,33 +203,80 @@ export const setToggleOpen = () => (dispatch) => {
   });
 };
 
-export const getAllProfiles =
-  ({ page, limit, sort, order, role }) =>
+export const getAllVendors =
+  ({ page, limit, sort, order, role, categoryId }) =>
   (dispatch) => {
+    dispatch(setIsLoading(true));
     return getAvailableVendorProfilesApi({
       page,
       limit,
       sort,
       order,
       role,
+      categoryId,
     }).then((res) => {
+      dispatch(setIsLoading(false));
       if (!res.ok) {
         dispatch(setErrorMessage(res.message));
         dispatch(setShowWarningNotification(true));
         return;
       }
-      dispatch(setVendors(res.data));
+      dispatch(setVendors(res.data.rows));
     });
   };
 
-export const getVendorById = () => (dispatch) => {
-  return getAvailVendorProfileByIdApi().then((res) => {
+export const getVendorById = (id) => (dispatch) => {
+  dispatch(setIsLoading(true));
+  return getAvailVendorProfileByIdApi(id).then((res) => {
+    dispatch(setIsLoading(false));
     if (!res.ok) {
       dispatch(setErrorMessage(res.message));
       dispatch(setShowWarningNotification(true));
       return;
     }
+    if (res.data === null) return dispatch(setVendorById("no-result"));
     dispatch(setVendorById(res.data));
+  });
+};
+
+export const cleanVendorById = () => (dispatch) => {
+  dispatch(setVendorById(null));
+};
+
+export const getVendorOfSearchedProducts = (array) => (dispatch) => {
+  if (!array) return dispatch(setSearchedVendors(null));
+  dispatch(setIsLoading(true));
+  const result = [];
+  Promise.all(
+    array.map((id) => {
+      return getAvailVendorProfileByIdApi(id).then((res) => {
+        if (!res.ok) {
+          dispatch(setErrorMessage(res.message));
+          dispatch(setShowWarningNotification(true));
+          return;
+        }
+        result.push(res.data);
+      });
+    })
+  )
+    .then(() => {
+      dispatch(setIsLoading(false));
+      dispatch(setSearchedVendors(result));
+    })
+    .catch((err) => {
+      dispatch(setErrorMessage(err.message));
+      dispatch(setShowWarningNotification(true));
+    });
+};
+
+export const getVendorOfMap = (id) => (dispatch) => {
+  return getAvailVendorProfileByIdApi(id).then((res) => {
+    if (!res.ok) {
+      dispatch(setErrorMessage(res.message));
+      dispatch(setShowWarningNotification(true));
+      return;
+    }
+    return res.data;
   });
 };
 
@@ -214,5 +290,17 @@ export const getCategories = () => (dispatch) => {
     dispatch(setCategories(res.data));
   });
 };
+
+export const setCompleteAddress = (address) => (dispatch) => {
+  dispatch(setAddress(address));
+};
+
+export const getDistance =
+  ({ origin, destination }) =>
+  (dispatch) => {
+    return getDistanceApi({ origin, destination }).then((res) => {
+      dispatch(setDistance(res));
+    });
+  };
 
 export default vendorReducer.reducer;
