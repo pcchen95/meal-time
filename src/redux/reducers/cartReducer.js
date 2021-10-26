@@ -65,6 +65,15 @@ export const getMe = () => (dispatch) => {
   })
 }
 
+export const getCartFromLocalStorage = (userId) => (dispatch) => {
+  const cart = localStorage.getItem(`cartId${userId}`)
+  let cartArray
+  if (cart) {
+    cartArray = JSON.parse(cart)
+    dispatch(setCart(cartArray))
+  }
+}
+
 export const getCartData = (userId) => (dispatch) => {
   const cart = localStorage.getItem(`cartId${userId}`)
   let cartArray
