@@ -1,14 +1,14 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { useState, useEffect } from "react";
-import { Div, Dropdown, Anchor } from "atomize";
+import { Div, Dropdown, Anchor, Text } from "atomize";
 import { useSelector } from "react-redux";
 
 const lists = ({ categories, categoryId, setCategoryId, setShowDropdown }) => {
   return (
     <Div p={{ x: "1rem", y: "0.5rem" }}>
       {categories &&
-        categories
+        [{ id: 0, name: "全部" }, ...categories]
           .filter((category) => category.id !== categoryId)
           .map((category) => {
             return (
@@ -17,6 +17,7 @@ const lists = ({ categories, categoryId, setCategoryId, setShowDropdown }) => {
                 d="block"
                 p={{ y: "0.25rem" }}
                 value={category.id}
+                textSize="12px"
                 onClick={(e) => {
                   setCategoryId(Number(e.target.getAttribute("value")));
                   setShowDropdown(false);
@@ -37,11 +38,7 @@ lists.propTypes = {
   setShowDropdown: PropTypes.func,
 };
 
-export function SmallDropdown({
-  value: categoryId,
-  setCategoryId,
-  isDisabled,
-}) {
+export function SmallDropdown({ categoryId, setCategoryId }) {
   const [showDropdown, setShowDropdown] = useState(false);
   const [name, setName] = useState("");
   const categories = useSelector((store) => store.vendors.categories);
@@ -52,6 +49,7 @@ export function SmallDropdown({
 
   useEffect(() => {
     if (categories) {
+      if (categoryId === 0) return setName("全部");
       for (let i = 0; i < categories.length; i++) {
         if (categories[i].id === categoryId) return setName(categories[i].name);
       }
@@ -59,23 +57,31 @@ export function SmallDropdown({
   }, [categories, categoryId]);
 
   return (
-    <Dropdown
-      w="fit-content"
-      isOpen={!isDisabled && showDropdown}
-      onClick={handleToggleDropdown}
-      textColor={isDisabled && "gray600"}
-      menu={lists({ categories, categoryId, setCategoryId, setShowDropdown })}
-      cursor={isDisabled ? "not-allowed" : "pointer"}
-    >
-      {name}
-    </Dropdown>
+    <Div d="flex" align="center">
+      <Text textSize="14px">賣場分類</Text>
+      <Dropdown
+        w="fit-content"
+        h="2rem"
+        textSize="12px"
+        isOpen={showDropdown}
+        m={{ l: "0.5rem" }}
+        onClick={handleToggleDropdown}
+        menu={lists({
+          categories,
+          categoryId,
+          setCategoryId,
+          setShowDropdown,
+        })}
+      >
+        {categoryId ? name : "全部"}
+      </Dropdown>
+    </Div>
   );
 }
 
 SmallDropdown.propTypes = {
-  value: PropTypes.number,
+  categoryId: PropTypes.number,
   setCategoryId: PropTypes.func,
-  isDisabled: PropTypes.bool,
 };
 
 export default SmallDropdown;

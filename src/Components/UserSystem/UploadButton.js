@@ -52,6 +52,6 @@ export default function UploadButton({ fileInput, handleEvent }) {
 }
 
 UploadButton.propTypes = {
-  fileInput: PropTypes.string,
+  fileInput: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
   handleEvent: PropTypes.func,
 };

@@ -1,23 +1,9 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { useSelector } from "react-redux";
+import { useLocation } from "react-router";
 import { Icon, Div } from "atomize";
 import styled from "styled-components";
 import UploadButton from "../../Components/VendorSystem/UploadButton";
-
-const PreviewImg = styled.div`
-  position: relative;
-  width: 100%;
-  height: 15rem;
-  border-radius: 10px;
-
-  ${(props) =>
-    props.banner
-      ? `
-      background: url(${props.banner}) no-repeat center/cover;
-  `
-      : `background: rgb(183, 183, 183)`}
-`;
 
 const DeleteBtn = styled.div`
   height: 2.5rem;
@@ -49,54 +35,64 @@ Delete.propTypes = {
   handleDelete: PropTypes.func,
 };
 
-const PreviewArea = ({ banner, handleDelete }) => {
-  const isOpen = useSelector(
-    (store) => store.vendors.vendor && store.vendors.vendor.isOpen
-  );
-  const isSuspended = useSelector(
-    (store) => store.vendors.vendor && store.vendors.vendor.isSuspended
-  );
-  const isDisabled = !isOpen || isSuspended;
+const PreviewArea = ({ banner, handleDelete, isDisabled }) => {
   return (
-    <PreviewImg banner={banner}>
+    <Div
+      pos="relative"
+      w="100%"
+      h="15rem"
+      rounded="10px"
+      bgImg={banner || "defaultBanner.jpg"}
+    >
       <Div pos="absolute" top="1rem" left="1rem" d="flex">
         {banner && !isDisabled && <Delete handleDelete={handleDelete} />}
       </Div>
-    </PreviewImg>
+    </Div>
   );
 };
 
 PreviewArea.propTypes = {
   banner: PropTypes.string,
   handleDelete: PropTypes.func,
+  isDisabled: PropTypes.bool,
 };
 
-const BannerPreview = ({ banner, handleBanner, bannerInput, handleDelete }) => {
-  const isVendor = useSelector((store) => store.vendors.vendor || false);
-  const isOpen = useSelector(
-    (store) => store.vendors.vendor && store.vendors.vendor.isOpen
-  );
-  const isSuspended = useSelector(
-    (store) => store.vendors.vendor && store.vendors.vendor.isSuspended
-  );
-  const isDisabled = isVendor && (!isOpen || isSuspended);
+const BannerPreview = ({
+  banner,
+  handleBanner,
+  bannerInput,
+  handleDelete,
+  isDisabled,
+}) => {
+  const location = useLocation();
   return (
     <Div>
-      <Div d="flex" flexDir="column" align="flex-start" justify="flex-start">
-        <Div>賣場主圖</Div>
-        {!isDisabled && (
-          <UploadButton fileInput={bannerInput} handleEvent={handleBanner} />
-        )}
-      </Div>
-      <PreviewArea banner={banner} handleDelete={handleDelete} />
-      <input
-        type="file"
-        accept=".png,.jpg,.jpeg"
-        ref={bannerInput}
-        onChange={handleBanner}
-        style={{ display: "none" }}
-        id="bannerInput"
-        disabled={isDisabled}
+      {location.pathname === "/update_store" && (
+        <Div d="flex" flexDir="column" align="flex-start" justify="flex-start">
+          <Div>賣場主圖</Div>
+          {!isDisabled && (
+            <>
+              <UploadButton
+                fileInput={bannerInput}
+                handleEvent={handleBanner}
+              />
+              <input
+                type="file"
+                accept=".png,.jpg,.jpeg"
+                ref={bannerInput}
+                onChange={handleBanner}
+                style={{ display: "none" }}
+                id="bannerInput"
+                disabled={isDisabled}
+              />
+            </>
+          )}
+        </Div>
+      )}
+      <PreviewArea
+        banner={banner}
+        handleDelete={handleDelete}
+        isDisabled={isDisabled}
       />
     </Div>
   );
@@ -107,6 +103,7 @@ BannerPreview.propTypes = {
   handleBanner: PropTypes.func,
   bannerInput: PropTypes.object,
   handleDelete: PropTypes.func,
+  isDisabled: PropTypes.bool,
 };
 
 export default BannerPreview;

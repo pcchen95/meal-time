@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { Div, Icon } from "atomize";
-import { useSelector } from "react-redux";
+import { useLocation } from "react-router";
 import styled from "styled-components";
 
 const PreviewImg = styled.div`
@@ -48,15 +48,8 @@ Delete.propTypes = {
   handleDelete: PropTypes.func,
 };
 
-const AvatarPreview = ({ image, handleDelete }) => {
-  const isVendor = useSelector((store) => store.vendors.vendor || false);
-  const isOpen = useSelector(
-    (store) => store.vendors.vendor && store.vendors.vendor.isOpen
-  );
-  const isSuspended = useSelector(
-    (store) => store.vendors.vendor && store.vendors.vendor.isSuspended
-  );
-  const isDisabled = isVendor && (!isOpen || isSuspended);
+const AvatarPreview = ({ image, handleDelete, isDisabled }) => {
+  const location = useLocation();
   return (
     <Div w={{ xs: "100%", md: "auto" }} d="flex" justify="center">
       <PreviewImg image={image}>
@@ -67,7 +60,9 @@ const AvatarPreview = ({ image, handleDelete }) => {
           transform="translate(-50%, -50%)"
           d="flex"
         >
-          {image && !isDisabled && <Delete handleDelete={handleDelete} />}
+          {image && !isDisabled && location.pathname === "/update_store" && (
+            <Delete handleDelete={handleDelete} />
+          )}
         </Div>
       </PreviewImg>
     </Div>
@@ -77,6 +72,7 @@ const AvatarPreview = ({ image, handleDelete }) => {
 AvatarPreview.propTypes = {
   image: PropTypes.string,
   handleDelete: PropTypes.func,
+  isDisabled: PropTypes.bool,
 };
 
 export default AvatarPreview;
