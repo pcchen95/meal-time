@@ -86,7 +86,7 @@ export function Map({ vendorOfMap, handleEvent, setDistance }) {
                 />
               );
             })}
-          {vendorOfMap && (
+          {vendorOfMap && currentPosition && (
             <DistanceMatrixService
               options={{
                 destinations: [
