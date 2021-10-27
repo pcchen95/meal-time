@@ -91,20 +91,27 @@ export const getCartData = (userId) => (dispatch) => {
     });
 };
 
-export const newOrder = (data) => (dispatch) => {
-  dispatch(setIsLoading(true));
-  postOrder(data).then((res) => {
-    if (!res.ok) {
-      dispatch(setErrorMessage(res.message));
+export const newOrder =
+  ({ orderProducts, vendorId, pickupTime, remarks }) =>
+  (dispatch) => {
+    dispatch(setIsLoading(true));
+    postOrder({
+      orderProducts,
+      vendorId,
+      pickupTime,
+      remarks,
+    }).then((res) => {
+      if (!res.ok) {
+        dispatch(setErrorMessage(res.message));
+        dispatch(setIsLoading(false));
+        dispatch(setShowWarningNotification(true));
+        return;
+      }
       dispatch(setIsLoading(false));
-      dispatch(setShowWarningNotification(true));
-      return;
-    }
-    dispatch(setIsLoading(false));
-    dispatch(setShowSuccessNotification(true, "訂單已成立"));
-    return res;
-  });
-};
+      dispatch(setShowSuccessNotification(true, "訂單已成立"));
+      return res;
+    });
+  };
 
 export const cleanCartData = () => (dispatch) => {
   dispatch(setCart(null));
