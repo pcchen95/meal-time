@@ -18,6 +18,7 @@ const initialState = {
   user: null,
   users: null,
   isLoading: false,
+  position: null,
 };
 
 export const userReducer = createSlice({
@@ -33,10 +34,14 @@ export const userReducer = createSlice({
     setIsLoading: (state, action) => {
       state.isLoading = action.payload;
     },
+    setPosition: (state, action) => {
+      state.position = action.payload;
+    },
   },
 });
 
-export const { setUser, setUsers, setIsLoading } = userReducer.actions;
+export const { setUser, setUsers, setIsLoading, setPosition } =
+  userReducer.actions;
 
 export const register =
   ({ avatar, nickname, username, password, email, phone }) =>
@@ -97,10 +102,22 @@ export const login = (username, password) => (dispatch) => {
   });
 };
 
+export const logout = () => (dispatch) => {
+  dispatch(setUser("non-login"));
+  setAuthToken("");
+  dispatch(setShowSuccessNotification(true, "已登出"));
+};
+
 export const getMe = () => (dispatch) => {
   dispatch(setIsLoading(true));
   return getMeApi().then((res) => {
     if (!res.ok) {
+      if (res.message === "non-login") {
+        dispatch(setIsLoading(false));
+        dispatch(setUser("non-login"));
+        return;
+      }
+      dispatch(setIsLoading(false));
       dispatch(setErrorMessage(res.message));
       return;
     }
@@ -166,5 +183,9 @@ export const getAllProfiles =
       dispatch(setUsers(res.data));
     });
   };
+
+export const setCurrentPosition = (latlng) => (dispatch) => {
+  dispatch(setPosition(latlng));
+};
 
 export default userReducer.reducer;

@@ -1,119 +1,75 @@
-import React from "react";
-import { Div, Button, Text } from "atomize";
-import SmallSizeDropdown from "../../Components/Dropdown";
+import React, { useState } from 'react'
+import { Div } from 'atomize'
+
+import { useEffect } from 'react'
+import { getProducts, cleanProducts } from '../../redux/reducers/productReducer'
+import { useDispatch, useSelector } from 'react-redux'
+import PaginationButton from '../../Components/PaginationButton/PaginationButton'
+import ProductCard from '../../Components/ProductSystem/ProductCard'
+import ProductsPageHeader from '../../Components/ProductSystem/ProductsPageHeader'
+import LoadingPage from '../LoadingPage'
 
 export default function ProductsPage() {
-  const productsList = (
-    <Div>
-      {[
-        "食物1",
-        "食物2",
-        "食物3",
-        "食物4",
-        "食物5",
-        "食物6",
-        "食物7",
-        "食物8",
-        "食物9",
-        "食物10",
-      ].map((name, index) => (
-        <Div
-          key={index}
-          textAlign="center"
-          m={{ t: "2rem", l: { xs: "2rem", lg: "3.5rem" } }}
-          d="inline-block"
-        >
-          <Div
-            bg="gray400"
-            m={{ t: "2rem", l: { xs: "1rem" } }}
-            h="13rem"
-            w="13rem"
-            border="1px solid"
-            rounded="sm"
-          />
-          <Text textSize="title" textWeight="400" cursor="pointer">
-            {name}
-          </Text>
-          <Text
-            textSize="subheader"
-            textColor="gray400"
-            cursor="pointer"
-            m={{ t: "0.5rem" }}
-          >
-            賣場名字
-          </Text>
-          <Text textSize="subheader" m={{ t: "0.5rem" }}>
-            NT$ 0
-          </Text>
-        </Div>
-      ))}
-    </Div>
-  );
+  const dispatch = useDispatch()
+  const productsData = useSelector((state) => state.products.products)
+  const isLoading = useSelector((store) => store.products.isLoading)
 
-  const buttonList = (
-    <>
-      {["1", "2", ">"].map((name, index) => (
-        <Button
-          key={index}
-          h="2rem"
-          p={{ x: "1rem" }}
-          textSize="caption"
-          textColor="info700"
-          hoverTextColor="info900"
-          bg="white"
-          hoverBg="info200"
-          border="1px solid"
-          borderColor="info700"
-          hoverBorderColor="info900"
-          m={{ r: "0.5rem" }}
-        >
-          {name}
-        </Button>
-      ))}
-    </>
-  );
+  let products
+  let count
+  if (productsData) {
+    products = productsData.rows
+  }
+  const [page, setPage] = useState(1)
+  const [sort, setSort] = useState('id')
+  const limit = 10
+  const [order, setOrder] = useState('DESC')
+  const [notSupplied, setNotSupplied] = useState(false)
+  const queryParameters = { page, sort, limit, order, notSupplied }
+  let totalPages
+  if (productsData) {
+    count = productsData.count
+    totalPages = Math.ceil(count / limit)
+  }
+  useEffect(() => {
+    dispatch(getProducts(queryParameters))
+    window.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: 'instant',
+    })
+    return () => dispatch(cleanProducts())
+  }, [page, sort, order, notSupplied, dispatch])
 
   return (
     <>
+      {isLoading && <LoadingPage />}
+
       <Div
         pos="relative"
-        bg="gray300"
         w="78%"
-        m={{ x: "auto", y: "4rem" }}
+        m={{ x: 'auto', y: '4rem' }}
         minH="60rem"
-        p={{ b: { xs: "3rem" } }}
+        p={{ b: { xs: '5rem' } }}
       >
-        <Div d="flex" m={{ t: "2rem" }}>
-          <Button
-            h="3rem"
-            p={{ x: "1.25rem" }}
-            textSize="body"
-            textColor="info700"
-            hoverTextColor="info900"
-            bg="white"
-            hoverBg="info200"
-            border="1px solid"
-            borderColor="info700"
-            hoverBorderColor="info900"
-            m={{ r: "0.5rem" }}
-          >
-            目前分類
-          </Button>
-          <SmallSizeDropdown />
-        </Div>
+        <ProductsPageHeader
+          headerText={<Div />}
+          setPage={setPage}
+          setSort={setSort}
+          setOrder={setOrder}
+          setNotSupplied={setNotSupplied}
+          notSupplied={notSupplied}
+        />
+        {products &&
+          products.map((product) => (
+            <ProductCard key={product.id} product={product} />
+          ))}
 
-        {productsList}
-
-        <Div
-          m={{ t: "1rem" }}
-          pos="absolute"
-          right="2rem"
-          bottom="1rem"
-          d="flex"
-        >
-          {buttonList}
-        </Div>
+        <PaginationButton
+          page={page}
+          setPage={setPage}
+          totalPages={totalPages}
+        />
       </Div>
     </>
-  );
+  )
 }

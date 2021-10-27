@@ -23,7 +23,7 @@ const Booking = styled.div`
     background: #c7c1c178;
     z-index: 2;
     `}
-`;
+`
 
 const BookingProducts = styled.div`
   display: none;
@@ -50,7 +50,7 @@ const BookingProducts = styled.div`
       width: 100%;
     }
   `}
-`;
+`
 
 const BookingBoard = ({ vendorById, isShow, handleIsShow, handleSubmit }) => {
   const vendorId = useSelector(selectVendorId);
@@ -103,6 +103,7 @@ const BookingBoard = ({ vendorById, isShow, handleIsShow, handleSubmit }) => {
                   borderColor="info700"
                   hoverBorderColor="warning800"
                   m={{ r: "0.5rem", t: "1rem" }}
+                  type="submit"
                   onClick={() =>
                     handleSubmit(orderProducts, vendorId, pickupTime, remarks)
                   }
@@ -131,8 +132,8 @@ const BookingBoard = ({ vendorById, isShow, handleIsShow, handleSubmit }) => {
         </Div>
       </BookingProducts>
     </Booking>
-  );
-};
+  )
+}
 
 BookingBoard.propTypes = {
   vendorById: PropTypes.object,
@@ -141,6 +142,6 @@ BookingBoard.propTypes = {
   handleSubmit: PropTypes.func,
   pickupTime: PropTypes.string,
   remarks: PropTypes.string,
-};
+}
 
-export default BookingBoard;
+export default BookingBoard
