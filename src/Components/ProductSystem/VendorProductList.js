@@ -45,7 +45,7 @@ NameAndPrice.propTypes = {
   price: PropTypes.number,
 };
 
-const Status = ({ isAvailable, quantity, category }) => {
+const Status = ({ isAvailable, quantity, category, isExpired, isSoldOut }) => {
   return (
     <Div
       d="flex"
@@ -63,19 +63,35 @@ const Status = ({ isAvailable, quantity, category }) => {
         align="center"
         w={{ xs: "55%", sm: "auto" }}
       >
-        {isAvailable && (
+        {isAvailable && !isSoldOut && !isExpired && (
           <>
             <Icon name="Success" color="success700" size="14px" />
-            <Div textColor="success700" m={{ l: "5px" }}>
+            <Div textColor="success700" m={{ x: "5px" }}>
               供應中
             </Div>
           </>
         )}
-        {!isAvailable && (
+        {!isAvailable && !isSoldOut && !isExpired && (
           <>
             <Icon name="RemoveSolid" color="danger700" size="14px" />
-            <Div textColor="danger700" m={{ l: "5px" }}>
+            <Div textColor="danger700" m={{ x: "5px" }}>
               未供應
+            </Div>
+          </>
+        )}
+        {isSoldOut && (
+          <>
+            <Icon name="AlertSolid" color="warning700" size="14px" />
+            <Div textColor="warning700" m={{ x: "5px" }}>
+              已售完
+            </Div>
+          </>
+        )}
+        {isExpired && (
+          <>
+            <Icon name="AlertSolid" color="warning700" size="14px" />
+            <Div textColor="warning700" m={{ x: "5px" }}>
+              已過期
             </Div>
           </>
         )}
@@ -96,6 +112,8 @@ Status.propTypes = {
   isAvailable: PropTypes.bool,
   quantity: PropTypes.number,
   category: PropTypes.string,
+  isExpired: PropTypes.bool,
+  isSoldOut: PropTypes.bool,
 };
 
 const Buttons = ({ next, handleEvent, isDisabled }) => {
@@ -125,7 +143,7 @@ const Buttons = ({ next, handleEvent, isDisabled }) => {
             m={{ r: "0.5rem" }}
             w={{ xs: "100%", md: "5rem" }}
             disabled={isDisabled}
-            cursor={isDisabled && "not-allowed"}
+            cursor={isDisabled ? "not-allowed" : "pointer"}
           >
             編輯
           </Button>
@@ -146,7 +164,7 @@ const Buttons = ({ next, handleEvent, isDisabled }) => {
         w={{ xs: "47%", md: "5rem" }}
         onClick={handleEvent}
         disabled={isDisabled}
-        cursor={isDisabled && "not-allowed"}
+        cursor={isDisabled ? "not-allowed" : "pointer"}
       >
         刪除
       </Button>
@@ -160,7 +178,13 @@ Buttons.propTypes = {
   isDisabled: PropTypes.bool,
 };
 
-export function VendorProductList({ product, handleDelete, isDisabled }) {
+export function VendorProductList({
+  product,
+  handleConfirmDelete,
+  isDisabled,
+  expiredProducts,
+  soldOutProducts,
+}) {
   return (
     <Div
       key={product.id}
@@ -190,6 +214,12 @@ export function VendorProductList({ product, handleDelete, isDisabled }) {
           <NameAndPrice name={product.name} price={product.price} />
         </Div>
         <Status
+          isExpired={
+            expiredProducts.map((item) => item.id).indexOf(product.id) >= 0
+          }
+          isSoldOut={
+            soldOutProducts.map((item) => item.id).indexOf(product.id) >= 0
+          }
           isAvailable={product.isAvailable}
           quantity={product.quantity}
           category={product.ProductCategory.name}
@@ -197,7 +227,7 @@ export function VendorProductList({ product, handleDelete, isDisabled }) {
       </Div>
       <Buttons
         next={`/product_edit/${product.id}`}
-        handleEvent={() => handleDelete(product.id)}
+        handleEvent={() => handleConfirmDelete(product.id)}
         isDisabled={isDisabled}
       />
     </Div>
@@ -206,8 +236,10 @@ export function VendorProductList({ product, handleDelete, isDisabled }) {
 
 VendorProductList.propTypes = {
   product: PropTypes.object,
-  handleDelete: PropTypes.func,
+  handleConfirmDelete: PropTypes.func,
   isDisabled: PropTypes.bool,
+  expiredProducts: PropTypes.array,
+  soldOutProducts: PropTypes.array,
 };
 
 export default VendorProductList;
