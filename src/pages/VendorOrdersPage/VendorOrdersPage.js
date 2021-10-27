@@ -5,6 +5,7 @@ import PaginationButton from "../../Components/PaginationButton";
 import LoadingPage from "../LoadingPage";
 import OrderList from "../../Components/OrderSystem/OrderList";
 import FilterButton from "../../Components/OrderSystem/FilterButton";
+import BackButton from "../../Components/OrderSystem/BackButton";
 import {
   getOrdersSold,
   selectAllOrders,
@@ -21,6 +22,7 @@ export default function OrdersBoughtPage() {
   const status = useSelector(selectStatus);
   const totalPages = useSelector(selectTotalPages);
   const isLoading = useSelector(selectIsLoading);
+  const orderPage = false;
   const [page, setPage] = useState(1);
   const dispatch = useDispatch();
   const limit = 5;
@@ -37,12 +39,12 @@ export default function OrdersBoughtPage() {
     return () => {
       dispatch(cleanOrders());
     };
-  }, [page, status]);
+  }, [page, status, dispatch]);
 
   return (
     <Div
       w="80%"
-      minH="40rem"
+      minH={isLoading ? "150rem" : "40rem"}
       m={{ y: "4rem", x: "auto" }}
       p={{ xs: "1rem", lg: "3rem", b: { lg: "6rem" } }}
       pos="relative"
@@ -57,9 +59,10 @@ export default function OrdersBoughtPage() {
           m={{ x: "auto", y: "auto" }}
           textAlign="center"
         >
-          <Text textColor="warning700" textSize="title">
+          <Text textColor="warning700" textSize="title" textWeight="700">
             目前還沒有訂單資料…
           </Text>
+          <BackButton orderPage={orderPage} />
         </Div>
       ) : (
         orders && <OrderList orders={orders} />

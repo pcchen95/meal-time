@@ -1,17 +1,16 @@
-import React, { useState } from "react"
-import PropTypes from "prop-types"
-import styled from "styled-components"
-import { Div, Text, Input, Textarea, Button } from "atomize"
-import OpeningHour from "./OpeningHour"
+import React, { useState } from "react";
+import PropTypes from "prop-types";
+import styled from "styled-components";
+import { Div, Text, Input, Textarea, Button } from "atomize";
+import OpeningHour from "./OpeningHour";
 import {
   selectVendorId,
   selectOrderProducts,
-} from "../../redux/reducers/cartReducer"
-import { useSelector } from "react-redux"
+} from "../../redux/reducers/cartReducer";
+import { useSelector } from "react-redux";
 
 const Booking = styled.div`
   display: none;
-
   ${(props) =>
     props.$isShow &&
     `
@@ -24,11 +23,10 @@ const Booking = styled.div`
     background: #c7c1c178;
     z-index: 2;
     `}
-`
+`;
 
 const BookingProducts = styled.div`
   display: none;
-
   ${(props) =>
     props.$isShow &&
     `
@@ -43,7 +41,6 @@ const BookingProducts = styled.div`
     top: 50%;
     left: 50%;
     transform: translate(-50%,-50%);
-
     @media screen and (max-width: 768px){
       bottom: 0;
       left: 0;
@@ -53,18 +50,22 @@ const BookingProducts = styled.div`
       width: 100%;
     }
   `}
-`
+`;
 
 const BookingBoard = ({ vendorById, isShow, handleIsShow, handleSubmit }) => {
-  const vendorId = useSelector(selectVendorId)
-  const orderProducts = useSelector(selectOrderProducts)
-  const [pickupTime, setPickupTime] = useState("")
-  const [remarks, setRemarks] = useState("")
+  const vendorId = useSelector(selectVendorId);
+  const orderProducts = useSelector(selectOrderProducts);
+  const [pickupTime, setPickupTime] = useState("");
+  const [remarks, setRemarks] = useState("");
+  console.log("vendorId", vendorId);
+  console.log("orderProducts:", orderProducts);
+  console.log("type", typeof orderProducts);
+  console.log(Array.isArray(orderProducts));
 
   return (
     <Booking $isShow={isShow}>
       <BookingProducts $isShow={isShow}>
-        <Div fontFamily="code" yI textAlign="center">
+        <Div fontFamily="code" textAlign="center">
           <OpeningHour vendorById={vendorById} />
           <div>
             <Div border={{ t: "3px solid" }} borderColor="gray200">
@@ -83,16 +84,16 @@ const BookingBoard = ({ vendorById, isShow, handleIsShow, handleSubmit }) => {
                 min={new Date().toISOString().slice(0, 16)}
                 required
               />
-              <Text
-                textSize="heading"
-                m="1rem"
-                textColor="gray800"
-                value={remarks}
-                onChange={(e) => setRemarks(e.target.value)}
-              >
+              <Text textSize="heading" m="1rem" textColor="gray800">
                 備註
               </Text>
-              <Textarea m="1rem" maxH="8rem" name="remarks" />
+              <Textarea
+                m="1rem"
+                maxH="8rem"
+                name="remarks"
+                value={remarks}
+                onChange={(e) => setRemarks(e.target.value)}
+              />
               <Div d="flex" w="26rem" justify="center">
                 <Button
                   h="3rem"
@@ -106,7 +107,6 @@ const BookingBoard = ({ vendorById, isShow, handleIsShow, handleSubmit }) => {
                   borderColor="info700"
                   hoverBorderColor="warning800"
                   m={{ r: "0.5rem", t: "1rem" }}
-                  type="submit"
                   onClick={() =>
                     handleSubmit(orderProducts, vendorId, pickupTime, remarks)
                   }
@@ -135,8 +135,8 @@ const BookingBoard = ({ vendorById, isShow, handleIsShow, handleSubmit }) => {
         </Div>
       </BookingProducts>
     </Booking>
-  )
-}
+  );
+};
 
 BookingBoard.propTypes = {
   vendorById: PropTypes.object,
@@ -145,6 +145,6 @@ BookingBoard.propTypes = {
   handleSubmit: PropTypes.func,
   pickupTime: PropTypes.string,
   remarks: PropTypes.string,
-}
+};
 
-export default BookingBoard
+export default BookingBoard;

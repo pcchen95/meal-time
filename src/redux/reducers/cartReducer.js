@@ -1,8 +1,12 @@
-import { createSlice } from "@reduxjs/toolkit"
-import { getCartData as getCartDataApi } from "../../WebAPI/cartAPI"
-import { getMe as getMeApi } from "../../WebAPI/userAPI"
-
-import { setErrorMessage } from "./notificationReducer"
+import { createSlice } from "@reduxjs/toolkit";
+import { getCartData as getCartDataApi } from "../../WebAPI/cartAPI";
+import { getMe as getMeApi } from "../../WebAPI/userAPI";
+import { postOrder } from "../../WebAPI/orderAPI";
+import {
+  setErrorMessage,
+  setShowSuccessNotification,
+  setShowWarningNotification,
+} from "./notificationReducer";
 
 const initialState = {
   cart: null,
@@ -12,38 +16,35 @@ const initialState = {
   isLoading: false,
   userId: null,
   orderProducts: [],
-}
+};
 
 export const cartReducer = createSlice({
   name: "cart",
   initialState,
   reducers: {
     setCart: (state, action) => {
-      state.cart = action.payload
+      state.cart = action.payload;
     },
     setCartData: (state, action) => {
-      state.cartData = action.payload
+      state.cartData = action.payload;
     },
     setIsShow: (state, action) => {
-      state.isShow = action.payload
+      state.isShow = action.payload;
     },
     setVendorId: (state, action) => {
-      state.vendorId = action.payload
+      state.vendorId = action.payload;
     },
     setIsLoading: (state, action) => {
-      state.isLoading = action.payload
-    },
-    setVendorById: (state, action) => {
-      state.vendorById = action.payload
+      state.isLoading = action.payload;
     },
     setUserId: (state, action) => {
-      state.userId = action.payload
+      state.userId = action.payload;
     },
     setOrderProducts: (state, action) => {
-      state.orderProducts = action.payload
+      state.orderProducts = action.payload;
     },
   },
-})
+});
 
 export const {
   setCart,
@@ -53,58 +54,68 @@ export const {
   setIsLoading,
   setUserId,
   setOrderProducts,
-} = cartReducer.actions
+} = cartReducer.actions;
 
 export const getMe = () => (dispatch) => {
+  dispatch(setIsLoading(true));
   return getMeApi().then((res) => {
+    dispatch(setIsLoading(false));
     if (!res.ok) {
-      dispatch(setErrorMessage(res.message))
-      return
+      dispatch(setErrorMessage(res.message));
+      return;
     }
-    dispatch(setUserId(res.data.id))
-  })
-}
-
-export const getCartFromLocalStorage = (userId) => (dispatch) => {
-  const cart = localStorage.getItem(`cartId${userId}`)
-  let cartArray
-  if (cart) {
-    cartArray = JSON.parse(cart)
-    dispatch(setCart(cartArray))
-  }
-}
+    dispatch(setUserId(res.data.id));
+  });
+};
 
 export const getCartData = (userId) => (dispatch) => {
-  const cart = localStorage.getItem(`cartId${userId}`)
-  let cartArray
+  const cart = localStorage.getItem(`cartId${userId}`);
+  let cartArray;
   if (cart) {
-    cartArray = JSON.parse(cart)
+    cartArray = JSON.parse(cart);
   }
+  dispatch(setIsLoading(true));
   return getCartDataApi({ cart: cartArray })
     .then((res) => {
+      dispatch(setIsLoading(false));
       if (!res.ok) {
-        return dispatch(setErrorMessage(res ? res.message : "something wrong"))
+        return dispatch(setErrorMessage(res ? res.message : "something wrong"));
       }
-      return res.data
+      return res.data;
     })
     .then((cartData) => {
-      return dispatch(setCart(cartData))
+      return dispatch(setCart(cartData));
     })
     .catch((err) => {
-      console.log(err)
-    })
-}
+      console.log(err);
+    });
+};
+
+export const newOrder = (data) => (dispatch) => {
+  dispatch(setIsLoading(true));
+  postOrder(data).then((res) => {
+    if (!res.ok) {
+      dispatch(setErrorMessage(res.message));
+      dispatch(setIsLoading(false));
+      dispatch(setShowWarningNotification(true));
+      return;
+    }
+    dispatch(setIsLoading(false));
+    dispatch(setShowSuccessNotification(true, "訂單已成立"));
+    return res;
+  });
+};
 
 export const cleanCartData = () => (dispatch) => {
-  dispatch(setCart(null))
-}
+  dispatch(setCart(null));
+};
 
-export const selectCart = (state) => state.cart.cart
-export const selectCartData = (state) => state.cart.cartData
-export const selectIsShow = (state) => state.cart.isShow
-export const selectIsLoading = (state) => state.cart.isLoading
-export const selectVendorId = (state) => state.cart.vendorId
-export const selectUserId = (state) => state.cart.userId
-export const selectOrderProducts = (state) => state.cart.orderProducts
+export const selectCart = (state) => state.cart.cart;
+export const selectCartData = (state) => state.cart.cartData;
+export const selectIsShow = (state) => state.cart.isShow;
+export const selectIsLoading = (state) => state.cart.isLoading;
+export const selectVendorId = (state) => state.cart.vendorId;
+export const selectUserId = (state) => state.cart.userId;
+export const selectOrderProducts = (state) => state.cart.orderProducts;
 
-export default cartReducer.reducer
+export default cartReducer.reducer;

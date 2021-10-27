@@ -16,7 +16,7 @@ const FilterButton = ({ orderItems }) => {
         <Div d={{ xs: "block", xl: "flex" }}>
           <Col>
             <Div
-              bgImg={orderItem.Product.pictureUrl}
+              bgImg={orderItem.Product && orderItem.Product.pictureUrl}
               bgSize="cover"
               bgPos="center"
               h={{ xs: "14rem", md: "20rem", lg: "16rem" }}
@@ -25,12 +25,20 @@ const FilterButton = ({ orderItems }) => {
             />
           </Col>
           <Div minW="10rem" textSize="subheader">
-            <Text m={{ t: "1rem" }}>{orderItem.Product.name}</Text>
-            <Text m={{ t: "1rem" }}>單價：{orderItem.Product.price}</Text>
-            <Text m={{ t: "1rem" }}>預訂數量：{orderItem.quantity}</Text>
+            <Text m={{ t: "1rem" }} flexWrap="wrap">
+              {orderItem.Product && orderItem.Product.name}
+            </Text>
+            <Text m={{ t: "1rem" }}>
+              單價：{orderItem.Products && orderItem.Product.price}
+            </Text>
+            <Text m={{ t: "1rem" }}>
+              預訂數量：{orderItem && orderItem.quantity}
+            </Text>
           </Div>
           <Div minW="60rem">
-            <Text m={{ t: "1rem" }}>{orderItem.Product.description}</Text>
+            <Text m={{ t: "1rem" }}>
+              {orderItem.Productor && orderItem.Product.description}
+            </Text>
           </Div>
         </Div>
       </Div>
