@@ -1,10 +1,19 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Div, Icon, Button } from "atomize";
 import Carousel from "../../Components/Carousel";
+import { useDispatch, useSelector } from "react-redux";
+import PropTypes from "prop-types";
+import {
+  getProducts,
+  cleanProducts,
+} from "../../redux/reducers/productReducer";
+import ProductCard from "../../Components/ProductSystem/ProductCard";
+import LoadingPage from "../LoadingPage";
+import { useHistory } from "react-router";
 
-const NewItemList = () => {
+const NewItemList = ({ products, loadMoreEvent }) => {
   return (
-    <Div>
+    <Div w={{ xs: "100%" }}>
       <Div
         textAlign="center"
         textSize="heading"
@@ -14,41 +23,19 @@ const NewItemList = () => {
       >
         最新商品
       </Div>
-      <Div d="flex" justify="space-around">
-        <Div
-          m="2.5rem"
-          bgImg="https://images.unsplash.com/photo-1504674900247-0877df9cc836?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1770&q=80"
-          bgSize="cover"
-          bgPos="center"
-          h="15rem"
-          w="15rem"
-        ></Div>
-        <Div
-          m="2.5rem"
-          bgImg="https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=960&q=80"
-          bgSize="cover"
-          bgPos="center"
-          h="15rem"
-          w="15rem"
-        ></Div>
-        <Div
-          m="2.5rem"
-          bgImg="https://images.unsplash.com/photo-1498837167922-ddd27525d352?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1770&q=80"
-          bgSize="cover"
-          bgPos="center"
-          h="15rem"
-          w="15rem"
-        ></Div>{" "}
-        <Div
-          m="2.5rem"
-          bgImg="https://images.unsplash.com/photo-1482049016688-2d3e1b311543?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=820&q=80"
-          bgSize="cover"
-          bgPos="center"
-          h="15rem"
-          w="15rem"
-        ></Div>
+      <Div
+        d={{ xs: "flex", md: "block", lg: "flex" }}
+        flexDir={{ xs: "column", lg: "row" }}
+        justify="center"
+        align="center"
+        m={{ r: { xs: "2rem", lg: "3.5rem" } }}
+      >
+        {products &&
+          products.map((product) => (
+            <ProductCard key={product.id} product={product} />
+          ))}
       </Div>
-      <Div d="flex" justify="center">
+      <Div d="flex" justify="center" m={{ t: "4rem" }}>
         <Button
           suffix={
             <Icon
@@ -67,19 +54,43 @@ const NewItemList = () => {
           shadow="1"
           hoverShadow="2"
           m={{ b: "3rem" }}
+          onClick={loadMoreEvent}
         >
           查看更多
-        </Button>{" "}
+        </Button>
       </Div>
     </Div>
   );
 };
 
+NewItemList.propTypes = {
+  products: PropTypes.array,
+  loadMoreEvent: PropTypes.func,
+};
+
 const HomePage = () => {
+  const history = useHistory();
+  const isLoading = useSelector((store) => store.products.isLoading);
+  const dispatch = useDispatch();
+  const productsData = useSelector((state) => state.products.products);
+
+  useEffect(() => {
+    dispatch(getProducts({ limit: 5 }));
+    return () => dispatch(cleanProducts());
+  }, []);
+
+  let products;
+  if (productsData) {
+    products = productsData.rows;
+  }
   return (
-    <Div>
+    <Div d="flex" flexDir="column" align="center" justify="center">
+      {isLoading && <LoadingPage />}
       <Carousel />
-      <NewItemList />
+      <NewItemList
+        products={products}
+        loadMoreEvent={() => history.push("/products")}
+      />
     </Div>
   );
 };
