@@ -72,9 +72,6 @@ export default function CartPage() {
     }
   };
 
-  console.log("vendorId", vendorId);
-  console.log("orderProducts:", orderProducts);
-
   const handleCheckedClick = (e) => {
     dispatch(setVendorId(e.target.value));
     setIsChecked(!isChecked);
@@ -108,71 +105,18 @@ export default function CartPage() {
       p={{ xs: "1rem", lg: "2rem" }}
     >
       {isLoading && <LoadingPage />}
-      {cartData && (
-        <>
-          <Div m={{ t: "2rem", l: { xs: "0", lg: "5rem" } }}>
-            <Div
-              border={{ b: "4px solid" }}
-              borderColor="info600"
-              w="10rem"
-              textAlign="center"
-            >
-              <Div d="flex">
-                <Icon name="Bag" size="50px" color="black300" />
-                <Text textSize="display1" w="24rem" textColor="black300">
-                  購物車
-                </Text>
-              </Div>
-            </Div>
-            <Div d="flex" m={{ t: "1rem" }} textColor="warning800">
-              <Icon name="Alert" size="20px" color="warning800" />
-              <Text>
-                一次只能預訂一位賣家商品，如果有多位賣家商品請分開下單
-              </Text>
-            </Div>
-            {errMessage && (
-              <Text
-                m={{ t: "1rem" }}
-                textColor="danger700"
-                textSize="title"
-                textWeight="700"
-              >
-                {errMessage}
-              </Text>
-            )}
-          </Div>
-          <CartList
-            setErrorMessage={setErrorMessage}
-            isChecked={isChecked}
-            vendorId={vendorId}
-            handleCheckedClick={handleCheckedClick}
-            handleDeleteClick={handleDeleteClick}
-            userId={userId}
-            cart={cart}
-            cartData={cartData}
-          />
-          <Div m={{ t: "4rem" }} border="2px solid" borderColor="warning600" />
-          <Div m={{ y: "2rem" }} p={{ xs: "1rem", lg: "2rem" }} pos="relative">
-            <Button
-              h="3rem"
-              p={{ x: "1.25rem" }}
-              textSize="body"
-              textColor="info700"
-              bg="white"
-              hoverBg="warning300"
-              border="1px solid"
-              borderColor="info700"
-              hoverBorderColor="info800"
-              m={{ r: "0.5rem", t: "1rem" }}
-              pos="absolute"
-              top="50%"
-              left="50%"
-              transform="translate(-50%, -50%)"
-              onClick={() => handleIsShow("book")}
-              $isShow={isShow}
-            >
-              預訂
-            </Button>
+      <Div m={{ t: "2rem", l: { xs: "0", lg: "5rem" } }}>
+        <Div
+          border={{ b: "4px solid" }}
+          borderColor="info600"
+          w="10rem"
+          textAlign="center"
+        >
+          <Div d="flex">
+            <Icon name="Bag" size="50px" color="black300" />
+            <Text textSize="display1" w="24rem" textColor="black300">
+              購物車
+            </Text>
           </Div>
         </Div>
         <Div d="flex" m={{ t: "1rem" }} textColor="warning800">
