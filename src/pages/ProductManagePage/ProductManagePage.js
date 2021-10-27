@@ -13,6 +13,7 @@ import LoadingPage from "../LoadingPage/LoadingPage";
 import PaginationButton from "../../Components/VendorSystem/PaginationButton";
 import ProductList from "../../Components/ProductSystem/VendorProductList";
 import ControlArea from "../../Components/ProductSystem/VendorControlArea";
+import ConfirmNotification from "../../Components/ProductSystem/ConfirmNotification";
 
 export default function ProductManagePage() {
   const dispatch = useDispatch();
@@ -23,42 +24,55 @@ export default function ProductManagePage() {
   const [isDisabled, setIsDisabled] = useState(false);
   const [pageStart, setPageStart] = useState(null);
   const [pageEnd, setPageEnd] = useState(null);
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [deletedId, setDeletedId] = useState(null);
   const user = useSelector((store) => store.users.user);
   const vendor = useSelector((store) => store.vendors.vendor);
   const products = useSelector((store) => store.products.myVendorProducts);
+  const expiredProducts = useSelector(
+    (store) => store.products.myVendorProductsExpired
+  );
+  const soldOutProducts = useSelector(
+    (store) => store.products.myVendorProductsSoldOut
+  );
   const count = useSelector((store) => store.products.count);
   const isLoadingProduct = useSelector((store) => store.products.isLoading);
   const history = useHistory();
   const limit = 10;
 
   const getProducts = (id) => {
-    if (categoryId === 0) {
-      dispatch(
-        getMyVendorProducts(id, {
-          limit,
-          page,
-          isAvailable: availableFilter,
-        })
-      );
+    let queryParameters = {
+      limit,
+      page,
+      isAvailable: availableFilter,
+    };
+    if (availableFilter == "true" || availableFilter == "false") {
+      queryParameters.hideExpiry = true;
+      queryParameters.hideSoldOut = true;
     }
     if (categoryId !== 0) {
-      dispatch(
-        getMyVendorProducts(id, {
-          limit,
-          category: categoryId,
-          page,
-          isAvailable: availableFilter,
-        })
-      );
+      queryParameters.category = categoryId;
     }
+    dispatch(getMyVendorProducts(id, queryParameters));
   };
 
-  const handleDelete = (id) => {
-    dispatch(deleteProduct(id)).then((res) => {
+  const handleConfirmDelete = (id) => {
+    setShowConfirm(true);
+    setDeletedId(id);
+  };
+
+  const handleDelete = () => {
+    setShowConfirm(false);
+    dispatch(deleteProduct(deletedId)).then((res) => {
       if (res.ok) {
         getProducts(vendor.id, categoryId, page);
       }
     });
+  };
+
+  const handleCancelDelete = () => {
+    setShowConfirm(false);
+    setDeletedId(null);
   };
 
   useEffect(() => {
@@ -136,12 +150,18 @@ export default function ProductManagePage() {
           </Div>
           <Div minH="calc(100vh - 467px)">
             {products &&
+              expiredProducts &&
+              soldOutProducts &&
               products.map((product) => (
                 <ProductList
                   key={product.id}
                   product={product}
-                  handleDelete={handleDelete}
+                  handleConfirmDelete={handleConfirmDelete}
                   isDisabled={isDisabled}
+                  expiredProducts={expiredProducts}
+                  soldOutProducts={soldOutProducts}
+                  setDeletedId={setDeletedId}
+                  setShowConfirm={setShowConfirm}
                 />
               ))}
           </Div>
@@ -152,6 +172,11 @@ export default function ProductManagePage() {
               setPage={setPage}
             />
           )}
+          <ConfirmNotification
+            showConfirm={showConfirm}
+            handleDelete={handleDelete}
+            handleCancelDelete={handleCancelDelete}
+          />
         </Div>
       )}
     </>
