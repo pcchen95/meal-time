@@ -1,101 +1,89 @@
-import React, { useEffect, useState } from "react"
-import { useSelector, useDispatch } from "react-redux"
-import { Div, Button, Text, Icon } from "atomize"
-import CartList from "../../Components/CartSystem/CartList"
-import BookingBoard from "../../Components/CartSystem/BookingBoard"
-import LoadingPage from "../LoadingPage"
+import React, { useEffect, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { Div, Button, Text, Icon } from "atomize";
+import CartList from "../../Components/CartSystem/CartList";
+import BookingBoard from "../../Components/CartSystem/BookingBoard";
+import LoadingPage from "../LoadingPage";
 import {
   getMe,
-  selectCart,
-  setVendorId,
-  selectVendorId,
-  selectIsLoading,
   getCartData,
-  selectCartData,
+  newOrder,
   setCartData,
-  selectUserId,
-  selectOrderProducts,
+  setVendorId,
   setOrderProducts,
-} from "../../redux/reducers/cartReducer"
-import { newOrder } from "../../redux/reducers/orderReducer"
-import { getVendorById } from "../../redux/reducers/vendorReducer"
-import { setErrorMessage } from "../../redux/reducers/notificationReducer"
-import SuccessNotification from "../../Components/Notifications/SuccessNotification"
-import WarningNotification from "../../Components/Notifications/WarningNotification"
+  selectCart,
+  selectVendorId,
+  selectCartData,
+  selectUserId,
+  selectIsLoading,
+} from "../../redux/reducers/cartReducer";
+import { getVendorById } from "../../redux/reducers/vendorReducer";
+import {
+  setErrorMessage,
+  setShowWarningNotification,
+} from "../../redux/reducers/notificationReducer";
+import SuccessNotification from "../../Components/Notifications/SuccessNotification";
+import WarningNotification from "../../Components/Notifications/WarningNotification";
 
 export default function CartPage() {
-  const dispatch = useDispatch()
-  const [isChecked, setIsChecked] = useState(false)
-  const [isShow, setIsShow] = useState(false)
-  const cartData = useSelector(selectCartData)
-  const userId = useSelector(selectUserId)
-  const cart = useSelector(selectCart)
-  const vendorId = useSelector(selectVendorId)
-  const isLoading = useSelector(selectIsLoading)
-  const orderProducts = useSelector(selectOrderProducts)
-  const vendorById = useSelector((store) => store.vendors.vendorById)
-  const errMessage = useSelector((store) => store.notifications.errMessage)
+  const dispatch = useDispatch();
+  const [isChecked, setIsChecked] = useState(false);
+  const [isShow, setIsShow] = useState(false);
+  const cartData = useSelector(selectCartData);
+  const isLoading = useSelector(selectIsLoading);
+  const userId = useSelector(selectUserId);
+  const cart = useSelector(selectCart);
+  const vendorId = useSelector(selectVendorId);
+  const vendorById = useSelector((store) => store.vendors.vendorById);
 
   useEffect(() => {
-    dispatch(getMe())
-    dispatch(getCartData(userId))
-    dispatch(setCartData(localStorage.getItem(`cartId${userId}`)))
+    dispatch(getMe());
+    dispatch(getCartData(userId));
+    dispatch(setCartData(localStorage.getItem(`cartId${userId}`)));
     return () => {
-      dispatch(setErrorMessage(null))
-    }
-  }, [userId, cartData])
+      dispatch(setErrorMessage(null));
+    };
+  }, [userId, cartData, dispatch]);
 
   const handleIsShow = (type) => {
     if (type === "book") {
       if (isChecked === true) {
-        dispatch(setErrorMessage(null))
-        dispatch(getVendorById(vendorId))
-        setIsShow(true)
-      } else {
-        window.scroll(0, 0)
-        dispatch(setErrorMessage("請至少勾選一個購物車才能預訂食物"))
-      }
-      if (vendorId) {
-        let isSelectFood = []
-        let result = []
-        if (vendorId) {
-          vendorId &&
-            cart[vendorId].forEach((item) => isSelectFood.push(item.id))
-          for (let i = 0; i < isSelectFood.length; i++) {
-            result.push(
-              JSON.parse(cartData).find((item) => item.id == isSelectFood[i])
-            )
-          }
-          console.log("vendorId", vendorId)
-          console.log("orderProducts:", orderProducts)
-
-          dispatch(setOrderProducts(result))
+        dispatch(setErrorMessage(null));
+        dispatch(getVendorById(vendorId));
+        setIsShow(true);
+        let isSelectFood = [];
+        let result = [];
+        cart && cart[vendorId].forEach((item) => isSelectFood.push(item.id));
+        for (let i = 0; i < isSelectFood.length; i++) {
+          result.push(
+            JSON.parse(cartData).find((item) => item.id === isSelectFood[i])
+          );
         }
+        dispatch(setOrderProducts(result));
+      } else {
+        window.scroll(0, 0);
+        dispatch(setErrorMessage("請至少勾選一個購物車才能預訂食物"));
+        dispatch(setShowWarningNotification(true));
       }
     }
     if (type === "cancel") {
-      setIsShow(false)
-      setVendorId(null)
+      setIsShow(false);
+      setVendorId(null);
     }
-  }
+  };
 
   const handleCheckedClick = (e) => {
-    dispatch(setVendorId(e.target.value))
-    setIsChecked(!isChecked)
-
-    if (isChecked) {
-      dispatch(setVendorId(null))
-      dispatch(setOrderProducts([]))
-    }
-  }
+    dispatch(setVendorId(e.target.value));
+    setIsChecked(!isChecked);
+  };
 
   const handleDeleteClick = (id, userId) => {
     const newCartData = JSON.stringify(
       JSON.parse(cartData).filter((item) => item.id !== id)
-    )
-    localStorage.setItem(`cartId${userId}`, newCartData)
-    dispatch(setCartData(newCartData))
-  }
+    );
+    localStorage.setItem(`cartId${userId}`, newCartData);
+    dispatch(setCartData(newCartData));
+  };
 
   const handleSubmit = (orderProducts, vendorId, pickupTime, remarks) => {
     dispatch(
@@ -105,13 +93,14 @@ export default function CartPage() {
         pickupTime,
         remarks,
       })
-    )
-  }
+    );
+  };
 
   return (
     <Div
       bg="gray200"
       w="80%"
+      minH="30rem"
       m={{ y: "4rem", x: "auto" }}
       p={{ xs: "1rem", lg: "2rem" }}
     >
@@ -134,58 +123,64 @@ export default function CartPage() {
           <Icon name="Alert" size="20px" color="warning800" />
           <Text>一次只能預訂一位賣家商品，如果有多位賣家商品請分開下單</Text>
         </Div>
-        {errMessage && (
-          <Text
-            m={{ t: "1rem" }}
-            textColor="danger700"
+      </Div>
+      {cartData ? (
+        <>
+          <CartList
+            setErrorMessage={setErrorMessage}
+            isChecked={isChecked}
+            vendorId={vendorId}
+            handleCheckedClick={handleCheckedClick}
+            handleDeleteClick={handleDeleteClick}
+            userId={userId}
+            cart={cart}
+            cartData={cartData}
+          />
+          <Div m={{ t: "4rem" }} border="2px solid" borderColor="warning600" />
+          <Div m={{ y: "2rem" }} p={{ xs: "1rem", lg: "2rem" }} pos="relative">
+            <Button
+              h="3rem"
+              p={{ x: "1.25rem" }}
+              textSize="body"
+              textColor="info700"
+              bg="white"
+              hoverBg="warning300"
+              border="1px solid"
+              borderColor="info700"
+              hoverBorderColor="info800"
+              m={{ r: "0.5rem", t: "1rem" }}
+              pos="absolute"
+              top="50%"
+              left="50%"
+              transform="translate(-50%, -50%)"
+              onClick={() => handleIsShow("book")}
+              $isShow={isShow}
+            >
+              預訂
+            </Button>
+          </Div>
+          <BookingBoard
+            vendorById={vendorById}
+            isShow={isShow}
+            handleIsShow={handleIsShow}
+            handleSubmit={handleSubmit}
+          />
+        </>
+      ) : (
+        <Div>
+          <Div
+            textAlign="center"
+            textColor="warning700"
             textSize="title"
             textWeight="700"
+            m={{ t: "6rem" }}
           >
-            {errMessage}
-          </Text>
-        )}
-      </Div>
-      <CartList
-        setErrorMessage={setErrorMessage}
-        isChecked={isChecked}
-        vendorId={vendorId}
-        handleCheckedClick={handleCheckedClick}
-        handleDeleteClick={handleDeleteClick}
-        userId={userId}
-        cart={cart}
-        cartData={cartData}
-      />
-      <Div m={{ t: "4rem" }} border="2px solid" borderColor="warning600" />
-      <Div m={{ y: "2rem" }} p={{ xs: "1rem", lg: "2rem" }} pos="relative">
-        <Button
-          h="3rem"
-          p={{ x: "1.25rem" }}
-          textSize="body"
-          textColor="info700"
-          bg="white"
-          hoverBg="warning300"
-          border="1px solid"
-          borderColor="info700"
-          hoverBorderColor="info800"
-          m={{ r: "0.5rem", t: "1rem" }}
-          pos="absolute"
-          top="50%"
-          left="50%"
-          transform="translate(-50%, -50%)"
-          onClick={() => handleIsShow("book")}
-          $isShow={isShow}
-        >
-          預訂
-        </Button>
-      </Div>
-      <BookingBoard
-        vendorById={vendorById}
-        isShow={isShow}
-        handleIsShow={handleIsShow}
-        handleSubmit={handleSubmit}
-      />
+            目前購物車是空的…
+          </Div>
+        </Div>
+      )}
       <SuccessNotification />
       <WarningNotification />
     </Div>
-  )
+  );
 }

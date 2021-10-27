@@ -3,7 +3,6 @@ import {
   getOrdersBought as getOrdersBoughtAPI,
   getOrdersSold as getOrdersSoldAPI,
   getOrder as getOrderAPI,
-  postOrder,
   completeOrder as completeOrderAPI,
   cancelOrder as cancelOrderAPI,
 } from "../../WebAPI/orderAPI";
@@ -108,21 +107,6 @@ export const getOrdersSold = (vendorId) => (dispatch) => {
   });
 };
 
-export const newOrder = (data) => (dispatch) => {
-  dispatch(setIsLoading(true));
-  postOrder(data).then((res) => {
-    if (!res.ok) {
-      dispatch(setErrorMessage(res.message));
-      dispatch(setIsLoading(false));
-      dispatch(setShowWarningNotification(true));
-      return;
-    }
-    dispatch(setIsLoading(false));
-    dispatch(setShowSuccessNotification(true, "訂單已成立"));
-    return res;
-  });
-};
-
 export const completeOrder = (id) => (dispatch) => {
   dispatch(setIsLoading(true));
   return completeOrderAPI(id).then((res) => {
@@ -155,7 +139,6 @@ export const cleanOrders = () => (dispatch) => {
 export const selectAllOrders = (state) => state.orders.orders;
 export const selectSingleOrder = (state) => state.orders.order;
 export const selectStatus = (state) => state.orders.status;
-export const selectPage = (state) => state.orders.page;
 export const selectTotalPages = (state) => state.orders.totalPages;
 export const selectIsLoading = (state) => state.orders.isLoading;
 export const selectIsDisabled = (state) => state.orders.isDisabled;

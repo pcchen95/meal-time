@@ -2,7 +2,6 @@ import "./App.css";
 import React from "react";
 import { HashRouter as Router, Switch, Route } from "react-router-dom";
 import { useDispatch } from "react-redux";
-
 import { getMe } from "./redux/reducers/userReducer";
 import HomePage from "./pages/HomePage";
 import ProductsPage from "./pages/ProductsPage";
@@ -12,6 +11,8 @@ import ProductManagePage from "./pages/ProductManagePage";
 import ProductEdit from "./pages/ProductEdit";
 import SingleProductPage from "./pages/SingleProductPage";
 import OrderDetailsPage from "./pages/OrderDetailsPage";
+import ClientOrdersPage from "./pages/ClientOrdersPage";
+import VendorOrdersPage from "./pages/VendorOrdersPage";
 import StorePage from "./pages/StorePage";
 import UpdateStorePage from "./pages/UpdateStorePage";
 import MapPage from "./pages/MapPage";
@@ -67,7 +68,13 @@ function App() {
           <Route path="/product_edit/:id">
             <ProductEdit />
           </Route>
-          <Route path="/order_details">
+          <Route path="/orders">
+            <ClientOrdersPage />
+          </Route>
+          <Route path="/vendor_orders/">
+            <VendorOrdersPage />
+          </Route>
+          <Route path="/order_details/:id">
             <OrderDetailsPage />
           </Route>
           <Route path="/store/:id">
@@ -78,9 +85,6 @@ function App() {
           </Route>
           <Route path="/map">
             <MapPage />
-          </Route>
-          <Route path="/cart">
-            <CartPage />
           </Route>
           <Route path="/cart">
             <CartPage />
