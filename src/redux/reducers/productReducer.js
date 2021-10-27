@@ -98,6 +98,7 @@ export const {
   setProduct,
   setErrMessage,
   setVendorProduct,
+  setVendorProductCategories,
   setMyVendorProduct,
   setMyVendorProductExpired,
   setMyVendorProductSoldOut,
@@ -106,7 +107,6 @@ export const {
   setProductCategories,
   setIsLoading,
   setCount,
-  setVendorProductCategories,
 } = productReducer.actions;
 
 export const getProducts = (queryParameters) => (dispatch) => {
@@ -414,7 +414,6 @@ export const patchProduct =
       // isDeletePicture,
     }).then((res) => {
       dispatch(setIsLoading(false));
-
       if (!res.ok) {
         dispatch(setErrorMessage(res.message));
         dispatch(setShowWarningNotification(true));
