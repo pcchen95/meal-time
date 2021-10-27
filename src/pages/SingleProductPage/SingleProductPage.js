@@ -30,14 +30,14 @@ const ProductDetails = ({ title, content }) => {
       >
         {title}
       </Text>
-      <Text>{content}</Text>
+      <Div>{content}</Div>
     </Div>
   );
 };
 
 ProductDetails.propTypes = {
   title: PropTypes.string,
-  content: PropTypes.string,
+  content: PropTypes.object,
 };
 
 const EllipsisText = styled.div`
@@ -69,7 +69,7 @@ const Product = ({ product }) => {
             rounded="sm"
           />
         </Col>
-        <Text
+        <Div
           m={{ y: "1rem", r: "0rem" }}
           textAlign="center"
           textColor="black"
@@ -77,10 +77,10 @@ const Product = ({ product }) => {
           w={{ xs: "100%", lg: "9rem" }}
         >
           <EllipsisText>{product.name}</EllipsisText>
-        </Text>
-        <Text m={{ y: "1rem" }} textAlign="center" textColor="info800">
+        </Div>
+        <Div m={{ y: "1rem" }} textAlign="center" textColor="info800">
           <EllipsisText>NT$ {product.price}</EllipsisText>
-        </Text>
+        </Div>
       </Div>
     </Link>
   );
@@ -103,7 +103,7 @@ export default function SingleProductPage() {
   const page = useSelector((state) => state.products.page);
   const sort = useSelector((state) => state.products.sort);
   const queryParameters = { page, sort, limit: 4, order: "DESC" };
-  const [productCount, setProductCount] = useState(null);
+  const [productCount, setProductCount] = useState("");
   const [showSuccess, setShowSuccess] = useState(false);
   const [showWarning, setShowWarning] = useState(false);
   const [productInCart, setProductInCart] = useState(null);
@@ -334,8 +334,9 @@ export default function SingleProductPage() {
             title="製造日期"
             content={
               product &&
-              product.manufactureDate &&
-              product.manufactureDate.slice(0, 10)
+              product.manufactureDate && (
+                <Div>{product.manufactureDate.slice(0, 10)}</Div>
+              )
             }
           />
           <ProductDetails

@@ -1,8 +1,8 @@
-import React, { useEffect } from "react"
-import PropTypes from "prop-types"
-import { useState } from "react"
-import { Div, Text, Dropdown } from "atomize"
-import { useSelector } from "react-redux"
+import React, { useEffect } from "react";
+import PropTypes from "prop-types";
+import { useState } from "react";
+import { Div, Text, Dropdown } from "atomize";
+import { useSelector } from "react-redux";
 
 ///from pcc
 
@@ -21,46 +21,46 @@ const lists = ({ categories, categoryId, setCategoryId, setShowDropdown }) => {
                 hoverTextColor="info700"
                 value={category.id}
                 onClick={(e) => {
-                  setCategoryId(Number(e.target.getAttribute("value")))
-                  setShowDropdown(false)
+                  setCategoryId(Number(e.target.getAttribute("value")));
+                  setShowDropdown(false);
                 }}
                 cursor="pointer"
               >
                 {category.name}
               </Text>
-            )
+            );
           })}
     </Div>
-  )
-}
+  );
+};
 
 lists.propTypes = {
   categoryId: PropTypes.number,
   setCategoryId: PropTypes.func,
   categories: PropTypes.object,
   setShowDropdown: PropTypes.func,
-}
+};
 
 export function CategoryDropdown({ categoryId, setCategoryId, remind, name }) {
-  let titleLength = 5
-  let marginLength = 0
+  let titleLength = 5;
+  let marginLength = 0;
 
-  const [showDropdown, setShowDropdown] = useState(false)
-  const [categoryName, setCategoryName] = useState("")
-  const categories = useSelector((store) => store.products.productCategories)
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [categoryName, setCategoryName] = useState("");
+  const categories = useSelector((store) => store.products.productCategories);
 
   const handleToggleDropdown = () => {
-    setShowDropdown(!showDropdown)
-  }
+    setShowDropdown(!showDropdown);
+  };
 
   useEffect(() => {
     if (categories) {
       for (let i = 0; i < categories.length; i++) {
         if (categories[i].id === categoryId)
-          return setCategoryName(categories[i].name)
+          return setCategoryName(categories[i].name);
       }
     }
-  }, [categoryId, categories])
+  }, [categoryId, categories]);
 
   return (
     <Div d="flex" flexDir="column" m={{ y: "1rem" }}>
@@ -106,14 +106,14 @@ export function CategoryDropdown({ categoryId, setCategoryId, remind, name }) {
         {remind}
       </Div>
     </Div>
-  )
+  );
 }
 
 CategoryDropdown.propTypes = {
-  categoryId: PropTypes.number,
+  categoryId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   setCategoryId: PropTypes.func,
   remind: PropTypes.string,
   name: PropTypes.string,
-}
+};
 
-export default CategoryDropdown
+export default CategoryDropdown;

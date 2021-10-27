@@ -1,10 +1,10 @@
-import React from "react"
-import PropTypes from "prop-types"
-import { Div, Radiobox, Label } from "atomize"
+import React from "react";
+import PropTypes from "prop-types";
+import { Div, Radiobox, Label } from "atomize";
 
 const RadioField = ({ name, value, handleEvent, remind }) => {
-  const titleLength = 5
-  const marginLength = 0
+  const titleLength = 5;
+  const marginLength = 0;
 
   return (
     <Div d="flex" flexDir="column" m={{ y: "1rem" }}>
@@ -54,14 +54,14 @@ const RadioField = ({ name, value, handleEvent, remind }) => {
         {remind}
       </Div>
     </Div>
-  )
-}
+  );
+};
 
 RadioField.propTypes = {
   name: PropTypes.string,
-  value: PropTypes.string,
+  value: PropTypes.bool,
   handleEvent: PropTypes.func,
   remind: PropTypes.string,
-}
+};
 
-export default RadioField
+export default RadioField;
