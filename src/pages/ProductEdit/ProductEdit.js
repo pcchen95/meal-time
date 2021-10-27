@@ -109,10 +109,10 @@ export default function ProductEdit() {
   };
 
   if (id !== "new") {
-  useEffect(() => {
-    dispatch(getProduct(id));
-    return () => dispatch(cleanProduct());
-  }, [id, dispatch]);
+    useEffect(() => {
+      dispatch(getProduct(id));
+      return () => dispatch(cleanProduct());
+    }, [id, dispatch]);
   }
 
   const handleImg = (e) => {
