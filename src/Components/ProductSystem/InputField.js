@@ -23,7 +23,6 @@ const InputField = ({
   }
   const marginLength =
     location.pathname === "/member_password" ? 0 : titleLength + 1;
-
   return (
     <Div d="flex" flexDir="column" m={{ y: "1rem" }}>
       <Div
@@ -64,12 +63,13 @@ const InputField = ({
               m={{ t: "0.5rem" }}
               w={{ xs: "100%", md: "100%" }}
               required={required}
-              min={
-                (name === "有效期限" &&
-                  new Date().toISOString().slice(0, 10)) ||
-                ((name === "價錢" || name === "數量") && 0)
-              }
-              max={name === "製造日期" && new Date().toISOString().slice(0, 10)}
+              {...(name === "有效期限" && {
+                min: new Date().toISOString().slice(0, 10),
+              })}
+              {...((name === "價錢" || name === "數量") && { min: 0 })}
+              {...(name === "製造日期" && {
+                max: new Date().toISOString().slice(0, 10),
+              })}
             />
           )}
         </Div>
@@ -88,7 +88,7 @@ const InputField = ({
 InputField.propTypes = {
   name: PropTypes.string,
   type: PropTypes.string,
-  value: PropTypes.string,
+  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   handleEvent: PropTypes.func,
   placeholder: PropTypes.string,
   remind: PropTypes.string,
