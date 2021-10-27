@@ -23,7 +23,6 @@ const getQueryString = (queryParameters) => {
   if (notSupplied) queryString += `&notSupplied=true`;
   if (hideExpiry) queryString += `&hideExpiry=true`;
   if (hideSoldOut) queryString += `&hideSoldOut=true`;
-
   return queryString;
 };
 

@@ -1,10 +1,10 @@
-import React, { useState } from "react"
-import { Div, Input, Icon, Image, Button } from "atomize"
-import { Link, useHistory } from "react-router-dom"
-import PropTypes from "prop-types"
-import { getProductCategories } from "../redux/reducers/productReducer"
-import { useSelector, useDispatch } from "react-redux"
-import { useEffect } from "react"
+import React, { useState } from "react";
+import { Div, Input, Icon, Image, Button } from "atomize";
+import { Link, useHistory } from "react-router-dom";
+import PropTypes from "prop-types";
+import { getProductCategories } from "../redux/reducers/productReducer";
+import { useSelector, useDispatch } from "react-redux";
+import { useEffect } from "react";
 const InputWithRightIcon = ({ searchContent, setSarchContent, search }) => {
   return (
     <Div d="flex">
@@ -18,7 +18,7 @@ const InputWithRightIcon = ({ searchContent, setSarchContent, search }) => {
       <Input
         value={searchContent}
         onChange={(e) => {
-          setSarchContent(e.target.value)
+          setSarchContent(e.target.value);
         }}
         onKeyPress={(e) => e.key === "Enter" && search()}
         placeholder="Search"
@@ -36,14 +36,14 @@ const InputWithRightIcon = ({ searchContent, setSarchContent, search }) => {
         }
       />
     </Div>
-  )
-}
+  );
+};
 
 InputWithRightIcon.propTypes = {
   searchContent: PropTypes.string,
   setSarchContent: PropTypes.func,
   search: PropTypes.func,
-}
+};
 
 const CategoryButton = ({ categories }) => {
   return (
@@ -72,15 +72,15 @@ const CategoryButton = ({ categories }) => {
                 {category.name}
               </Button>
             </Link>
-          )
+          );
         })}
     </Div>
-  )
-}
+  );
+};
 
 CategoryButton.propTypes = {
-  categories: CategoryButton.object,
-}
+  categories: PropTypes.array,
+};
 
 const LikeButton = () => {
   return (
@@ -93,8 +93,8 @@ const LikeButton = () => {
     >
       <Icon name="HeartSolid" size="20px" color="danger700" />
     </Button>
-  )
-}
+  );
+};
 
 const NotiButton = () => {
   return (
@@ -107,8 +107,8 @@ const NotiButton = () => {
     >
       <Icon name="Notification" size="20px" color="black700" />
     </Button>
-  )
-}
+  );
+};
 
 const MenuButton = () => {
   return (
@@ -121,8 +121,8 @@ const MenuButton = () => {
     >
       <Icon name="Menu" size="20px" color="black700" />
     </Button>
-  )
-}
+  );
+};
 
 const UserButton = () => {
   return (
@@ -136,23 +136,23 @@ const UserButton = () => {
     >
       <Icon name="UserCircle" size="30px" color="black900" />
     </Button>
-  )
-}
+  );
+};
 
 const NavBar = () => {
-  const dispatch = useDispatch()
-  const categories = useSelector((store) => store.products.productCategories)
-  const history = useHistory()
-  const [searchContent, setSarchContent] = useState("")
+  const dispatch = useDispatch();
+  const categories = useSelector((store) => store.products.productCategories);
+  const history = useHistory();
+  const [searchContent, setSarchContent] = useState("");
   const search = () => {
     if (!searchContent) {
-      return
+      return;
     }
-    history.push(`/products/search/${searchContent}`)
-  }
+    history.push(`/products/search/${searchContent}`);
+  };
   useEffect(() => {
-    dispatch(getProductCategories())
-  }, [dispatch])
+    dispatch(getProductCategories());
+  }, [dispatch]);
   return (
     <Div
       m={{ t: "1.5rem", l: "1.5rem", r: "1.5rem", b: "3rem" }}
@@ -176,7 +176,7 @@ const NavBar = () => {
         <UserButton></UserButton>
       </Div>
     </Div>
-  )
-}
+  );
+};
 
-export default NavBar
+export default NavBar;
