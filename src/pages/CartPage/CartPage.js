@@ -5,7 +5,6 @@ import CartList from "../../Components/CartSystem/CartList";
 import BookingBoard from "../../Components/CartSystem/BookingBoard";
 import LoadingPage from "../LoadingPage";
 import {
-  //getMe,
   getCartData,
   newOrder,
   setCartData,
@@ -14,7 +13,7 @@ import {
   selectCart,
   selectVendorId,
   selectCartData,
-  //selectIsLoading,
+  selectIsLoading,
 } from "../../redux/reducers/cartReducer";
 import { getVendorById } from "../../redux/reducers/vendorReducer";
 import {
@@ -29,26 +28,21 @@ export default function CartPage() {
   const [isChecked, setIsChecked] = useState(false);
   const [isShow, setIsShow] = useState(false);
   const cartData = useSelector(selectCartData);
-  //const isLoading = useSelector(selectIsLoading);
-  const [isLoading, setIsLoading] = useState(false);
+  const isLoading = useSelector(selectIsLoading);
   const { id } = useSelector((state) => state.users.user);
   const cart = useSelector(selectCart);
   const vendorId = useSelector(selectVendorId);
   const vendorById = useSelector((store) => store.vendors.vendorById);
 
   useEffect(() => {
-    setIsLoading(true);
     if (id) {
       dispatch(getCartData(id));
       dispatch(setCartData(localStorage.getItem(`cartId${id}`)));
     }
-    setIsLoading(false);
     return () => {
       dispatch(setErrorMessage(null));
     };
   }, [id, cartData, dispatch]);
-
-  //console.log(userId);
 
   const handleIsShow = (type) => {
     if (type === "book") {
@@ -106,14 +100,6 @@ export default function CartPage() {
         remarks,
       })
     );
-    let newCartData = [];
-    for (let i = 0; i < orderProducts.length; i++) {
-      newCartData.push(
-        JSON.parse(cartData).find((item) => item.id !== orderProducts.id)
-      );
-    }
-    console.log("newCartData:", newCartData);
-    dispatch(setCartData(newCartData));
     setIsShow(false);
   };
 
