@@ -1,7 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import { Div, Input, Icon, Image, Button } from "atomize";
-
-const InputWithRightIcon = () => {
+import { Link, useHistory } from "react-router-dom";
+import PropTypes from "prop-types";
+import { getProductCategories } from "../redux/reducers/productReducer";
+import { useSelector, useDispatch } from "react-redux";
+import { useEffect } from "react";
+const InputWithRightIcon = ({ searchContent, setSarchContent, search }) => {
   return (
     <Div d="flex">
       <Image
@@ -12,13 +16,18 @@ const InputWithRightIcon = () => {
         src="https://i.pinimg.com/564x/82/ba/7d/82ba7db3760b88da021a340ee9eb861e.jpg"
       />
       <Input
+        value={searchContent}
+        onChange={(e) => {
+          setSarchContent(e.target.value);
+        }}
+        onKeyPress={(e) => e.key === "Enter" && search()}
         placeholder="Search"
         suffix={
           <Icon
             name="Search"
             size="20px"
             cursor="pointer"
-            onClick={() => console.log("clicked")}
+            onClick={() => search()}
             pos="absolute"
             top="25%"
             right="1rem"
@@ -30,116 +39,47 @@ const InputWithRightIcon = () => {
   );
 };
 
-const CategoryButton = () => {
+InputWithRightIcon.propTypes = {
+  searchContent: PropTypes.string,
+  setSarchContent: PropTypes.func,
+  search: PropTypes.func,
+};
+
+const CategoryButton = ({ categories }) => {
   return (
     <Div d="flex">
-      <Button
-        h="2.5rem"
-        p={{ x: "1.25rem" }}
-        textSize="body"
-        bg="white"
-        hoverBg="warning300"
-        rounded="circle"
-        m={{ r: "1rem" }}
-        fontFamily="code"
-        textColor="info700"
-        border="1px solid"
-        borderColor="info500"
-      >
-        生鮮蔬果
-      </Button>
-      <Button
-        h="2.5rem"
-        p={{ x: "1.25rem" }}
-        textSize="body"
-        bg="white"
-        hoverBg="warning300"
-        rounded="circle"
-        m={{ r: "1rem" }}
-        fontFamily="code"
-        textColor="info700"
-        border="1px solid"
-        borderColor="info500"
-      >
-        冷藏肉品
-      </Button>{" "}
-      <Button
-        h="2.5rem"
-        p={{ x: "1.25rem" }}
-        textSize="body"
-        bg="white"
-        hoverBg="warning300"
-        rounded="circle"
-        m={{ r: "1rem" }}
-        fontFamily="code"
-        textColor="info700"
-        border="1px solid"
-        borderColor="info500"
-      >
-        生鮮蔬果
-      </Button>
-      <Button
-        h="2.5rem"
-        p={{ x: "1.25rem" }}
-        textSize="body"
-        bg="white"
-        hoverBg="warning300"
-        rounded="circle"
-        m={{ r: "1rem" }}
-        fontFamily="code"
-        textColor="info700"
-        border="1px solid"
-        borderColor="info500"
-      >
-        冷藏肉品
-      </Button>
-      <Button
-        h="2.5rem"
-        p={{ x: "1.25rem" }}
-        textSize="body"
-        bg="white"
-        hoverBg="warning300"
-        rounded="circle"
-        m={{ r: "1rem" }}
-        fontFamily="code"
-        textColor="info700"
-        border="1px solid"
-        borderColor="info500"
-      >
-        零食
-      </Button>
-      <Button
-        h="2.5rem"
-        p={{ x: "1.25rem" }}
-        textSize="body"
-        bg="white"
-        hoverBg="warning300"
-        rounded="circle"
-        m={{ r: "1rem" }}
-        fontFamily="code"
-        textColor="info700"
-        border="1px solid"
-        borderColor="info500"
-      >
-        飲品
-      </Button>
-      <Button
-        h="2.5rem"
-        p={{ x: "1.25rem" }}
-        textSize="body"
-        bg="white"
-        hoverBg="warning300"
-        rounded="circle"
-        m={{ r: "1rem" }}
-        fontFamily="code"
-        textColor="info700"
-        border="1px solid"
-        borderColor="info500"
-      >
-        其他
-      </Button>
+      {categories &&
+        categories.map((category) => {
+          return (
+            <Link
+              key={category.id}
+              to={`/products/category/${category.id}`}
+              style={{ textDecoration: "none" }}
+            >
+              <Button
+                h="2.5rem"
+                p={{ x: "1.25rem" }}
+                textSize="body"
+                bg="white"
+                hoverBg="warning300"
+                rounded="circle"
+                m={{ r: "1rem" }}
+                fontFamily="code"
+                textColor="info700"
+                border="1px solid"
+                borderColor="info500"
+              >
+                {category.name}
+              </Button>
+            </Link>
+          );
+        })}
     </Div>
   );
+};
+
+CategoryButton.propTypes = {
+  categories: PropTypes.array,
 };
 
 const LikeButton = () => {
@@ -200,6 +140,19 @@ const UserButton = () => {
 };
 
 const NavBar = () => {
+  const dispatch = useDispatch();
+  const categories = useSelector((store) => store.products.productCategories);
+  const history = useHistory();
+  const [searchContent, setSarchContent] = useState("");
+  const search = () => {
+    if (!searchContent) {
+      return;
+    }
+    history.push(`/products/search/${searchContent}`);
+  };
+  useEffect(() => {
+    dispatch(getProductCategories());
+  }, [dispatch]);
   return (
     <Div
       m={{ t: "1.5rem", l: "1.5rem", r: "1.5rem", b: "3rem" }}
@@ -210,8 +163,12 @@ const NavBar = () => {
       borderColor="info400"
       shadow="2"
     >
-      <InputWithRightIcon></InputWithRightIcon>
-      <CategoryButton></CategoryButton>
+      <InputWithRightIcon
+        searchContent={searchContent}
+        setSarchContent={setSarchContent}
+        search={search}
+      ></InputWithRightIcon>
+      <CategoryButton categories={categories}></CategoryButton>
       <Div d="flex">
         <LikeButton></LikeButton>
         <NotiButton></NotiButton>

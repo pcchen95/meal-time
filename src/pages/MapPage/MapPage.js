@@ -1,87 +1,186 @@
 import React from "react";
-import { Div, Text, Col, Button, Icon } from "atomize";
+import { useState, useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { setCurrentPosition } from "../../redux/reducers/userReducer";
+import {
+  getCategories,
+  getAllVendors,
+  getVendorOfMap,
+  getVendorOfSearchedProducts,
+} from "../../redux/reducers/vendorReducer";
+import {
+  getVendorProducts,
+  searchProducts,
+} from "../../redux/reducers/productReducer";
+import {
+  setErrMessage,
+  setShowWarningNotification,
+} from "../../redux/reducers/notificationReducer";
+import { Div, Text } from "atomize";
+import { AddressToLatLng } from "../../utils";
+import LoadingPage from "../LoadingPage/LoadingPage";
+import Map from "../../Components/MapSystem/Map";
+import Dropdown from "../../Components/MapSystem/Dropdown";
+import SearchBox from "../../Components/MapSystem/SearchBox";
+import SelectedVendor from "../../Components/MapSystem/SelectedVendor";
+import AddressInputBox from "../../Components/MapSystem/AddressInputBox";
+import WarningNotification from "../../Components/Notifications/WarningNotification";
 
-export default function SingleProductPage() {
-  const productInfo = (
-    <>
-      {["食物名稱", "食物分類", "單價", "距離"].map((name, index) => (
-        <Div key={index} p={{ l: { xs: "3rem", lg: "1rem" } }}>
-          <Text m={{ y: "1rem", l: "2.2rem" }}>{name}</Text>
-        </Div>
-      ))}
-    </>
+export default function MapPage() {
+  const dispatch = useDispatch();
+  const [distance, setDistance] = useState(null);
+  const [vendorOfMap, setVendorOfMap] = useState(null);
+  const [categoryId, setCategoryId] = useState(0);
+  const [input, setInput] = useState("");
+  const [address, setAddress] = useState("");
+  const [isLocationUsed, setIsLocationUsed] = useState(false);
+
+  const isLoadingVendor = useSelector((store) => store.vendors.isLoading);
+  const products = useSelector((store) => store.products.vendorProducts);
+  const searchedProducts = useSelector(
+    (store) => store.products.searchedProducts
   );
+  const isLoadingProduct = useSelector((store) => store.products.isLoading);
+
+  const handleEvent = (id) => {
+    dispatch(getVendorOfMap(id)).then((vendor) => setVendorOfMap(vendor));
+    dispatch(getVendorProducts(id, { limit: 5 }));
+  };
+
+  const handleOnChange = (e) => {
+    setInput(e.target.value);
+  };
+
+  const handleSearch = () => {
+    dispatch(searchProducts(input));
+    setCategoryId(0);
+    setVendorOfMap(null);
+  };
+
+  const handleKeyPressSearch = (e) => {
+    if (e.key === "Enter") {
+      dispatch(searchProducts(input));
+      setCategoryId(0);
+      setVendorOfMap(null);
+    }
+  };
+
+  const handleClearSearch = () => {
+    setInput("");
+    dispatch(getVendorOfSearchedProducts());
+    dispatch(searchProducts());
+  };
+
+  const handleEnter = () => {
+    AddressToLatLng(address).then((res) => {
+      const { lat, lng } = res;
+      if (lat && lng) {
+        return dispatch(setCurrentPosition({ lat, lng }));
+      }
+      dispatch(setErrMessage("找不到地址"));
+      dispatch(setShowWarningNotification(true));
+    });
+  };
+
+  const handleOnKeyPress = (e) => {
+    if (e.key === "Enter") {
+      AddressToLatLng(address).then((res) => {
+        const { lat, lng } = res;
+        if (lat && lng) {
+          return dispatch(setCurrentPosition({ lat, lng }));
+        }
+        dispatch(setErrMessage("找不到地址"));
+        dispatch(setShowWarningNotification(true));
+      });
+    }
+  };
+
+  const handleClearAddress = () => {
+    setAddress("");
+    dispatch(setCurrentPosition(null));
+  };
+
+  const geoSuccess = ({ coords: { latitude: lat, longitude: lng } }) => {
+    const pos = { lat, lng };
+    dispatch(setCurrentPosition(pos));
+    setIsLocationUsed(true);
+  };
+
+  const geoError = (err) => {
+    if (err) setIsLocationUsed(false);
+  };
+
+  useEffect(() => {
+    categoryId !== 0
+      ? dispatch(getAllVendors({ categoryId }))
+      : dispatch(getAllVendors({}));
+    dispatch(getCategories());
+    if (!navigator?.geolocation) return setIsLocationUsed(false);
+    navigator?.geolocation.getCurrentPosition(geoSuccess, geoError);
+  }, [categoryId, dispatch]);
+
+  useEffect(() => {
+    if (searchedProducts && searchedProducts.count > 0) {
+      const array = [];
+      searchedProducts.rows.forEach((product) => {
+        if (array.indexOf(product.vendorId) < 0) array.push(product.vendorId);
+      });
+      dispatch(getVendorOfSearchedProducts(array));
+    }
+  }, [searchedProducts]);
 
   return (
-    <Div w="80%" m={{ y: "2rem", x: "auto" }} d={{ xs: "block", lg: "flex" }}>
-      <Div
-        bg="gray200"
-        w={{ xs: "18rem", md: "38rem", lg: "80rem" }}
-        h={{ xs: "16rem", md: "32rem", lg: "50rem" }}
-      />
-      <Div
-        m={{ l: { lg: "2rem", xs: "0" }, t: { xs: "2rem", lg: "0" } }}
-        p="2rem"
-        d="block"
-        justify="center"
-        align="center"
-        border="1px solid"
-        borderColor="gray400"
-        shadow="4"
-        rounded="lg"
-      >
-        <Div textSize="title">賣家名稱</Div>
-        <Col>
-          <Div
-            bgImg="https://cdn2.ettoday.net/images/3161/d3161278.jpg"
-            bgSize="cover"
-            bgPos="center"
-            w="12rem"
-            h="12rem"
-            rounded="lg"
-            m={{ t: "1rem" }}
+    <>
+      {(isLoadingVendor || isLoadingProduct) && <LoadingPage />}
+      <Div w="80%" m={{ y: "2rem", x: "auto" }}>
+        <Text textSize="heading" textColor="info900">
+          搜尋賣家
+        </Text>
+        <Div
+          d="flex"
+          flexDir={{ xs: "column", sm: "row" }}
+          w="100%"
+          justify="flex-start"
+        >
+          <Dropdown categoryId={categoryId} setCategoryId={setCategoryId} />
+          <SearchBox
+            input={input}
+            handleOnChange={handleOnChange}
+            handleSearch={handleSearch}
+            handleKeyPressSearch={handleKeyPressSearch}
+            handleClearSearch={handleClearSearch}
           />
-        </Col>
-        <Div border={{ b: "2px solid" }} borderColor="gray400">
-          {productInfo}
         </Div>
-        <Div>
-          <Col>
-            <Div
-              bgImg="https://images.unsplash.com/photo-1559963629-38ed0fbd4c86?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1000&q=80"
-              bgSize="cover"
-              bgPos="center"
-              w="8rem"
-              h="8rem"
-              rounded="circle"
-              m={{ l: "2rem", t: "2rem" }}
-            />
-          </Col>
-          <Div
-            m={{ l: "2rem", t: "2rem" }}
-            p={{ l: { xs: "3rem", lg: "1rem" } }}
-          >
-            賣場分類
-          </Div>
-          <Div m={{ t: "2rem", l: "3rem" }}>
-            <Button
-              suffix={
-                <Icon
-                  name="LongRight"
-                  size="16px"
-                  color="white"
-                  m={{ l: "1rem" }}
-                />
-              }
-              shadow="3"
-              hoverShadow="4"
-              m={{ r: "1rem" }}
-            >
-              前往賣場
-            </Button>
-          </Div>
+        {!isLocationUsed && (
+          <AddressInputBox
+            address={address}
+            handleOnChange={(e) => setAddress(e.target.value)}
+            handleEnter={handleEnter}
+            handleOnKeyPress={handleOnKeyPress}
+            handleClear={handleClearAddress}
+          />
+        )}
+        <Div
+          w="100%"
+          m={{ y: "1rem" }}
+          d="flex"
+          flexDir={{ xs: "column", lg: "row" }}
+          justify="space-between"
+        >
+          <Map
+            vendorOfMap={vendorOfMap}
+            handleEvent={handleEvent}
+            setDistance={setDistance}
+          />
+          <SelectedVendor
+            vendorOfMap={vendorOfMap}
+            products={products}
+            distance={distance}
+            searchedProducts={searchedProducts}
+          />
         </Div>
+        <WarningNotification />
       </Div>
-    </Div>
+    </>
   );
 }

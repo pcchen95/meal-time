@@ -57,7 +57,7 @@ const getOrder = (id) => {
   }).then((res) => res.json());
 };
 
-const postOrder = (orderProducts, vendorId, pickupTime, remarks) => {
+const postOrder = ({ orderProducts, vendorId, pickupTime, remarks }) => {
   const token = getAuthToken();
   return fetch(`${BASE_URL}/orders`, {
     method: "POST",

@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { Div, Button, Text, Icon } from "atomize";
-import CartList from "../../Components/CartSystem/CartList";
-import BookingBoard from "../../Components/CartSystem/BookingBoard";
-import LoadingPage from "../LoadingPage";
+import React, { useEffect, useState } from "react"
+import { useSelector, useDispatch } from "react-redux"
+import { Div, Button, Text, Icon } from "atomize"
+import CartList from "../../Components/CartSystem/CartList"
+import BookingBoard from "../../Components/CartSystem/BookingBoard"
+import LoadingPage from "../LoadingPage"
 import {
   getMe,
   selectCart,
@@ -16,48 +16,60 @@ import {
   selectUserId,
   selectOrderProducts,
   setOrderProducts,
-} from "../../redux/reducers/cartReducer";
-import { newOrder } from "../../redux/reducers/orderReducer";
-import { getVendorById } from "../../redux/reducers/vendorReducer";
-import { setErrorMessage } from "../../redux/reducers/notificationReducer";
-import SuccessNotification from "../../Components/Notifications/SuccessNotification";
-import WarningNotification from "../../Components/Notifications/WarningNotification";
+} from "../../redux/reducers/cartReducer"
+import { newOrder } from "../../redux/reducers/orderReducer"
+import { getVendorById } from "../../redux/reducers/vendorReducer"
+import { setErrorMessage } from "../../redux/reducers/notificationReducer"
+import SuccessNotification from "../../Components/Notifications/SuccessNotification"
+import WarningNotification from "../../Components/Notifications/WarningNotification"
 
 export default function CartPage() {
-  const dispatch = useDispatch();
-  const [isChecked, setIsChecked] = useState(false);
-  const [isShow, setIsShow] = useState(false);
-  const cartData = useSelector(selectCartData);
-  const userId = useSelector(selectUserId);
-  const cart = useSelector(selectCart);
-  const vendorId = useSelector(selectVendorId);
-  const isLoading = useSelector(selectIsLoading);
-  const orderProducts = useSelector(selectOrderProducts);
-  const vendorById = useSelector((store) => store.vendors.vendorById);
-  const errMessage = useSelector((store) => store.notifications.errMessage);
+  const dispatch = useDispatch()
+  const [isChecked, setIsChecked] = useState(false)
+  const [isShow, setIsShow] = useState(false)
+  const cartData = useSelector(selectCartData)
+  const userId = useSelector(selectUserId)
+  const cart = useSelector(selectCart)
+  const vendorId = useSelector(selectVendorId)
+  const isLoading = useSelector(selectIsLoading)
+  const orderProducts = useSelector(selectOrderProducts)
+  const vendorById = useSelector((store) => store.vendors.vendorById)
+  const errMessage = useSelector((store) => store.notifications.errMessage)
 
   useEffect(() => {
-    dispatch(getMe());
-    dispatch(getCartData(userId));
-    dispatch(setCartData(localStorage.getItem(`cartId${userId}`)));
+    dispatch(getMe())
+    dispatch(getCartData(userId))
+    dispatch(setCartData(localStorage.getItem(`cartId${userId}`)))
     return () => {
-      dispatch(setErrorMessage(null));
-    };
-  }, [userId, cartData]);
+      dispatch(setErrorMessage(null))
+    }
+  }, [userId, cartData])
 
   const handleIsShow = (type) => {
     if (type === "book") {
       if (isChecked === true) {
-        dispatch(setErrorMessage(null));
-        dispatch(getVendorById(vendorId));
-        setIsShow(true);
-        let isSelectFood = [];
-        let result = [];
-        cart && cart[vendorId].forEach((item) => isSelectFood.push(item.id));
-        for (let i = 0; i < isSelectFood.length; i++) {
-          result.push(
-            JSON.parse(cartData).find((item) => item.id == isSelectFood[i])
-          );
+        dispatch(setErrorMessage(null))
+        dispatch(getVendorById(vendorId))
+        setIsShow(true)
+      } else {
+        window.scroll(0, 0)
+        dispatch(setErrorMessage("請至少勾選一個購物車才能預訂食物"))
+      }
+      if (vendorId) {
+        let isSelectFood = []
+        let result = []
+        if (vendorId) {
+          vendorId &&
+            cart[vendorId].forEach((item) => isSelectFood.push(item.id))
+          for (let i = 0; i < isSelectFood.length; i++) {
+            result.push(
+              JSON.parse(cartData).find((item) => item.id == isSelectFood[i])
+            )
+          }
+          console.log("vendorId", vendorId)
+          console.log("orderProducts:", orderProducts)
+
+          dispatch(setOrderProducts(result))
         }
         dispatch(setOrderProducts(result));
       } else {
@@ -66,26 +78,31 @@ export default function CartPage() {
       }
     }
     if (type === "cancel") {
-      setIsShow(false);
-      setVendorId(null);
+      setIsShow(false)
+      setVendorId(null)
     }
-  };
+  }
 
   console.log("vendorId", vendorId);
   console.log("orderProducts:", orderProducts);
 
   const handleCheckedClick = (e) => {
-    dispatch(setVendorId(e.target.value));
-    setIsChecked(!isChecked);
-  };
+    dispatch(setVendorId(e.target.value))
+    setIsChecked(!isChecked)
+
+    if (isChecked) {
+      dispatch(setVendorId(null))
+      dispatch(setOrderProducts([]))
+    }
+  }
 
   const handleDeleteClick = (id, userId) => {
     const newCartData = JSON.stringify(
       JSON.parse(cartData).filter((item) => item.id !== id)
-    );
-    localStorage.setItem(`cartId${userId}`, newCartData);
-    dispatch(setCartData(newCartData));
-  };
+    )
+    localStorage.setItem(`cartId${userId}`, newCartData)
+    dispatch(setCartData(newCartData))
+  }
 
   const handleSubmit = (orderProducts, vendorId, pickupTime, remarks) => {
     dispatch(
@@ -95,8 +112,8 @@ export default function CartPage() {
         pickupTime,
         remarks,
       })
-    );
-  };
+    )
+  }
 
   return (
     <Div
@@ -183,5 +200,5 @@ export default function CartPage() {
       <SuccessNotification />
       <WarningNotification />
     </Div>
-  );
+  )
 }

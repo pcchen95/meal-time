@@ -1,8 +1,8 @@
-import React from "react";
-import PropTypes from "prop-types";
-import { Div, Text } from "atomize";
-import styled from "styled-components";
-import CartItem from "./CartItem";
+import React from 'react'
+import PropTypes from 'prop-types'
+import { Div, Text } from 'atomize'
+import styled from 'styled-components'
+import CartItem from './CartItem'
 
 const CheckItem = styled.input`
   width: 18px;
@@ -11,7 +11,7 @@ const CheckItem = styled.input`
   margin: 8px 11px;
   align-items: center;
   justify-content: center;
-`;
+`
 
 const CartList = ({
   userId,
@@ -23,7 +23,7 @@ const CartList = ({
   cartData,
 }) => {
   return (
-    <Div p={{ x: { xs: "1rem", lg: "5rem" }, t: { xs: "3rem", lg: "2rem" } }}>
+    <Div p={{ x: { xs: '1rem', lg: '5rem' }, t: { xs: '3rem', lg: '2rem' } }}>
       {cart &&
         Object.values(cart).map((cartItem) => (
           <Div key={cartItem[0].id}>
@@ -31,7 +31,7 @@ const CartList = ({
               d="flex"
               p="1rem"
               bg="gray400"
-              m={{ t: "2rem" }}
+              m={{ t: '2rem' }}
               textAlign="center"
               rounded="md"
             >
@@ -52,8 +52,8 @@ const CartList = ({
           </Div>
         ))}
     </Div>
-  );
-};
+  )
+}
 
 CartList.propTypes = {
   userId: PropTypes.number,
@@ -63,6 +63,6 @@ CartList.propTypes = {
   handleDeleteClick: PropTypes.func,
   cart: PropTypes.object,
   cartData: PropTypes.string,
-};
+}
 
-export default CartList;
+export default CartList
