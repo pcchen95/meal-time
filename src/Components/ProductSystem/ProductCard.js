@@ -1,22 +1,22 @@
-import React from "react"
+import React from "react";
 
-import styled from "styled-components"
-import { Div, Text } from "atomize"
-import PropTypes from "prop-types"
-import { Link } from "react-router-dom"
+import styled from "styled-components";
+import { Div, Text } from "atomize";
+import PropTypes from "prop-types";
+import { Link } from "react-router-dom";
 
 const EllipsisText = styled.div`
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-`
+`;
 
 export default function ProductCard({ product }) {
-  let now = new Date()
-  now.setHours(0)
-  now.setMinutes(0)
-  now.setSeconds(0)
-  const today = now.getTime()
+  let now = new Date();
+  now.setHours(0);
+  now.setMinutes(0);
+  now.setSeconds(0);
+  const today = now.getTime();
   return (
     <Div
       key={product.id}
@@ -81,10 +81,9 @@ export default function ProductCard({ product }) {
               </Div>
             ))}
         </Div>
-        <Text
+        <Div
           textSize="title"
           textWeight="400"
-          textDecor="none"
           textColor="black"
           cursor="pointer"
           rounded="sm"
@@ -92,7 +91,7 @@ export default function ProductCard({ product }) {
           p={{ x: "1rem" }}
         >
           <EllipsisText>{product.name}</EllipsisText>
-        </Text>
+        </Div>
         <Div d="flex" align="center" m={{ t: "0.5rem", b: "0rem" }} w="100%">
           <Div
             bgImg={product.Vendor.avatarUrl || "defaultImage.png"}
@@ -103,7 +102,7 @@ export default function ProductCard({ product }) {
             rounded="circle"
             m={{ l: "1.5rem", r: "1rem", y: "0rem" }}
           ></Div>
-          <Text
+          <Div
             textSize="subheader"
             textColor="gray600"
             cursor="pointer"
@@ -111,7 +110,7 @@ export default function ProductCard({ product }) {
             m={{ r: "1rem", y: "0rem" }}
           >
             <EllipsisText>{product.Vendor.vendorName}</EllipsisText>
-          </Text>
+          </Div>
         </Div>
 
         <Text
@@ -123,8 +122,8 @@ export default function ProductCard({ product }) {
         </Text>
       </Link>
     </Div>
-  )
+  );
 }
 ProductCard.propTypes = {
   product: PropTypes.object,
-}
+};
