@@ -1,6 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { getCartData as getCartDataApi } from "../../WebAPI/cartAPI";
-import { getMe as getMeApi } from "../../WebAPI/userAPI";
 import { postOrder } from "../../WebAPI/orderAPI";
 import {
   setErrorMessage,
@@ -14,7 +13,6 @@ const initialState = {
   isShow: false,
   vendorId: null,
   isLoading: false,
-  userId: null,
   orderProducts: [],
 };
 
@@ -37,9 +35,6 @@ export const cartReducer = createSlice({
     setIsLoading: (state, action) => {
       state.isLoading = action.payload;
     },
-    setUserId: (state, action) => {
-      state.userId = action.payload;
-    },
     setOrderProducts: (state, action) => {
       state.orderProducts = action.payload;
     },
@@ -52,21 +47,8 @@ export const {
   setVendorId,
   setIsShow,
   setIsLoading,
-  setUserId,
   setOrderProducts,
 } = cartReducer.actions;
-
-export const getMe = () => (dispatch) => {
-  dispatch(setIsLoading(true));
-  return getMeApi().then((res) => {
-    dispatch(setIsLoading(false));
-    if (!res.ok) {
-      dispatch(setErrorMessage(res.message));
-      return;
-    }
-    dispatch(setUserId(res.data.id));
-  });
-};
 
 export const getCartData = (userId) => (dispatch) => {
   const cart = localStorage.getItem(`cartId${userId}`);
