@@ -57,11 +57,7 @@ const BookingBoard = ({ vendorById, isShow, handleIsShow, handleSubmit }) => {
   const orderProducts = useSelector(selectOrderProducts);
   const [pickupTime, setPickupTime] = useState("");
   const [remarks, setRemarks] = useState("");
-  console.log("vendorId", vendorId);
-  console.log("orderProducts:", orderProducts);
-  console.log("type", typeof orderProducts);
-  console.log(Array.isArray(orderProducts));
-
+  
   return (
     <Booking $isShow={isShow}>
       <BookingProducts $isShow={isShow}>
