@@ -37,6 +37,24 @@ const AvailableFilter = ({
       >
         未供應
       </Div>
+      |{" "}
+      <Div
+        m={{ x: "0.5rem" }}
+        cursor={isDisabled ? "not-allowed" : "pointer"}
+        textColor={availableFilter === "expired" ? "info800" : "disabled"}
+        onClick={() => !isDisabled && setAvailableFilter("expired")}
+      >
+        已過期
+      </Div>
+      |{" "}
+      <Div
+        m={{ x: "0.5rem" }}
+        cursor={isDisabled ? "not-allowed" : "pointer"}
+        textColor={availableFilter === "soldOut" ? "info800" : "disabled"}
+        onClick={() => !isDisabled && setAvailableFilter("soldOut")}
+      >
+        已售完
+      </Div>
     </Div>
   );
 };
