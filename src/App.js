@@ -126,6 +126,7 @@ function App() {
         <Footer />
       </Router>
     </div>
+
   );
 }
 
