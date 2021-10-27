@@ -23,8 +23,6 @@ const initialState = {
   products: null,
   product: null,
   vendorProducts: null,
-  myVendorProducts: null,
-  vendorProductCategories: null,
   categoryProducts: null,
   searchedProducts: null,
   productCategories: null,
@@ -90,11 +88,35 @@ export const {
   setProduct,
   setErrMessage,
   setVendorProduct,
-  setMyVendorProduct,
   setCategoryProduct,
   setSearchedProduct,
   setProductCategories,
   setIsLoading,
+} = productReducer.actions
+
+export const getProducts = (queryParameters) => (dispatch) => {
+  dispatch(setIsLoading(true))
+  return getProductsApi(queryParameters)
+    .then((res) => {
+      if (!res.ok) {
+        return dispatch(setErrMessage(res ? res.message : "something wrong"))
+      }
+      return res.data
+    })
+    .then((products) => {
+      dispatch(setIsLoading(false))
+      dispatch(setProducts(products))
+    })
+    .catch((err) => {
+      console.log(err)
+    })
+}
+export const cleanProducts = () => (dispatch) => {
+  dispatch(setProducts(null))
+}
+
+export const getProduct = (id) => (dispatch) => {
+  dispatch(setIsLoading(true))
   setCount,
   setVendorProductCategories,
 } = productReducer.actions;
@@ -376,7 +398,6 @@ export const patchProduct =
       // isDeletePicture,
     }).then((res) => {
       dispatch(setIsLoading(false));
-
       if (!res.ok) {
         dispatch(setErrorMessage(res.message));
         dispatch(setShowWarningNotification(true));
