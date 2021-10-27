@@ -1,6 +1,6 @@
-import React, { useState } from "react"
-import { Div, Button, Switch } from "atomize"
-import PropTypes from "prop-types"
+import React, { useState } from "react";
+import { Div, Button, Switch } from "atomize";
+import PropTypes from "prop-types";
 export default function ProductsPageHeader({
   headerText,
   setPage,
@@ -9,7 +9,7 @@ export default function ProductsPageHeader({
   setNotSupplied,
   notSupplied,
 }) {
-  const [active, setActive] = useState("new")
+  const [active, setActive] = useState("new");
   return (
     <Div
       w="100%"
@@ -34,10 +34,10 @@ export default function ProductsPageHeader({
             hoverBorderColor="info900"
             m={{ r: "0.5rem" }}
             onClick={() => {
-              setPage(1)
-              setSort("id")
-              setOrder("DESC")
-              setActive("new")
+              setPage(1);
+              setSort("id");
+              setOrder("DESC");
+              setActive("new");
             }}
           >
             最新上架
@@ -55,10 +55,10 @@ export default function ProductsPageHeader({
             hoverBorderColor="info900"
             m={{ r: "0.5rem" }}
             onClick={() => {
-              setPage(1)
-              setSort("price")
-              setOrder("ASC")
-              setActive("cheap")
+              setPage(1);
+              setSort("price");
+              setOrder("ASC");
+              setActive("cheap");
             }}
           >
             低價優先
@@ -76,10 +76,10 @@ export default function ProductsPageHeader({
             hoverBorderColor="info900"
             m={{ r: { xs: "0rem", lg: "0.5rem" } }}
             onClick={() => {
-              setPage(1)
-              setSort("expiryDate")
-              setOrder("ASC")
-              setActive("expiry")
+              setPage(1);
+              setSort("expiryDate");
+              setOrder("ASC");
+              setActive("expiry");
             }}
           >
             即期優先
@@ -103,14 +103,14 @@ export default function ProductsPageHeader({
         </Div>
       </Div>
     </Div>
-  )
+  );
 }
 
 ProductsPageHeader.propTypes = {
-  headerText: PropTypes.func,
+  headerText: PropTypes.object,
   setPage: PropTypes.func,
   setSort: PropTypes.func,
   setOrder: PropTypes.func,
   setNotSupplied: PropTypes.func,
   notSupplied: PropTypes.bool,
-}
+};
