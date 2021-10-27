@@ -64,7 +64,7 @@ CartList.propTypes = {
   handleCheckedClick: PropTypes.func,
   handleDeleteClick: PropTypes.func,
   cart: PropTypes.object,
-  cartData: PropTypes.string,
+  cartData: PropTypes.array,
 };
 
 export default CartList;

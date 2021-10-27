@@ -57,7 +57,10 @@ const BookingBoard = ({ vendorById, isShow, handleIsShow, handleSubmit }) => {
   const orderProducts = useSelector(selectOrderProducts);
   const [pickupTime, setPickupTime] = useState("");
   const [remarks, setRemarks] = useState("");
-  
+
+  console.log("orderProducts:", orderProducts);
+  console.log("vendorId:", vendorId);
+
   return (
     <Booking $isShow={isShow}>
       <BookingProducts $isShow={isShow}>
@@ -78,7 +81,7 @@ const BookingBoard = ({ vendorById, isShow, handleIsShow, handleSubmit }) => {
                 onChange={(e) => setPickupTime(e.target.value)}
                 m="1rem"
                 min={new Date().toISOString().slice(0, 16)}
-                required
+                required={true}
               />
               <Text textSize="heading" m="1rem" textColor="gray800">
                 備註

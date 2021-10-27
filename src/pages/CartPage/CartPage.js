@@ -5,7 +5,7 @@ import CartList from "../../Components/CartSystem/CartList";
 import BookingBoard from "../../Components/CartSystem/BookingBoard";
 import LoadingPage from "../LoadingPage";
 import {
-  getMe,
+  //getMe,
   getCartData,
   newOrder,
   setCartData,
@@ -14,8 +14,7 @@ import {
   selectCart,
   selectVendorId,
   selectCartData,
-  selectUserId,
-  selectIsLoading,
+  //selectIsLoading,
 } from "../../redux/reducers/cartReducer";
 import { getVendorById } from "../../redux/reducers/vendorReducer";
 import {
@@ -30,20 +29,26 @@ export default function CartPage() {
   const [isChecked, setIsChecked] = useState(false);
   const [isShow, setIsShow] = useState(false);
   const cartData = useSelector(selectCartData);
-  const isLoading = useSelector(selectIsLoading);
-  const userId = useSelector(selectUserId);
+  //const isLoading = useSelector(selectIsLoading);
+  const [isLoading, setIsLoading] = useState(false);
+  const { id } = useSelector((state) => state.users.user);
   const cart = useSelector(selectCart);
   const vendorId = useSelector(selectVendorId);
   const vendorById = useSelector((store) => store.vendors.vendorById);
 
   useEffect(() => {
-    dispatch(getMe());
-    dispatch(getCartData(userId));
-    dispatch(setCartData(localStorage.getItem(`cartId${userId}`)));
+    setIsLoading(true);
+    if (id) {
+      dispatch(getCartData(id));
+      dispatch(setCartData(localStorage.getItem(`cartId${id}`)));
+    }
+    setIsLoading(false);
     return () => {
       dispatch(setErrorMessage(null));
     };
-  }, [userId, cartData, dispatch]);
+  }, [id, cartData, dispatch]);
+
+  //console.log(userId);
 
   const handleIsShow = (type) => {
     if (type === "book") {
@@ -71,6 +76,7 @@ export default function CartPage() {
       setVendorId(null);
     }
   };
+  console.log("cartData:", cartData);
 
   const handleCheckedClick = (e) => {
     dispatch(setVendorId(e.target.value));
@@ -86,6 +92,12 @@ export default function CartPage() {
   };
 
   const handleSubmit = (orderProducts, vendorId, pickupTime, remarks) => {
+    if (!pickupTime) {
+      setIsShow(false);
+      dispatch(setErrorMessage("請填寫預約時間!"));
+      dispatch(setShowWarningNotification(true));
+      return;
+    }
     dispatch(
       newOrder({
         orderProducts,
@@ -94,7 +106,18 @@ export default function CartPage() {
         remarks,
       })
     );
+    let newCartData = [];
+    for (let i = 0; i < orderProducts.length; i++) {
+      newCartData.push(
+        JSON.parse(cartData).find((item) => item.id !== orderProducts.id)
+      );
+    }
+    console.log("newCartData:", newCartData);
+    dispatch(setCartData(newCartData));
+    setIsShow(false);
   };
+
+  console.log("cartData:", cartData);
 
   return (
     <Div
@@ -132,7 +155,7 @@ export default function CartPage() {
             vendorId={vendorId}
             handleCheckedClick={handleCheckedClick}
             handleDeleteClick={handleDeleteClick}
-            userId={userId}
+            userId={id}
             cart={cart}
             cartData={cartData}
           />
