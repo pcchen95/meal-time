@@ -1,10 +1,10 @@
-import React from 'react'
-import ReactDOM from 'react-dom'
-import App from './App'
-import { Provider } from 'react-redux'
-import store from './redux/store'
-import { Provider as StyletronProvider, DebugEngine } from 'styletron-react'
-import { Client as Styletron } from 'styletron-engine-atomic'
+import React from "react";
+import ReactDOM from "react-dom";
+import App from "./App";
+import { Provider as StyletronProvider, DebugEngine } from "styletron-react";
+import { Client as Styletron } from "styletron-engine-atomic";
+import { Provider } from "react-redux";
+import store from "./redux/store";
 
 const debug = process.env.NODE_ENV === '' ? void 0 : new DebugEngine()
 
@@ -19,5 +19,5 @@ ReactDOM.render(
       <App />
     </StyletronProvider>
   </Provider>,
-  document.getElementById('root')
-)
+  document.getElementById("root")
+);

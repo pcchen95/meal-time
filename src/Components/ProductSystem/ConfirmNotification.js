@@ -12,9 +12,9 @@ const YesButton = ({ handleEvent }) => {
       p={{ x: "0.75rem" }}
       textSize="caption"
       textColor="white"
-      bg="success700"
+      bg="danger700"
       border="1px solid"
-      borderColor="success700"
+      borderColor="danger700"
       m={{ r: "0.5rem" }}
       onClick={handleEvent}
     >
@@ -61,15 +61,15 @@ const ConfirmNotification = ({
     <Div pos="fixed" top="50%" right="50%" transform="translateX(50%)">
       <Notification
         isOpen={showConfirm}
-        bg="danger200"
-        textColor="danger900"
+        bg="white"
+        textColor="info900"
         pos="static"
         top="0"
         right="0"
         w="18rem"
         textAlign="center"
         border="2px solid"
-        borderColor="danger600"
+        borderColor="info600"
       >
         <Div d="flex" flexDir="column" justify="center" align="center">
           <Div textSize="18px" m={{ t: "1rem" }}>
