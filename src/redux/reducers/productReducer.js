@@ -24,8 +24,6 @@ const initialState = {
   product: null,
   vendorProducts: null,
   myVendorProducts: null,
-  myVendorProductsExpired: null,
-  myVendorProductsSoldOut: null,
   vendorProductCategories: null,
   categoryProducts: null,
   searchedProducts: null,
@@ -59,12 +57,6 @@ export const productReducer = createSlice({
     },
     setMyVendorProduct: (state, action) => {
       state.myVendorProducts = action.payload;
-    },
-    setMyVendorProductExpired: (state, action) => {
-      state.myVendorProductsExpired = action.payload;
-    },
-    setMyVendorProductSoldOut: (state, action) => {
-      state.myVendorProductsSoldOut = action.payload;
     },
     setVendorProductCategories: (state, action) => {
       state.vendorProductCategories = action.payload;
@@ -100,8 +92,6 @@ export const {
   setVendorProduct,
   setVendorProductCategories,
   setMyVendorProduct,
-  setMyVendorProductExpired,
-  setMyVendorProductSoldOut,
   setCategoryProduct,
   setSearchedProduct,
   setProductCategories,
@@ -236,35 +226,7 @@ export const getMyProductCategories = (id) => (dispatch) => {
       }
       return res.data;
     })
-    .then(async (products) => {
-      const notExpiredProducts = await getOwnProductsApi(id, {
-        hideExpiry: true,
-      });
-      const notSoldOutProducts = await getOwnProductsApi(id, {
-        hideSoldOut: true,
-      });
-      const notExpiredProductsId = notExpiredProducts.data.rows.map(
-        (notExpiredProduct) => {
-          return notExpiredProduct.id;
-        }
-      );
-      const notSoldOutProductsId = notSoldOutProducts.data.rows.map(
-        (notSoldOutProduct) => {
-          return notSoldOutProduct.id;
-        }
-      );
-      const expiredProducts = [];
-      const soldOutProducts = [];
-      products.rows.forEach((product) => {
-        if (notExpiredProductsId.indexOf(product.id) < 0)
-          expiredProducts.push(product);
-      });
-      products.rows.forEach((product) => {
-        if (notSoldOutProductsId.indexOf(product.id) < 0)
-          soldOutProducts.push(product);
-      });
-      dispatch(setMyVendorProductExpired(expiredProducts));
-      dispatch(setMyVendorProductSoldOut(soldOutProducts));
+    .then((products) => {
       const array = [];
       products.rows.forEach((product) => {
         if (array.map((item) => item.id).indexOf(product.categoryId) < 0)
