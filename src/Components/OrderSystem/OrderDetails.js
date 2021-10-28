@@ -18,7 +18,7 @@ const OrderDetails = ({ order }) => {
       <Text bg="gray200" w="8rem" m={{ t: "1rem" }} textTransform="uppercase">
         {order.order.orderNumber}
       </Text>
-      <Text m={{ t: "1rem" }} d="flex">
+      <Div m={{ t: "1rem" }} d="flex">
         訂單狀態：
         <Div
           bg="warning700"
@@ -32,7 +32,7 @@ const OrderDetails = ({ order }) => {
             ? "已完成"
             : "待取貨"}
         </Div>
-      </Text>
+      </Div>
       <Text m={{ t: "1rem" }}>面交</Text>
       <Text m={{ t: "1rem" }}>訂單金額：NT$ {order.order.totalPrice}</Text>
       <Text m={{ t: "1rem" }}>
