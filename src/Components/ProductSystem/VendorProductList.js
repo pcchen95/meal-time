@@ -1,27 +1,34 @@
 import React from "react";
-import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
+import PropTypes from "prop-types";
 import { Div, Icon, Button } from "atomize";
 
-const Picture = ({ url }) => {
+const Picture = ({ url, id }) => {
   return (
-    <Div
-      w="5rem"
-      h="5rem"
-      bgImg={url || "defaultImage.png"}
-      bgSize="cover"
-      bgPos="center"
-    ></Div>
+    <Link to={`/product/${id}`}>
+      <Div
+        w="5rem"
+        h="5rem"
+        bgImg={url || "defaultImage.png"}
+        bgSize="cover"
+        bgPos="center"
+      ></Div>
+    </Link>
   );
 };
 
 Picture.propTypes = {
   url: PropTypes.string,
+  id: PropTypes.number,
 };
 
-const NameAndPrice = ({ name, price }) => {
+const NameAndPrice = ({ name, price, category }) => {
   return (
-    <Div w="10rem" m={{ l: "2rem" }} textSize="14px">
+    <Div
+      w={{ xs: "calc(100% - 7rem)", md: "15rem" }}
+      m={{ l: "2rem" }}
+      textSize="14px"
+    >
       <Div
         textColor="black800"
         w="100%"
@@ -36,6 +43,9 @@ const NameAndPrice = ({ name, price }) => {
       <Div textColor="black800" m={{ t: "0.5rem" }}>
         NT$ {price}
       </Div>
+      <Div textColor="gray800" m={{ t: "0.5rem" }} textSize="caption">
+        分類：{category}
+      </Div>
     </Div>
   );
 };
@@ -43,9 +53,10 @@ const NameAndPrice = ({ name, price }) => {
 NameAndPrice.propTypes = {
   name: PropTypes.string,
   price: PropTypes.number,
+  category: PropTypes.string,
 };
 
-const Status = ({ isAvailable, quantity, category, isExpired, isSoldOut }) => {
+const Status = ({ quantity, isAvailable, isExpired, expiryDate }) => {
   return (
     <Div
       d="flex"
@@ -53,7 +64,7 @@ const Status = ({ isAvailable, quantity, category, isExpired, isSoldOut }) => {
       align={{ xs: "flex-start" }}
       w={{ xs: "100%", sm: "50%", md: "auto" }}
       textColor="gray700"
-      m={{ t: { xs: "1.5rem", sm: "0" } }}
+      m={{ t: { xs: "1.5rem", sm: "0" }, l: { sm: "1rem" } }}
     >
       <Div
         textSize="tiny"
@@ -63,7 +74,7 @@ const Status = ({ isAvailable, quantity, category, isExpired, isSoldOut }) => {
         align="center"
         w={{ xs: "55%", sm: "auto" }}
       >
-        {isAvailable && !isSoldOut && !isExpired && (
+        {isAvailable && !isExpired && quantity > 0 && (
           <>
             <Icon name="Success" color="success700" size="14px" />
             <Div textColor="success700" m={{ x: "5px" }}>
@@ -71,7 +82,7 @@ const Status = ({ isAvailable, quantity, category, isExpired, isSoldOut }) => {
             </Div>
           </>
         )}
-        {!isAvailable && !isSoldOut && !isExpired && (
+        {!isAvailable && !isExpired && quantity > 0 && (
           <>
             <Icon name="RemoveSolid" color="danger700" size="14px" />
             <Div textColor="danger700" m={{ x: "5px" }}>
@@ -79,9 +90,9 @@ const Status = ({ isAvailable, quantity, category, isExpired, isSoldOut }) => {
             </Div>
           </>
         )}
-        {isSoldOut && (
+        {quantity === 0 && (
           <>
-            <Icon name="AlertSolid" color="warning700" size="14px" />
+            <Icon name="CloseSolid" color="warning700" size="14px" />
             <Div textColor="warning700" m={{ x: "5px" }}>
               已售完
             </Div>
@@ -98,10 +109,10 @@ const Status = ({ isAvailable, quantity, category, isExpired, isSoldOut }) => {
       </Div>
       <Div>
         <Div textSize="tiny" m={{ y: "0.3rem" }}>
-          分類 {category}
+          數量 {quantity}
         </Div>
         <Div textSize="tiny" m={{ y: "0.3rem" }}>
-          數量 {quantity}
+          效期 {expiryDate.slice(0, 10)}
         </Div>
       </Div>
     </Div>
@@ -109,11 +120,10 @@ const Status = ({ isAvailable, quantity, category, isExpired, isSoldOut }) => {
 };
 
 Status.propTypes = {
-  isAvailable: PropTypes.bool,
   quantity: PropTypes.number,
-  category: PropTypes.string,
+  expiryDate: PropTypes.string,
+  isAvailable: PropTypes.bool,
   isExpired: PropTypes.bool,
-  isSoldOut: PropTypes.bool,
 };
 
 const Buttons = ({ next, handleEvent, isDisabled }) => {
@@ -182,8 +192,7 @@ export function VendorProductList({
   product,
   handleConfirmDelete,
   isDisabled,
-  expiredProducts,
-  soldOutProducts,
+  currentTime,
 }) {
   return (
     <Div
@@ -208,21 +217,20 @@ export function VendorProductList({
           d="flex"
           align="center"
           justify="flex-start"
-          w={{ sm: "50%", md: "auto" }}
+          w={{ xs: "100%", sm: "50%", md: "auto" }}
         >
-          <Picture url={product.pictureUrl} />
-          <NameAndPrice name={product.name} price={product.price} />
+          <Picture url={product.pictureUrl} id={product.id} />
+          <NameAndPrice
+            name={product.name}
+            price={product.price}
+            category={product.ProductCategory.name}
+          />
         </Div>
         <Status
-          isExpired={
-            expiredProducts.map((item) => item.id).indexOf(product.id) >= 0
-          }
-          isSoldOut={
-            soldOutProducts.map((item) => item.id).indexOf(product.id) >= 0
-          }
-          isAvailable={product.isAvailable}
           quantity={product.quantity}
-          category={product.ProductCategory.name}
+          isAvailable={product.isAvailable}
+          isExpired={Date.parse(product.expiryDate).valueOf() < currentTime}
+          expiryDate={product.expiryDate}
         />
       </Div>
       <Buttons
@@ -238,8 +246,7 @@ VendorProductList.propTypes = {
   product: PropTypes.object,
   handleConfirmDelete: PropTypes.func,
   isDisabled: PropTypes.bool,
-  expiredProducts: PropTypes.array,
-  soldOutProducts: PropTypes.array,
+  currentTime: PropTypes.number,
 };
 
 export default VendorProductList;
