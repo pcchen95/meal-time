@@ -36,9 +36,11 @@ const openingHour = ({ vendorById }) => {
         </Div>
       </Div>
     </>
-  )
-}
+  );
+};
 
-openingHour.propTypes = { vendorById: PropTypes.object }
+openingHour.propTypes = {
+  vendorById: PropTypes.object,
+};
 
-export default openingHour
+export default openingHour;
