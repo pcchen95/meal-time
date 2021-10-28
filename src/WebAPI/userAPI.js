@@ -1,5 +1,5 @@
-import BASE_URL from '../constants/apiurl';
-import { getAuthToken } from '../utils';
+import BASE_URL from "../constants/apiurl";
+import { getAuthToken } from "../utils";
 
 export const register = ({
   avatar,
@@ -10,23 +10,23 @@ export const register = ({
   phone,
 }) => {
   const formData = new FormData();
-  formData.append('avatar', avatar);
-  formData.append('nickname', nickname);
-  formData.append('username', username);
-  formData.append('email', email);
-  formData.append('phone', phone);
-  formData.append('password', password);
+  formData.append("avatar", avatar);
+  formData.append("nickname", nickname);
+  formData.append("username", username);
+  formData.append("email", email);
+  formData.append("phone", phone);
+  formData.append("password", password);
   return fetch(`${BASE_URL}/users/register`, {
-    method: 'POST',
+    method: "POST",
     body: formData,
   }).then((res) => res.json());
 };
 
 export const login = (username, password) => {
   return fetch(`${BASE_URL}/users/login`, {
-    method: 'POST',
+    method: "POST",
     headers: {
-      'content-type': 'application/json',
+      "content-type": "application/json",
     },
     body: JSON.stringify({
       username,
@@ -36,7 +36,7 @@ export const login = (username, password) => {
 };
 
 export const getMe = () => {
-  const token = getAuthToken();
+  const token = getAuthToken() || "";
   return fetch(`${BASE_URL}/users/profile/me`, {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -44,15 +44,22 @@ export const getMe = () => {
   }).then((res) => res.json());
 };
 
-export const updateProfile = ({ avatar, nickname, email, phone }) => {
+export const updateProfile = ({
+  avatar,
+  nickname,
+  email,
+  phone,
+  isDeleteAvatar,
+}) => {
   const formData = new FormData();
-  formData.append('avatar', avatar);
-  formData.append('nickname', nickname);
-  formData.append('email', email);
-  formData.append('phone', phone);
+  formData.append("avatar", avatar);
+  formData.append("nickname", nickname);
+  formData.append("email", email);
+  formData.append("phone", phone);
+  if (isDeleteAvatar) formData.append("isDeleteAvatar", isDeleteAvatar);
   const token = getAuthToken();
   return fetch(`${BASE_URL}/users/profile/me`, {
-    method: 'PATCH',
+    method: "PATCH",
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -63,10 +70,10 @@ export const updateProfile = ({ avatar, nickname, email, phone }) => {
 export const updatePassword = (oldPassword, newPassword, confirmPassword) => {
   const token = getAuthToken();
   return fetch(`${BASE_URL}/users/password`, {
-    method: 'PATCH',
+    method: "PATCH",
     headers: {
       authorization: `Bearer ${token}`,
-      'content-type': 'application/json',
+      "content-type": "application/json",
     },
     body: JSON.stringify({
       oldPassword,
@@ -95,15 +102,15 @@ export const updateProfileById = (
   phone
 ) => {
   const formData = new FormData();
-  formData.append('avatar', avatar);
-  formData.append('nickname', nickname);
-  formData.append('username', username);
-  formData.append('email', email);
-  formData.append('phone', phone);
-  formData.append('password', password);
+  formData.append("avatar", avatar);
+  formData.append("nickname", nickname);
+  formData.append("username", username);
+  formData.append("email", email);
+  formData.append("phone", phone);
+  formData.append("password", password);
   const token = getAuthToken();
   return fetch(`${BASE_URL}/users/profile/${id}`, {
-    method: 'PATCH',
+    method: "PATCH",
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -113,7 +120,7 @@ export const updateProfileById = (
 
 export const getAllProfiles = ({ page, limit, sort, order, role }) => {
   const token = getAuthToken();
-  let queryString = '?';
+  let queryString = "?";
   if (page) queryString += `_page=${page}&`;
   if (limit) queryString += `_limit=${limit}&`;
   if (sort) queryString += `_sort=${sort}&`;
@@ -129,7 +136,7 @@ export const getAllProfiles = ({ page, limit, sort, order, role }) => {
 export const updateUserAuth = (id) => {
   const token = getAuthToken();
   return fetch(`${BASE_URL}/users/auth/${id}`, {
-    method: 'PATCH',
+    method: "PATCH",
     headers: {
       authorization: `Bearer ${token}`,
     },

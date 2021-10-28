@@ -2,12 +2,27 @@ import BASE_URL from "../constants/apiurl";
 import { getAuthToken } from "../utils";
 
 const getQueryString = (queryParameters) => {
-  const { page, sort, order, limit } = queryParameters;
+  const {
+    page,
+    sort,
+    order,
+    limit,
+    category,
+    isAvailable,
+    notSupplied,
+    hideExpiry,
+    hideSoldOut,
+  } = queryParameters || {};
   let queryString = "";
   if (page) queryString += `&page=${page}`;
   if (sort) queryString += `&sort=${sort}`;
   if (order) queryString += `&order=${order}`;
   if (limit) queryString += `&limit=${limit}`;
+  if (category) queryString += `&category=${category}`;
+  if (isAvailable) queryString += `&isAvailable=${isAvailable}`;
+  if (notSupplied) queryString += `&notSupplied=true`;
+  if (hideExpiry) queryString += `&hideExpiry=true`;
+  if (hideSoldOut) queryString += `&hideSoldOut=true`;
   return queryString;
 };
 
@@ -30,10 +45,20 @@ const getProductsByVendor = (id, queryParameters) => {
   );
 };
 
+const getOwnProducts = (id, queryParameters) => {
+  const token = getAuthToken();
+  const queryString = getQueryString(queryParameters);
+  return fetch(`${BASE_URL}/products/vendor/manage/${id}?${queryString}`, {
+    headers: {
+      authorization: `Bearer ${token}`,
+    },
+  }).then((res) => res.json());
+};
+
 const searchProduct = (keyword, queryParameters) => {
   const queryString = getQueryString(queryParameters);
   return fetch(
-    `${BASE_URL}/products/search?_keyword=${keyword}${queryString}`
+    `${BASE_URL}/products/search?keyword=${keyword}${queryString}`
   ).then((res) => res.json());
 };
 
@@ -67,7 +92,6 @@ const postProduct = (data) => {
   return fetch(`${BASE_URL}/products`, {
     method: "POST",
     headers: {
-      "content-type": "multipart/form-data",
       authorization: `Bearer ${token}`,
     },
     body: formData,
@@ -100,7 +124,6 @@ const updateProduct = (id, updatedData) => {
   return fetch(`${BASE_URL}/products/${id}`, {
     method: "PATCH",
     headers: {
-      "content-type": "multipart/form-data",
       authorization: `Bearer ${token}`,
     },
     body: formData,
@@ -119,12 +142,12 @@ const deleteProduct = (id) => {
 };
 
 const getProductCategories = () => {
-  return fetch(`${BASE_URL}/product-categories`).then((res) => res.json());
+  return fetch(`${BASE_URL}/products-categories`).then((res) => res.json());
 };
 
 const addProductCategory = (name) => {
   const token = getAuthToken();
-  return fetch(`${BASE_URL}/product-categories`, {
+  return fetch(`${BASE_URL}/products-categories`, {
     method: "POST",
     headers: {
       "content-type": "application/json",
@@ -136,7 +159,7 @@ const addProductCategory = (name) => {
 
 const updateProductCategory = (id, name) => {
   const token = getAuthToken();
-  return fetch(`${BASE_URL}/product-categories/${id}`, {
+  return fetch(`${BASE_URL}/products-categories/${id}`, {
     method: "PATCH",
     headers: {
       "content-type": "application/json",
@@ -148,7 +171,7 @@ const updateProductCategory = (id, name) => {
 
 const deleteProductCategory = (id) => {
   const token = getAuthToken();
-  return fetch(`${BASE_URL}/product-categories/${id}`, {
+  return fetch(`${BASE_URL}/products-categories/${id}`, {
     method: "DELETE",
     headers: {
       "content-type": "application/json",
@@ -161,6 +184,7 @@ export {
   getProducts,
   getProductsByCategory,
   getProductsByVendor,
+  getOwnProducts,
   searchProduct,
   getProduct,
   postProduct,

@@ -2,12 +2,13 @@ import BASE_URL from "../constants/apiurl";
 import { getAuthToken } from "../utils";
 
 const getQueryString = (queryParameters) => {
-  const { page, sort, order, limit } = queryParameters;
+  const { page, sort, order, limit, status } = queryParameters || {};
   let queryString = "";
   if (page) queryString += `&page=${page}`;
   if (sort) queryString += `&sort=${sort}`;
   if (order) queryString += `&order=${order}`;
   if (limit) queryString += `&limit=${limit}`;
+  if (status) queryString += `&status=${status}`;
   return queryString;
 };
 
@@ -21,26 +22,26 @@ const getOrders = (queryParameters) => {
   }).then((res) => res.json());
 };
 
-const getOrdersBought = (id, queryParameters) => {
+const getOrdersBought = (queryParameters) => {
   const token = getAuthToken();
   const queryString = getQueryString(queryParameters);
-  let { clientId } = queryParameters;
+  let { clientId } = queryParameters || {};
   let getByClientId = "";
   if (clientId) getByClientId = `&clientId=${clientId}`;
-  return fetch(`${BASE_URL}/orders/buy/${id}?${queryString}${getByClientId}`, {
+  return fetch(`${BASE_URL}/orders/buy?${queryString}${getByClientId}`, {
     headers: {
       authorization: `Bearer ${token}`,
     },
   }).then((res) => res.json());
 };
 
-const getOrdersSold = (id, queryParameters) => {
+const getOrdersSold = (queryParameters) => {
   const token = getAuthToken();
   const queryString = getQueryString(queryParameters);
-  let { vendorId } = queryParameters;
+  let { vendorId } = queryParameters || {};
   let getByVendorId = "";
   if (vendorId) getByVendorId = `&vendorId=${vendorId}`;
-  return fetch(`${BASE_URL}/orders/sell/${id}?${queryString}${getByVendorId}`, {
+  return fetch(`${BASE_URL}/orders/sell?${queryString}${getByVendorId}`, {
     headers: {
       authorization: `Bearer ${token}`,
     },
