@@ -60,8 +60,33 @@ const BookingBoard = ({ vendorById, isShow, handleIsShow, handleSubmit }) => {
 
   return (
     <Booking $isShow={isShow}>
-      {vendorById && (
-        <BookingProducts $isShow={isShow}>
+      <BookingProducts $isShow={isShow}>
+        {vendorById == "no-result" ? (
+          <Div textAlign="center">
+            <Div textColor="danger700" textSize="title">
+              此賣家已被停權，請選擇其他賣家商品
+            </Div>
+            <Button
+              h="3rem"
+              p={{ x: "1.25rem" }}
+              textSize="body"
+              textColor="info700"
+              hoverTextColor="info800"
+              bg="white"
+              hoverBg="info300"
+              border="1px solid"
+              borderColor="info700"
+              hoverBorderColor="info800"
+              m={{ t: "1rem" }}
+              onClick={() => handleIsShow("cancel")}
+              pos="absolute"
+              left="50%"
+              transform="translate(-50%)"
+            >
+              確定
+            </Button>
+          </Div>
+        ) : (
           <Div fontFamily="code" textAlign="center">
             <OpeningHour vendorById={vendorById} />
             <div>
@@ -130,11 +155,8 @@ const BookingBoard = ({ vendorById, isShow, handleIsShow, handleSubmit }) => {
               </Div>
             </div>
           </Div>
-        </BookingProducts>
-      )}
-      {vendorById == null && (
-        <Div textColor="danger700">此賣家帳號已被停權</Div>
-      )}
+        )}
+      </BookingProducts>
     </Booking>
   );
 };
