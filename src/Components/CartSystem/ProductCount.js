@@ -99,7 +99,7 @@ const ProductCount = ({ item, cartData, userId }) => {
 
 ProductCount.propTypes = {
   item: PropTypes.object,
-  cartData: PropTypes.array,
+  cartData: PropTypes.string,
   userId: PropTypes.number,
 };
 
