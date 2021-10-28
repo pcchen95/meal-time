@@ -5,6 +5,7 @@ import { Div, Text } from "atomize";
 import OrderItems from "../../Components/OrderSystem/OrderItems";
 import OrderDetails from "../../Components/OrderSystem/OrderDetails";
 import OrderButton from "../../Components/OrderSystem/OrderButton";
+import BackButton from "../../Components/OrderSystem/BackButton";
 import LoadingPage from "../LoadingPage";
 import SuccessNotification from "../../Components/Notifications/SuccessNotification";
 import WarningNotification from "../../Components/Notifications/WarningNotification";
@@ -20,12 +21,14 @@ import {
 
 export default function OrderDetailsPage() {
   let { id } = useParams();
+  const orderPage = true;
   const order = useSelector(selectSingleOrder);
   const isLoading = useSelector(selectIsLoading);
   const isDisabled = useSelector(selectIsDisabled);
   const dispatch = useDispatch();
 
   useEffect(() => {
+    window.scroll(0, 0);
     dispatch(getOrder(id));
     return () => dispatch(cleanOrderDetails());
   }, [id, isDisabled]);
@@ -39,14 +42,23 @@ export default function OrderDetailsPage() {
   };
 
   return (
-    <Div w="80%" m={{ y: "2rem", x: "auto" }} pos="relative">
+    <Div
+      w="80%"
+      m={{ y: "2rem", x: "auto" }}
+      pos="relative"
+      minH={isLoading ? "120rem" : "0"}
+    >
       <Div border={{ b: "4px solid" }} borderColor="info600" w="7rem">
         <Text textSize="heading" w="10rem">
           訂單詳情
         </Text>
       </Div>
       {isLoading && <LoadingPage />}
-      {order.orderItems && <OrderItems orderItems={order.orderItems} />}
+      {order.orderItems ? (
+        <OrderItems orderItems={order.orderItems} />
+      ) : (
+        <BackButton orderPage={orderPage} isLoading={isLoading} />
+      )}
       {order.order && (
         <>
           <OrderDetails order={order} />
@@ -58,6 +70,7 @@ export default function OrderDetailsPage() {
           />
         </>
       )}
+
       <SuccessNotification />
       <WarningNotification />
     </Div>

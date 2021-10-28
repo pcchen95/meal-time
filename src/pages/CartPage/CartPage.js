@@ -1,110 +1,102 @@
-import React, { useEffect, useState } from "react"
-import { useSelector, useDispatch } from "react-redux"
-import { Div, Button, Text, Icon } from "atomize"
-import CartList from "../../Components/CartSystem/CartList"
-import BookingBoard from "../../Components/CartSystem/BookingBoard"
-import LoadingPage from "../LoadingPage"
+import React, { useEffect, useState } from "react";
+import { useSelector, useDispatch, batch } from "react-redux";
+import { Div, Button, Text, Icon } from "atomize";
+import CartList from "../../Components/CartSystem/CartList";
+import BookingBoard from "../../Components/CartSystem/BookingBoard";
+import LoadingPage from "../LoadingPage";
 import {
   getMe,
-  selectCart,
-  setVendorId,
-  selectVendorId,
-  selectIsLoading,
   getCartData,
-  selectCartData,
+  newOrder,
   setCartData,
-  selectUserId,
-  selectOrderProducts,
+  setVendorId,
   setOrderProducts,
-} from "../../redux/reducers/cartReducer"
-import { newOrder } from "../../redux/reducers/orderReducer"
-import { getVendorById } from "../../redux/reducers/vendorReducer"
-import { setErrorMessage } from "../../redux/reducers/notificationReducer"
-import SuccessNotification from "../../Components/Notifications/SuccessNotification"
-import WarningNotification from "../../Components/Notifications/WarningNotification"
+  selectCart,
+  selectUserId,
+  selectVendorId,
+  selectCartData,
+} from "../../redux/reducers/cartReducer";
+import { getVendorById } from "../../redux/reducers/vendorReducer";
+import {
+  setErrorMessage,
+  setShowWarningNotification,
+} from "../../redux/reducers/notificationReducer";
+import SuccessNotification from "../../Components/Notifications/SuccessNotification";
+import WarningNotification from "../../Components/Notifications/WarningNotification";
 
 export default function CartPage() {
-  const dispatch = useDispatch()
-  const [isChecked, setIsChecked] = useState(false)
-  const [isShow, setIsShow] = useState(false)
-  const cartData = useSelector(selectCartData)
-  const userId = useSelector(selectUserId)
-  const cart = useSelector(selectCart)
-  const vendorId = useSelector(selectVendorId)
-  const isLoading = useSelector(selectIsLoading)
-  const orderProducts = useSelector(selectOrderProducts)
-  const vendorById = useSelector((store) => store.vendors.vendorById)
-  const errMessage = useSelector((store) => store.notifications.errMessage)
+  const dispatch = useDispatch();
+  const [isChecked, setIsChecked] = useState(false);
+  const [isShow, setIsShow] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const cartData = useSelector(selectCartData);
+  const userId = useSelector(selectUserId);
+  const cart = useSelector(selectCart);
+  const vendorId = useSelector(selectVendorId);
+  const vendorById = useSelector((store) => store.vendors.vendorById);
 
   useEffect(() => {
-    dispatch(getMe())
-    dispatch(getCartData(userId))
-    dispatch(setCartData(localStorage.getItem(`cartId${userId}`)))
+    setIsLoading(true);
+    batch(async () => {
+      await dispatch(getMe());
+      if (userId) {
+        await dispatch(getCartData(userId));
+      }
+      await dispatch(setCartData(localStorage.getItem(`cartId${userId}`)));
+      setIsLoading(false);
+    });
     return () => {
-      dispatch(setErrorMessage(null))
-    }
-  }, [userId, cartData])
+      dispatch(setErrorMessage(null));
+    };
+  }, [userId, cartData, dispatch]);
 
   const handleIsShow = (type) => {
     if (type === "book") {
       if (isChecked === true) {
-        dispatch(setErrorMessage(null))
-        dispatch(getVendorById(vendorId))
-        setIsShow(true)
-      } else {
-        window.scroll(0, 0)
-        dispatch(setErrorMessage("請至少勾選一個購物車才能預訂食物"))
-      }
-      if (vendorId) {
-        let isSelectFood = []
-        let result = []
-        if (vendorId) {
-          vendorId &&
-            cart[vendorId].forEach((item) => isSelectFood.push(item.id))
-          for (let i = 0; i < isSelectFood.length; i++) {
-            result.push(
-              JSON.parse(cartData).find((item) => item.id == isSelectFood[i])
-            )
-          }
-          console.log("vendorId", vendorId)
-          console.log("orderProducts:", orderProducts)
-
-          dispatch(setOrderProducts(result))
+        dispatch(setErrorMessage(null));
+        dispatch(getVendorById(vendorId));
+        setIsShow(true);
+        let isSelectFood = [];
+        let result = [];
+        cart && cart[vendorId].forEach((item) => isSelectFood.push(item.id));
+        for (let i = 0; i < isSelectFood.length; i++) {
+          result.push(
+            JSON.parse(cartData).find((item) => item.id === isSelectFood[i])
+          );
         }
         dispatch(setOrderProducts(result));
       } else {
         window.scroll(0, 0);
         dispatch(setErrorMessage("請至少勾選一個購物車才能預訂食物"));
+        dispatch(setShowWarningNotification(true));
       }
     }
     if (type === "cancel") {
-      setIsShow(false)
-      setVendorId(null)
+      setIsShow(false);
+      setVendorId(null);
     }
-  }
-
-  console.log("vendorId", vendorId);
-  console.log("orderProducts:", orderProducts);
+  };
 
   const handleCheckedClick = (e) => {
-    dispatch(setVendorId(e.target.value))
-    setIsChecked(!isChecked)
-
-    if (isChecked) {
-      dispatch(setVendorId(null))
-      dispatch(setOrderProducts([]))
-    }
-  }
+    dispatch(setVendorId(e.target.value));
+    setIsChecked(!isChecked);
+  };
 
   const handleDeleteClick = (id, userId) => {
     const newCartData = JSON.stringify(
       JSON.parse(cartData).filter((item) => item.id !== id)
-    )
-    localStorage.setItem(`cartId${userId}`, newCartData)
-    dispatch(setCartData(newCartData))
-  }
+    );
+    localStorage.setItem(`cartId${userId}`, newCartData);
+    dispatch(setCartData(newCartData));
+  };
 
   const handleSubmit = (orderProducts, vendorId, pickupTime, remarks) => {
+    if (!pickupTime) {
+      setIsShow(false);
+      dispatch(setErrorMessage("請填寫預約時間!"));
+      dispatch(setShowWarningNotification(true));
+      return;
+    }
     dispatch(
       newOrder({
         orderProducts,
@@ -112,50 +104,61 @@ export default function CartPage() {
         pickupTime,
         remarks,
       })
-    )
-  }
+    );
+    setIsShow(false);
+    let newData = [].concat(
+      JSON.parse(cartData).filter((obj1) =>
+        orderProducts.every((obj2) => obj1.id !== obj2.id)
+      ),
+      orderProducts.filter((obj2) =>
+        JSON.parse(cartData).every((obj1) => obj2.id !== obj1.id)
+      )
+    );
+    localStorage.setItem(`cartId${userId}`, JSON.stringify(newData));
+    dispatch(setCartData(JSON.stringify(newData)));
+  };
 
   return (
     <Div
       bg="gray200"
       w="80%"
+      minH="30rem"
       m={{ y: "4rem", x: "auto" }}
       p={{ xs: "1rem", lg: "2rem" }}
     >
       {isLoading && <LoadingPage />}
-      {cartData && (
-        <>
-          <Div m={{ t: "2rem", l: { xs: "0", lg: "5rem" } }}>
-            <Div
-              border={{ b: "4px solid" }}
-              borderColor="info600"
-              w="10rem"
-              textAlign="center"
-            >
-              <Div d="flex">
-                <Icon name="Bag" size="50px" color="black300" />
-                <Text textSize="display1" w="24rem" textColor="black300">
-                  購物車
-                </Text>
-              </Div>
-            </Div>
-            <Div d="flex" m={{ t: "1rem" }} textColor="warning800">
-              <Icon name="Alert" size="20px" color="warning800" />
-              <Text>
-                一次只能預訂一位賣家商品，如果有多位賣家商品請分開下單
-              </Text>
-            </Div>
-            {errMessage && (
-              <Text
-                m={{ t: "1rem" }}
-                textColor="danger700"
-                textSize="title"
-                textWeight="700"
-              >
-                {errMessage}
-              </Text>
-            )}
+      <Div m={{ t: "2rem", l: { xs: "0", lg: "5rem" } }}>
+        <Div
+          border={{ b: "4px solid" }}
+          borderColor="info600"
+          w="10rem"
+          textAlign="center"
+        >
+          <Div d="flex">
+            <Icon name="Bag" size="50px" color="black300" />
+            <Text textSize="display1" w="24rem" textColor="black300">
+              購物車
+            </Text>
           </Div>
+        </Div>
+        <Div d="flex" m={{ t: "1rem" }} textColor="warning800">
+          <Icon name="Alert" size="20px" color="warning800" />
+          <Text>一次只能預訂一位賣家商品，如果有多位賣家商品請分開下單</Text>
+        </Div>
+      </Div>
+      {cartData && cartData.length == 2 ? (
+        <Div>
+          <Div
+            textAlign="center"
+            textSize="title"
+            textWeight="700"
+            m={{ t: "6rem" }}
+          >
+            目前購物車是空的…
+          </Div>
+        </Div>
+      ) : (
+        <>
           <CartList
             setErrorMessage={setErrorMessage}
             isChecked={isChecked}
@@ -194,11 +197,12 @@ export default function CartPage() {
             isShow={isShow}
             handleIsShow={handleIsShow}
             handleSubmit={handleSubmit}
+            userId={userId}
           />
         </>
       )}
       <SuccessNotification />
       <WarningNotification />
     </Div>
-  )
+  );
 }
