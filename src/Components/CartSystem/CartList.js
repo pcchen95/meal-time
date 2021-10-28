@@ -30,7 +30,7 @@ const CartList = ({
             <Div
               d="flex"
               p="1rem"
-              bg="gray400"
+              bg="success600"
               m={{ t: "2rem" }}
               textAlign="center"
               rounded="md"
@@ -64,7 +64,7 @@ CartList.propTypes = {
   handleCheckedClick: PropTypes.func,
   handleDeleteClick: PropTypes.func,
   cart: PropTypes.object,
-  cartData: PropTypes.array,
+  cartData: PropTypes.string,
 };
 
 export default CartList;
