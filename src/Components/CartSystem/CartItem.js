@@ -51,7 +51,7 @@ const CartItem = ({ userId, cartItem, cartData, handleDeleteClick }) => {
 CartItem.propTypes = {
   userId: PropTypes.number,
   cartItem: PropTypes.array,
-  cartData: PropTypes.array,
+  cartData: PropTypes.string,
   handleDeleteClick: PropTypes.func,
 };
 

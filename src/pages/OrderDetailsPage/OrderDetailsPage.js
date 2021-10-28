@@ -28,6 +28,7 @@ export default function OrderDetailsPage() {
   const dispatch = useDispatch();
 
   useEffect(() => {
+    window.scroll(0, 0);
     dispatch(getOrder(id));
     return () => dispatch(cleanOrderDetails());
   }, [id, isDisabled]);

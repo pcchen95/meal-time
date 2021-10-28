@@ -1,6 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { getCartData as getCartDataApi } from "../../WebAPI/cartAPI";
 import { postOrder } from "../../WebAPI/orderAPI";
+import { getMe as getMeApi } from "../../WebAPI/userAPI";
 import {
   setErrorMessage,
   setShowSuccessNotification,
@@ -10,9 +11,9 @@ import {
 const initialState = {
   cart: null,
   cartData: null,
+  userId: null,
   isShow: false,
   vendorId: null,
-  isLoading: false,
   orderProducts: [],
 };
 
@@ -26,14 +27,14 @@ export const cartReducer = createSlice({
     setCartData: (state, action) => {
       state.cartData = action.payload;
     },
+    setUserId: (state, action) => {
+      state.userId = action.payload;
+    },
     setIsShow: (state, action) => {
       state.isShow = action.payload;
     },
     setVendorId: (state, action) => {
       state.vendorId = action.payload;
-    },
-    setIsLoading: (state, action) => {
-      state.isLoading = action.payload;
     },
     setOrderProducts: (state, action) => {
       state.orderProducts = action.payload;
@@ -44,9 +45,9 @@ export const cartReducer = createSlice({
 export const {
   setCart,
   setCartData,
+  setUserId,
   setVendorId,
   setIsShow,
-  setIsLoading,
   setOrderProducts,
 } = cartReducer.actions;
 
@@ -56,10 +57,8 @@ export const getCartData = (userId) => (dispatch) => {
   if (cart) {
     cartArray = JSON.parse(cart);
   }
-  dispatch(setIsLoading(true));
   return getCartDataApi({ cart: cartArray })
     .then((res) => {
-      dispatch(setIsLoading(false));
       if (!res.ok) {
         return dispatch(setErrorMessage(res ? res.message : "something wrong"));
       }
@@ -73,10 +72,19 @@ export const getCartData = (userId) => (dispatch) => {
     });
 };
 
+export const getMe = () => (dispatch) => {
+  return getMeApi().then((res) => {
+    if (!res.ok) {
+      dispatch(setErrorMessage(res.message));
+      return;
+    }
+    dispatch(setUserId(res.data.id));
+  });
+};
+
 export const newOrder =
   ({ orderProducts, vendorId, pickupTime, remarks }) =>
   (dispatch) => {
-    dispatch(setIsLoading(true));
     postOrder({
       orderProducts,
       vendorId,
@@ -85,11 +93,9 @@ export const newOrder =
     }).then((res) => {
       if (!res.ok) {
         dispatch(setErrorMessage(res.message));
-        dispatch(setIsLoading(false));
         dispatch(setShowWarningNotification(true));
         return;
       }
-      dispatch(setIsLoading(false));
       dispatch(setShowSuccessNotification(true, "訂單已成立"));
       return res;
     });
@@ -102,7 +108,6 @@ export const cleanCartData = () => (dispatch) => {
 export const selectCart = (state) => state.cart.cart;
 export const selectCartData = (state) => state.cart.cartData;
 export const selectIsShow = (state) => state.cart.isShow;
-export const selectIsLoading = (state) => state.cart.isLoading;
 export const selectVendorId = (state) => state.cart.vendorId;
 export const selectUserId = (state) => state.cart.userId;
 export const selectOrderProducts = (state) => state.cart.orderProducts;

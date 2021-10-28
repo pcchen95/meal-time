@@ -1,19 +1,20 @@
 import React, { useEffect, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector, useDispatch, batch } from "react-redux";
 import { Div, Button, Text, Icon } from "atomize";
 import CartList from "../../Components/CartSystem/CartList";
 import BookingBoard from "../../Components/CartSystem/BookingBoard";
 import LoadingPage from "../LoadingPage";
 import {
+  getMe,
   getCartData,
   newOrder,
   setCartData,
   setVendorId,
   setOrderProducts,
   selectCart,
+  selectUserId,
   selectVendorId,
   selectCartData,
-  selectIsLoading,
 } from "../../redux/reducers/cartReducer";
 import { getVendorById } from "../../redux/reducers/vendorReducer";
 import {
@@ -27,22 +28,27 @@ export default function CartPage() {
   const dispatch = useDispatch();
   const [isChecked, setIsChecked] = useState(false);
   const [isShow, setIsShow] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const cartData = useSelector(selectCartData);
-  const isLoading = useSelector(selectIsLoading);
-  const { id } = useSelector((state) => state.users.user);
+  const userId = useSelector(selectUserId);
   const cart = useSelector(selectCart);
   const vendorId = useSelector(selectVendorId);
   const vendorById = useSelector((store) => store.vendors.vendorById);
 
   useEffect(() => {
-    if (id) {
-      dispatch(getCartData(id));
-      dispatch(setCartData(localStorage.getItem(`cartId${id}`)));
-    }
+    setIsLoading(true);
+    batch(async () => {
+      await dispatch(getMe());
+      if (userId) {
+        await dispatch(getCartData(userId));
+      }
+      await dispatch(setCartData(localStorage.getItem(`cartId${userId}`)));
+      setIsLoading(false);
+    });
     return () => {
       dispatch(setErrorMessage(null));
     };
-  }, [id, cartData, dispatch]);
+  }, [userId, cartData, dispatch]);
 
   const handleIsShow = (type) => {
     if (type === "book") {
@@ -70,7 +76,6 @@ export default function CartPage() {
       setVendorId(null);
     }
   };
-  console.log("cartData:", cartData);
 
   const handleCheckedClick = (e) => {
     dispatch(setVendorId(e.target.value));
@@ -101,9 +106,17 @@ export default function CartPage() {
       })
     );
     setIsShow(false);
+    let newData = [].concat(
+      JSON.parse(cartData).filter((obj1) =>
+        orderProducts.every((obj2) => obj1.id !== obj2.id)
+      ),
+      orderProducts.filter((obj2) =>
+        JSON.parse(cartData).every((obj1) => obj2.id !== obj1.id)
+      )
+    );
+    localStorage.setItem(`cartId${userId}`, JSON.stringify(newData));
+    dispatch(setCartData(JSON.stringify(newData)));
   };
-
-  console.log("cartData:", cartData);
 
   return (
     <Div
@@ -133,7 +146,18 @@ export default function CartPage() {
           <Text>一次只能預訂一位賣家商品，如果有多位賣家商品請分開下單</Text>
         </Div>
       </Div>
-      {cartData ? (
+      {cartData && cartData.length == 2 ? (
+        <Div>
+          <Div
+            textAlign="center"
+            textSize="title"
+            textWeight="700"
+            m={{ t: "6rem" }}
+          >
+            目前購物車是空的…
+          </Div>
+        </Div>
+      ) : (
         <>
           <CartList
             setErrorMessage={setErrorMessage}
@@ -141,7 +165,7 @@ export default function CartPage() {
             vendorId={vendorId}
             handleCheckedClick={handleCheckedClick}
             handleDeleteClick={handleDeleteClick}
-            userId={id}
+            userId={userId}
             cart={cart}
             cartData={cartData}
           />
@@ -173,20 +197,9 @@ export default function CartPage() {
             isShow={isShow}
             handleIsShow={handleIsShow}
             handleSubmit={handleSubmit}
+            userId={userId}
           />
         </>
-      ) : (
-        <Div>
-          <Div
-            textAlign="center"
-            textColor="warning700"
-            textSize="title"
-            textWeight="700"
-            m={{ t: "6rem" }}
-          >
-            目前購物車是空的…
-          </Div>
-        </Div>
       )}
       <SuccessNotification />
       <WarningNotification />
