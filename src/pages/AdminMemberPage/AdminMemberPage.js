@@ -1,103 +1,62 @@
-import React from "react";
-import { Div, Button } from "atomize";
-
-const TypeFilterButton = () => {
-  return (
-    <Div d="flex">
-      <Button
-        h="2.5rem"
-        p={{ x: "1.25rem" }}
-        textSize="body"
-        bg="white"
-        hoverBg="warning300"
-        rounded="sm"
-        m={{ r: "1rem" }}
-        fontFamily="code"
-        textColor="black700"
-        border="2px solid"
-        borderColor="black900"
-        textWeight="600"
-      >
-        正常
-      </Button>
-      <Button
-        h="2.5rem"
-        p={{ x: "1.25rem" }}
-        textSize="body"
-        bg="white"
-        hoverBg="warning300"
-        rounded="sm"
-        m={{ r: "1rem" }}
-        fontFamily="code"
-        textColor="black700"
-        border="2px solid"
-        borderColor="black900"
-        textWeight="600"
-      >
-        停權中
-      </Button>
-    </Div>
-  );
-};
-
-const MemberList = () => {
-  return (
-    <Div
-      border="1px solid"
-      m={{ t: "2rem" }}
-      p="1rem"
-      rounded="sm"
-      d="flex"
-      justify="space-between"
-    >
-      {" "}
-      <Div transform="translateY(25%)">1. 會員編號：5298974923</Div>
-      <Div d="flex">
-        <Button
-          h="2.5rem"
-          p={{ x: "1.25rem" }}
-          textSize="body"
-          bg="white"
-          hoverBg="warning300"
-          rounded="xl"
-          m={{ r: "1rem" }}
-          fontFamily="code"
-          textColor="black700"
-          border="1px solid"
-          borderColor="black900"
-          textWeight="300"
-        >
-          使停權
-        </Button>
-        <Button
-          h="2.5rem"
-          p={{ x: "1.25rem" }}
-          textSize="body"
-          bg="white"
-          hoverBg="warning300"
-          rounded="xl"
-          m={{ r: "1rem" }}
-          fontFamily="code"
-          textColor="black700"
-          border="1px solid"
-          borderColor="black900"
-          textWeight="300"
-        >
-          使正常
-        </Button>
-      </Div>
-    </Div>
-  );
-};
+import React, { useState, useEffect } from "react";
+import { Div } from "atomize";
+import { login } from "../../WebAPI/userAPI";
+import { getAllProfiles, updateUserAuth } from "../../WebAPI/userAPI";
+import { MemberFilterButton } from "../../Components/AdminSystem/FilterButton";
+import MemberList from "../../Components/AdminSystem/MemberList";
 
 const AdminMemberPage = () => {
+  const [users, setUsers] = useState([]);
+  const [display, setDisplay] = useState("all");
+  const [errorMessage, setErrorMessage] = useState();
+
+  const DISPLAY_MAP = {
+    all: (user) => user,
+    suspended: (user) => user.role == "suspended",
+  };
+
+  useEffect(() => {
+    login("admin", "admin").then((data) => {
+      if (data.ok === 0) {
+        return setErrorMessage(data.message);
+      }
+      getAllProfiles(1).then((res) => {
+        setUsers(res.data.rows);
+      });
+    });
+  }, []);
+
+  console.log(users);
+
+  function handleRegularFilter() {
+    setDisplay("all");
+  }
+
+  function handleSuspendedFilter() {
+    setDisplay("suspended");
+  }
+
+  function handleChangeAuth(id) {
+    console.log("btn");
+    updateUserAuth(id);
+  }
+
   return (
     <Div>
       <Div m={{ l: "5rem", r: "5rem" }}>
-        <TypeFilterButton />
-        <MemberList></MemberList>
-        <MemberList />
-        <MemberList />
+        {errorMessage && <Div>{errorMessage}</Div>}
+        <MemberFilterButton
+          user={users}
+          handleRegularFilter={handleRegularFilter}
+          handleSuspendedFilter={handleSuspendedFilter}
+        />
+        {users.filter(DISPLAY_MAP[display]).map((user) => (
+          <MemberList
+            key={user.id}
+            user={user}
+            handleChangeAuth={handleChangeAuth}
+          />
+        ))}
       </Div>
     </Div>
   );

@@ -1,6 +1,6 @@
 import "./App.css";
 import React from "react";
-import { HashRouter as Router, Switch, Route } from "react-router-dom";
+import { HashRouter as Router, Routes, Route } from "react-router-dom";
 import HomePage from "./pages/HomePage";
 import ProductsPage from "./pages/ProductsPage";
 import SingleProductPage from "./pages/SingleProductPage";
@@ -28,7 +28,7 @@ function App() {
     <div>
       <Router>
         <Navbar />
-        <Switch>
+        <Routes>
           <Route exact path="/">
             <HomePage />
           </Route>
@@ -89,7 +89,7 @@ function App() {
           <Route path="/signup">
             <SignUp />
           </Route>
-        </Switch>
+        </Routes>
         <Footer />
       </Router>
     </div>
