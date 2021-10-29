@@ -1,6 +1,8 @@
-import React from "react";
-// Variable Width
+import React, { useState, useEffect } from "react";
 import { Div, Dropdown, Anchor } from "atomize";
+import { login } from "../../WebAPI/userAPI";
+import { getAllVendorProfiles } from "../../WebAPI/vendorAPI";
+import PropTypes from "prop-types";
 
 const StoreListOption = (
   <Div p={{ x: "1rem", y: "0.5rem" }}>
@@ -32,7 +34,8 @@ class StoreTypeFilter extends React.Component {
     );
   }
 }
-const StoreList = () => {
+
+const StoreList = ({ vendor }) => {
   return (
     <Div
       border="1px solid"
@@ -43,20 +46,42 @@ const StoreList = () => {
       justify="space-between"
     >
       {" "}
-      <Div transform="translateY(25%)">1. 商家編號：5298974923</Div>
+      <Div transform="translateY(25%)">
+        1. 商家編號：{vendor.id}
+        {vendor.vendorName}
+      </Div>
       <StoreTypeFilter />
     </Div>
   );
 };
 
+StoreList.propTypes = {
+  vendor: PropTypes.object,
+  id: PropTypes.number,
+  nickname: PropTypes.string,
+  role: PropTypes.string,
+};
+
 const AdminStoreTypePage = () => {
+  const [vendors, setVendors] = useState([]);
+
+  useEffect(() => {
+    login("admin", "admin").then(() => {
+      getAllVendorProfiles(1).then((res) => {
+        setVendors(res.data.rows);
+      });
+    });
+  }, []);
+
+  console.log(vendors);
+
   return (
     <Div>
       <Div m={{ l: "5rem", r: "5rem" }}>
         <StoreTypeFilter />
-        <StoreList></StoreList>
-        <StoreList />
-        <StoreList />
+        {vendors.map((vendor) => (
+          <StoreList key={vendor.id} vendor={vendor} />
+        ))}
       </Div>
     </Div>
   );

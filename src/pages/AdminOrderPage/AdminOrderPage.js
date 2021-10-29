@@ -1,46 +1,11 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Div, Button } from "atomize";
+import { login } from "../../WebAPI/userAPI";
+import { getOrders } from "../../WebAPI/orderAPI";
+import { OrderFilterButton } from "../../Components/AdminSystem/FilterButton";
+import PropTypes from "prop-types";
 
-const TypeFilterButton = () => {
-  return (
-    <Div d="flex">
-      <Button
-        h="2.5rem"
-        p={{ x: "1.25rem" }}
-        textSize="body"
-        bg="white"
-        hoverBg="warning300"
-        rounded="sm"
-        m={{ r: "1rem" }}
-        fontFamily="code"
-        textColor="black700"
-        border="2px solid"
-        borderColor="black900"
-        textWeight="600"
-      >
-        交易中
-      </Button>
-      <Button
-        h="2.5rem"
-        p={{ x: "1.25rem" }}
-        textSize="body"
-        bg="white"
-        hoverBg="warning300"
-        rounded="sm"
-        m={{ r: "1rem" }}
-        fontFamily="code"
-        textColor="black700"
-        border="2px solid"
-        borderColor="black900"
-        textWeight="600"
-      >
-        已完成
-      </Button>
-    </Div>
-  );
-};
-
-const OrderList = () => {
+const OrderList = ({ order }) => {
   return (
     <Div
       border="1px solid"
@@ -51,7 +16,7 @@ const OrderList = () => {
       justify="space-between"
     >
       {" "}
-      <Div transform="translateY(25%)">1. 訂單編號：5298974923</Div>
+      <Div transform="translateY(25%)">編號：1{order.id}</Div>
       <Div d="flex">
         <Button
           h="2.5rem"
@@ -90,14 +55,55 @@ const OrderList = () => {
   );
 };
 
+OrderList.propTypes = {
+  order: PropTypes.object,
+  id: PropTypes.number,
+};
+
 const AdminOrderPage = () => {
+  const [orders, setOrders] = useState([]);
+  const [display, setDisplay] = useState("all");
+
+  const DISPLAY_MAP = {
+    all: (order) => order,
+    trading: (order) => order.isCompleted == false,
+    completed: (order) => order.isCompleted == true,
+  };
+
+  useEffect(() => {
+    login("admin", "admin").then(() => {
+      getOrders(1).then((res) => {
+        setOrders(res.data.rows);
+      });
+    });
+  }, []);
+
+  console.log(orders);
+
+  function handleAllFilter() {
+    setDisplay("all");
+  }
+
+  function handleTradingFilter() {
+    setDisplay("trading");
+  }
+
+  function handleCompletedFilter() {
+    setDisplay("completed");
+  }
+
   return (
     <Div>
       <Div m={{ l: "5rem", r: "5rem" }}>
-        <TypeFilterButton />
-        <OrderList></OrderList>
-        <OrderList />
-        <OrderList />
+        <OrderFilterButton
+          order={orders}
+          handleAllFilter={handleAllFilter}
+          handleTradingFilter={handleTradingFilter}
+          handleCompletedFilter={handleCompletedFilter}
+        />
+        {orders.filter(DISPLAY_MAP[display]).map((order) => (
+          <OrderList key={order.id} order={order} />
+        ))}
       </Div>
     </Div>
   );
