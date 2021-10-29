@@ -8,15 +8,15 @@ const CartItem = ({ userId, cartItem, cartData, handleDeleteClick }) => {
     <>
       {cartItem &&
         cartItem.map((item) => (
-          <Div d={{ xs: "block", lg: "flex" }} pos="relative" key={item.id}>
-            <Div m={{ l: "2rem" }}>
+          <Div d={{ xs: "block", md: "flex" }} pos="relative" key={item.id}>
+            <Div m={{ xs: "0", lg: { l: "2rem" } }}>
               <Col>
                 <Div
                   bgImg={item && item.pictureUrl}
                   bgSize="cover"
                   bgPos="center"
-                  w={{ xs: "10rem", lg: "12rem" }}
-                  h={{ xs: "10rem", lg: "12rem" }}
+                  w={{ xs: "9rem", lg: "12rem" }}
+                  h={{ xs: "9rem", lg: "12rem" }}
                   rounded="lg"
                   m={{ t: "1rem" }}
                 />
@@ -36,7 +36,7 @@ const CartItem = ({ userId, cartItem, cartData, handleDeleteClick }) => {
               title="刪除"
               pos="absolute"
               right="0"
-              top="5.3rem"
+              top="4rem"
               cursor="pointer"
               onClick={() => {
                 handleDeleteClick(item.id, userId);
