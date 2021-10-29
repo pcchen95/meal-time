@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Div, Text } from "atomize";
 import { useDispatch, useSelector } from "react-redux";
+import { useHistory } from "react-router-dom";
 import PaginationButton from "../../Components/PaginationButton";
 import LoadingPage from "../LoadingPage";
 import OrderList from "../../Components/OrderSystem/OrderList";
@@ -23,11 +24,16 @@ export default function OrdersBoughtPage() {
   const orderPage = false;
   const totalPages = useSelector(selectTotalPages);
   const isLoading = useSelector(selectIsLoading);
+  const user = useSelector((store) => store.users.user);
   const [page, setPage] = useState(1);
   const dispatch = useDispatch();
+  const history = useHistory();
   const limit = 5;
 
   useEffect(() => {
+    if (user === "non-login") {
+      return history.push("/");
+    }
     window.scroll(0, 0);
     dispatch(
       getOrdersBought({
@@ -39,7 +45,7 @@ export default function OrdersBoughtPage() {
     return () => {
       dispatch(cleanOrders());
     };
-  }, [page, status, dispatch]);
+  }, [user, page, status, dispatch]);
 
   return (
     <Div
