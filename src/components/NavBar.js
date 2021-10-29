@@ -13,7 +13,8 @@ const InputWithRightIcon = ({ searchContent, setSarchContent, search }) => {
         rounded="circle"
         h="5rem"
         w="5rem"
-        src="https://i.pinimg.com/564x/82/ba/7d/82ba7db3760b88da021a340ee9eb861e.jpg"
+        p="1rem"
+        src="logo.png"
       />
       <Input
         value={searchContent}
