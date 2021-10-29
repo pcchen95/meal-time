@@ -14,7 +14,6 @@ import {
   cleanProduct,
   patchProduct,
 } from "../../redux/reducers/productReducer";
-import { getMe } from "../../redux/reducers/userReducer";
 import { getVendor } from "../../redux/reducers/vendorReducer";
 import UploadButton from "../../Components/ProductSystem/UploadButton";
 import PreviewAvatar from "../../Components/ProductSystem/PreviewAvatar";
@@ -140,7 +139,6 @@ export default function ProductEdit() {
 
   useEffect(() => {
     dispatch(cleanProduct());
-    dispatch(getMe());
     dispatch(getVendor());
     dispatch(getProductCategories());
     window.scrollTo({
@@ -154,16 +152,21 @@ export default function ProductEdit() {
   }, []);
 
   useEffect(() => {
+    if (user && user === "non-login") return history.push("/");
+    if (
+      user &&
+      user !== "non-login" &&
+      (user.role === "member" || user.role === "suspended")
+    ) {
+      return history.push("/");
+    }
+  }, [user]);
+
+  useEffect(() => {
     if (id !== "new" && product === 0) {
       return history.push("/");
     }
     if (product && vendor) {
-      if (!user) {
-        return history.push("/");
-      }
-      if (user.role === "member" || user.role === "suspended") {
-        return history.push("/");
-      }
       if (product.vendorId !== vendor.id) {
         return history.push("/");
       }
