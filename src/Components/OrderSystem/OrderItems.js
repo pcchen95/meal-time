@@ -29,7 +29,7 @@ const FilterButton = ({ orderItems }) => {
               {orderItem.Product && orderItem.Product.name}
             </Text>
             <Text m={{ t: "1rem" }}>
-              單價：{orderItem.Products && orderItem.Product.price}
+              單價：{orderItem.Product && orderItem.Product.price}
             </Text>
             <Text m={{ t: "1rem" }}>
               預訂數量：{orderItem && orderItem.quantity}
@@ -37,7 +37,7 @@ const FilterButton = ({ orderItems }) => {
           </Div>
           <Div minW="60rem">
             <Text m={{ t: "1rem" }}>
-              {orderItem.Productor && orderItem.Product.description}
+              {orderItem.Product && orderItem.Product.description}
             </Text>
           </Div>
         </Div>
