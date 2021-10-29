@@ -42,12 +42,7 @@ export default function OrderDetailsPage() {
   };
 
   return (
-    <Div
-      w="80%"
-      m={{ y: "2rem", x: "auto" }}
-      pos="relative"
-      minH={isLoading ? "120rem" : "0"}
-    >
+    <Div w="80%" m={{ y: "2rem", x: "auto" }} minH={isLoading ? "120rem" : "0"}>
       <Div border={{ b: "4px solid" }} borderColor="info600" w="7rem">
         <Text textSize="heading" w="10rem">
           訂單詳情

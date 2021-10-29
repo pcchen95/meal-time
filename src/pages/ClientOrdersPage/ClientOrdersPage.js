@@ -49,6 +49,17 @@ export default function OrdersBoughtPage() {
       p={{ xs: "1rem", lg: "3rem", b: { lg: "6rem" } }}
       pos="relative"
     >
+      <Div border={{ b: "4px solid" }} borderColor="info600" w="6rem">
+        <Text textSize="heading" w="10rem">
+          {status === "uncompleted"
+            ? "待取貨"
+            : status === "completed"
+            ? "已完成"
+            : status === "canceled"
+            ? "已取消"
+            : "訂單列表"}
+        </Text>
+      </Div>
       {isLoading && <LoadingPage />}
       <FilterButton setPage={setPage} />
       {!orders || orders.length === 0 ? (
