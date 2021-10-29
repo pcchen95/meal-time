@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
 import { Div, Text, Input, Textarea, Button } from "atomize";
@@ -52,11 +52,18 @@ const BookingProducts = styled.div`
   `}
 `;
 
-const BookingBoard = ({ vendorById, isShow, handleIsShow, handleSubmit }) => {
+const BookingBoard = ({
+  vendorById,
+  isShow,
+  handleIsShow,
+  handleSubmit,
+  pickupTime,
+  setPickupTime,
+  remarks,
+  setRemarks,
+}) => {
   const vendorId = useSelector(selectVendorId);
   const orderProducts = useSelector(selectOrderProducts);
-  const [pickupTime, setPickupTime] = useState("");
-  const [remarks, setRemarks] = useState("");
 
   return (
     <Booking $isShow={isShow}>
@@ -130,7 +137,14 @@ const BookingBoard = ({ vendorById, isShow, handleIsShow, handleSubmit }) => {
                     hoverBorderColor="warning800"
                     m={{ r: "0.5rem", t: "1rem" }}
                     onClick={() =>
-                      handleSubmit(orderProducts, vendorId, pickupTime, remarks)
+                      handleSubmit(
+                        orderProducts,
+                        vendorId,
+                        pickupTime,
+                        remarks,
+                        setPickupTime,
+                        setRemarks
+                      )
                     }
                   >
                     確定
@@ -168,6 +182,8 @@ BookingBoard.propTypes = {
   handleSubmit: PropTypes.func,
   pickupTime: PropTypes.string,
   remarks: PropTypes.string,
+  setPickupTime: PropTypes.func,
+  setRemarks: PropTypes.func,
 };
 
 export default BookingBoard;
