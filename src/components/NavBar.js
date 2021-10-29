@@ -117,6 +117,23 @@ const NotiButton = () => {
   );
 };
 
+const MapButton = () => {
+  const history = useHistory();
+
+  return (
+    <Button
+      h="2.5rem"
+      w="2.5rem"
+      bg="white"
+      hoverBg="warning400"
+      rounded="circle"
+      onClick={() => history.push("/map")}
+    >
+      <Icon name="Store" size="20px" color="black700" />
+    </Button>
+  );
+};
+
 const SizeSideDrawer = ({ isOpen, onClose }) => {
   const history = useHistory();
 
@@ -270,6 +287,7 @@ const NavBar = () => {
       <Div d="flex" justify={{ xs: "center" }} m={{ t: { xs: "1rem" } }}>
         <LikeButton></LikeButton>
         <NotiButton></NotiButton>
+        <MapButton></MapButton>
         <Drawer />
         <UserButton></UserButton>
       </Div>
