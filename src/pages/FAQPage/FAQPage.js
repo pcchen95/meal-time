@@ -77,7 +77,7 @@ const FAQPage = () => {
   }, [categories]);
 
   useEffect(() => {
-    dispatch(getFaqs({ categoryId, order: "ASC" }));
+    if (categoryId) dispatch(getFaqs({ categoryId, order: "ASC" }));
   }, [categoryId]);
   return (
     <Div

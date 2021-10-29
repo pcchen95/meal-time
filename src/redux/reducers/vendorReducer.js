@@ -9,6 +9,8 @@ import {
   getVendorCategories as getVendorCategoriesApi,
   getDistance as getDistanceApi,
 } from "../../WebAPI/vendorAPI";
+import { getMe as getMeApi } from "../../WebAPI/userAPI";
+import { setUser } from "./userReducer";
 import { setAuthToken } from "../../utils";
 import {
   setErrorMessage,
@@ -114,7 +116,16 @@ export const register =
           return;
         }
         dispatch(setVendor(res.data));
-        return res.data;
+        return getMeApi().then((res) => {
+          if (!res.ok) {
+            setAuthToken("");
+            dispatch(setErrorMessage(res.message));
+            dispatch(setShowWarningNotification(true));
+            return;
+          }
+          dispatch(setUser(res.data));
+          return res.data;
+        });
       });
     });
   };
@@ -224,6 +235,10 @@ export const getAllVendors =
       dispatch(setVendors(res.data.rows));
     });
   };
+
+export const cleanAllVendors = () => (dispatch) => {
+  dispatch(setVendors(null));
+};
 
 export const getVendorById = (id) => (dispatch) => {
   dispatch(setIsLoading(true));
