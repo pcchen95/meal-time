@@ -9,7 +9,7 @@ const OrderDetails = ({
   isDisabled,
 }) => {
   return (
-    <Div d="flex" pos="absolute" bottom="1rem" right="2rem">
+    <Div d="flex" m={{ t: "2rem" }} justify="center">
       {order.order.isCompleted ||
       order.order.isCanceledByClient ||
       order.order.isCanceledByVendor ? (
@@ -19,7 +19,7 @@ const OrderDetails = ({
           textSize="body"
           border="1px solid"
           borderColor="info700"
-          m={{ r: "0.5rem" }}
+          m={{ t: "2rem" }}
           disabled={true}
         >
           訂單已完成/取消
@@ -37,7 +37,6 @@ const OrderDetails = ({
             border="1px solid"
             borderColor="info700"
             hoverBorderColor="info800"
-            m={{ r: "0.5rem" }}
             onClick={handleCompleteClick}
             disabled={isDisabled}
           >
@@ -54,7 +53,7 @@ const OrderDetails = ({
             border="1px solid"
             borderColor="info700"
             hoverBorderColor="danger800"
-            m={{ r: "0.5rem" }}
+            m={{ l: "0.5rem" }}
             onClick={handleCancelClick}
             disabled={isDisabled}
           >

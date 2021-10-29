@@ -5,15 +5,16 @@ import { Div, Text } from "atomize";
 const OrderDetails = ({ order }) => {
   return (
     <Div
-      m={{ l: { xs: "1rem", xl: "6rem" }, t: "1rem" }}
+      m={{ x: "auto", y: "1rem" }}
       p={{ x: "2rem", y: "2rem" }}
       border="1px solid"
       borderColor="gray400"
       rounded="lg"
-      w="50rem"
+      maxW="50rem"
       shadow="3"
       minH="20rem"
       bg="warning200"
+      justify="center"
     >
       <Text bg="gray200" w="8rem" m={{ t: "1rem" }} textTransform="uppercase">
         {order.order.orderNumber}
