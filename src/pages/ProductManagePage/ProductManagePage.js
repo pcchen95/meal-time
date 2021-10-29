@@ -1,10 +1,11 @@
 import React from "react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
 import { getVendor } from "../../redux/reducers/vendorReducer";
 import {
   getMyVendorProducts,
+  cleanMyVendorProducts,
   getMyProductCategories,
   deleteProduct,
 } from "../../redux/reducers/productReducer";
@@ -20,21 +21,24 @@ export default function ProductManagePage() {
   const [categoryId, setCategoryId] = useState(0);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(null);
-  const [availableFilter, setAvailableFilter] = useState("all");
+  const [filter, setFilter] = useState("all");
   const [isDisabled, setIsDisabled] = useState(false);
   const [pageStart, setPageStart] = useState(null);
   const [pageEnd, setPageEnd] = useState(null);
   const [showConfirm, setShowConfirm] = useState(false);
   const [deletedId, setDeletedId] = useState(null);
+  const [sort, setSort] = useState("id");
+  const [order, setOrder] = useState("DESC");
+  const currentTime = useRef(() => {
+    const now = new Date();
+    now.setHours(0);
+    now.setMinutes(0);
+    now.setSeconds(0);
+    return now.getTime();
+  });
   const user = useSelector((store) => store.users.user);
   const vendor = useSelector((store) => store.vendors.vendor);
   const products = useSelector((store) => store.products.myVendorProducts);
-  const expiredProducts = useSelector(
-    (store) => store.products.myVendorProductsExpired
-  );
-  const soldOutProducts = useSelector(
-    (store) => store.products.myVendorProductsSoldOut
-  );
   const count = useSelector((store) => store.products.count);
   const isLoadingProduct = useSelector((store) => store.products.isLoading);
   const history = useHistory();
@@ -42,18 +46,28 @@ export default function ProductManagePage() {
 
   const getProducts = (id) => {
     let queryParameters = {
+      sort,
+      order,
       limit,
       page,
-      isAvailable: availableFilter,
+      filter,
     };
-    if (availableFilter == "true" || availableFilter == "false") {
-      queryParameters.hideExpiry = true;
-      queryParameters.hideSoldOut = true;
-    }
     if (categoryId !== 0) {
       queryParameters.category = categoryId;
     }
     dispatch(getMyVendorProducts(id, queryParameters));
+  };
+
+  const handleSortById = () => {
+    setSort("id");
+    setOrder("DESC");
+    setPage(1);
+  };
+
+  const handleSortByDate = () => {
+    setSort("expiryDate");
+    setOrder("ASC");
+    setPage(1);
   };
 
   const handleConfirmDelete = (id) => {
@@ -74,6 +88,12 @@ export default function ProductManagePage() {
     setShowConfirm(false);
     setDeletedId(null);
   };
+
+  useEffect(() => {
+    return () => {
+      dispatch(cleanMyVendorProducts());
+    };
+  }, []);
 
   useEffect(() => {
     if (user && user === "non-login") return history.push("/");
@@ -97,7 +117,7 @@ export default function ProductManagePage() {
     if (vendor) {
       getProducts(vendor.id);
     }
-  }, [categoryId, page, availableFilter]);
+  }, [categoryId, page, filter, sort, order]);
 
   useEffect(() => {
     if (count) setTotalPages(Math.ceil(count / limit));
@@ -110,7 +130,7 @@ export default function ProductManagePage() {
 
   useEffect(() => {
     setPage(1);
-  }, [categoryId, availableFilter]);
+  }, [categoryId, filter]);
 
   return (
     <>
@@ -130,38 +150,30 @@ export default function ProductManagePage() {
           >
             商品管理
           </Text>
-          <Div
-            d="flex"
-            flexDir="row"
-            w="100%"
-            justify="space-between"
-            align="flex-end"
-          >
-            <ControlArea
-              categoryId={categoryId}
-              setCategoryId={setCategoryId}
-              availableFilter={availableFilter}
-              setAvailableFilter={setAvailableFilter}
-              isDisabled={isDisabled}
-            />
-          </Div>
+
+          <ControlArea
+            categoryId={categoryId}
+            setCategoryId={setCategoryId}
+            filter={filter}
+            setFilter={setFilter}
+            isDisabled={isDisabled}
+            handleSortById={handleSortById}
+            handleSortByDate={handleSortByDate}
+          />
+
           <Div textSize="caption" textColor="gray600" m={{ t: "1rem" }}>
             共 {count} 筆搜尋結果，顯示第 {pageStart} ～ {pageEnd} 筆結果
           </Div>
           <Div minH="calc(100vh - 467px)">
             {products &&
-              expiredProducts &&
-              soldOutProducts &&
               products.map((product) => (
                 <ProductList
                   key={product.id}
                   product={product}
+                  filter={filter}
                   handleConfirmDelete={handleConfirmDelete}
                   isDisabled={isDisabled}
-                  expiredProducts={expiredProducts}
-                  soldOutProducts={soldOutProducts}
-                  setDeletedId={setDeletedId}
-                  setShowConfirm={setShowConfirm}
+                  currentTime={currentTime.current()}
                 />
               ))}
           </Div>
