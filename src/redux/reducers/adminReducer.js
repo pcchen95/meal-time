@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import {
-  getMe as getMeApi,
+  getMe as getMeAPI,
   getProfileById as getProfileByIdAPI,
   updateProfileById as updateProfileByIdAPI,
   getAllProfiles as getAllProfilesAPI,
@@ -27,8 +27,7 @@ import {
   deleteOrder as deleteOrderAPI,
 } from "../../WebAPI/orderAPI";
 import {
-  getMessageToAdmin as getMessageToAdminAPI,
-  sendMessageToAdmin as sendMessageToAdminAPI,
+  sendMessageToUser as sendMessageToUserAPI,
   getAllAdminMessages as getAllAdminMessagesAPI,
   getAdminMessageById as getAdminMessageByIdAPI,
   getAllReportMessages as getAllReportMessagesAPI,
@@ -94,7 +93,7 @@ export const {
 } = adminReducer.actions;
 
 export const getMe = () => (dispatch) => {
-  return getMeApi().then((res) => {
+  return getMeAPI().then((res) => {
     if (!res.ok) {
       if (res.message === "non-login") {
         dispatch(setUser("non-login"));
@@ -151,7 +150,7 @@ export const updateProfileById =
         return;
       }
       dispatch(setShowSuccessNotification(true));
-      getMeApi().then((res) => {
+      getMeAPI().then((res) => {
         if (!res.ok) {
           dispatch(setErrorMessage(res.message));
           dispatch(setShowWarningNotification(true));
@@ -175,7 +174,7 @@ export const updateUserAuth =
         return;
       }
       dispatch(setShowSuccessNotification(true));
-      getMeApi().then((res) => {
+      getMeAPI().then((res) => {
         if (!res.ok) {
           dispatch(setErrorMessage(res.message));
           dispatch(setShowWarningNotification(true));
@@ -251,7 +250,7 @@ export const updateVendorProfileById =
         return;
       }
       dispatch(setShowSuccessNotification(true));
-      getMeApi().then((res) => {
+      getMeAPI().then((res) => {
         if (!res.ok) {
           dispatch(setErrorMessage(res.message));
           dispatch(setShowWarningNotification(true));
@@ -275,7 +274,7 @@ export const updateVendorAuth =
         return;
       }
       dispatch(setShowSuccessNotification(true));
-      getMeApi().then((res) => {
+      getMeAPI().then((res) => {
         if (!res.ok) {
           dispatch(setErrorMessage(res.message));
           dispatch(setShowWarningNotification(true));
@@ -312,7 +311,7 @@ export const addVendorCategory =
         return;
       }
       dispatch(setShowSuccessNotification(true));
-      getMeApi().then((res) => {
+      getMeAPI().then((res) => {
         if (!res.ok) {
           dispatch(setErrorMessage(res.message));
           dispatch(setShowWarningNotification(true));
@@ -337,7 +336,7 @@ export const updateVendorCategory =
         return;
       }
       dispatch(setShowSuccessNotification(true));
-      getMeApi().then((res) => {
+      getMeAPI().then((res) => {
         if (!res.ok) {
           dispatch(setErrorMessage(res.message));
           dispatch(setShowWarningNotification(true));
@@ -361,7 +360,7 @@ export const deleteVendorCategory =
         return;
       }
       dispatch(setShowSuccessNotification(true));
-      getMeApi().then((res) => {
+      getMeAPI().then((res) => {
         if (!res.ok) {
           dispatch(setErrorMessage(res.message));
           dispatch(setShowWarningNotification(true));
@@ -396,7 +395,7 @@ export const addProductCategory =
         return;
       }
       dispatch(setShowSuccessNotification(true));
-      getMeApi().then((res) => {
+      getMeAPI().then((res) => {
         if (!res.ok) {
           dispatch(setErrorMessage(res.message));
           dispatch(setShowWarningNotification(true));
@@ -421,7 +420,7 @@ export const updateProductCategory =
         return;
       }
       dispatch(setShowSuccessNotification(true));
-      getMeApi().then((res) => {
+      getMeAPI().then((res) => {
         if (!res.ok) {
           dispatch(setErrorMessage(res.message));
           dispatch(setShowWarningNotification(true));
@@ -445,7 +444,7 @@ export const deleteProductCategory =
         return;
       }
       dispatch(setShowSuccessNotification(true));
-      getMeApi().then((res) => {
+      getMeAPI().then((res) => {
         if (!res.ok) {
           dispatch(setErrorMessage(res.message));
           dispatch(setShowWarningNotification(true));
@@ -480,7 +479,7 @@ export const deleteOrder =
         return;
       }
       dispatch(setShowSuccessNotification(true));
-      getMeApi().then((res) => {
+      getMeAPI().then((res) => {
         if (!res.ok) {
           dispatch(setErrorMessage(res.message));
           dispatch(setShowWarningNotification(true));
@@ -492,13 +491,122 @@ export const deleteOrder =
     });
   };
 
-export const selectAllUsers = (state) => state.users.users;
-export const selectUser = (state) => state.users.user;
-export const selectAllMessages = (state) => state.messages.messages;
-export const selectMessage = (state) => state.messages.message;
-export const selectAllVendors = (state) => state.vendors.vendors;
-export const selectVendor = (state) => state.vendors.vendor;
-export const selectAllOrders = (state) => state.orders.orders;
-export const selectAllProducts = (state) => state.products.products;
+export const sendMessageToUser =
+  ({ id, content }) =>
+  (dispatch) => {
+    return sendMessageToUserAPI({
+      id,
+      content,
+    }).then((res) => {
+      if (!res.ok) {
+        dispatch(setErrorMessage(res.message));
+        dispatch(setShowWarningNotification(true));
+        return;
+      }
+      dispatch(setShowSuccessNotification(true));
+      getMeAPI().then((res) => {
+        if (!res.ok) {
+          dispatch(setErrorMessage(res.message));
+          dispatch(setShowWarningNotification(true));
+          return;
+        }
+        dispatch(setMessage(res.data));
+        return res;
+      });
+    });
+  };
+
+export const getAllAdminMessages =
+  ({ page, limit, sort, order }) =>
+  (dispatch) => {
+    return getAllAdminMessagesAPI({ page, limit, sort, order }).then((res) => {
+      if (!res.ok) {
+        dispatch(setErrorMessage(res.message));
+        dispatch(setShowWarningNotification(true));
+        return;
+      }
+      dispatch(setShowSuccessNotification(true));
+      getMeAPI().then((res) => {
+        if (!res.ok) {
+          dispatch(setErrorMessage(res.message));
+          dispatch(setShowWarningNotification(true));
+          return;
+        }
+        dispatch(setMessages(res.data));
+        return res;
+      });
+    });
+  };
+
+export const getAdminMessageById = (id) => (dispatch) => {
+  return getAdminMessageByIdAPI(id).then((res) => {
+    if (!res.ok) {
+      dispatch(setErrorMessage(res.message));
+      dispatch(setShowWarningNotification(true));
+      return;
+    }
+    dispatch(setShowSuccessNotification(true));
+    getMeAPI().then((res) => {
+      if (!res.ok) {
+        dispatch(setErrorMessage(res.message));
+        dispatch(setShowWarningNotification(true));
+        return;
+      }
+      dispatch(setMessage(res.data));
+      return res;
+    });
+  });
+};
+
+export const getAllReportMessages =
+  ({ page, limit, sort, order }) =>
+  (dispatch) => {
+    return getAllReportMessagesAPI({ page, limit, sort, order }).then((res) => {
+      if (!res.ok) {
+        dispatch(setErrorMessage(res.message));
+        dispatch(setShowWarningNotification(true));
+        return;
+      }
+      dispatch(setShowSuccessNotification(true));
+      getMeAPI().then((res) => {
+        if (!res.ok) {
+          dispatch(setErrorMessage(res.message));
+          dispatch(setShowWarningNotification(true));
+          return;
+        }
+        dispatch(setMessages(res.data));
+        return res;
+      });
+    });
+  };
+
+export const getReportMessageById = (id) => (dispatch) => {
+  return getReportMessageByIdAPI(id).then((res) => {
+    if (!res.ok) {
+      dispatch(setErrorMessage(res.message));
+      dispatch(setShowWarningNotification(true));
+      return;
+    }
+    dispatch(setShowSuccessNotification(true));
+    getMeAPI().then((res) => {
+      if (!res.ok) {
+        dispatch(setErrorMessage(res.message));
+        dispatch(setShowWarningNotification(true));
+        return;
+      }
+      dispatch(setMessage(res.data));
+      return res;
+    });
+  });
+};
+
+export const selectAllUsers = (state) => state.admin.users;
+export const selectUser = (state) => state.admin.user;
+export const selectAllMessages = (state) => state.admin.messages;
+export const selectMessage = (state) => state.admin.message;
+export const selectAllVendors = (state) => state.admin.vendors;
+export const selectVendor = (state) => state.admin.vendor;
+export const selectAllOrders = (state) => state.admin.orders;
+export const selectAllProducts = (state) => state.admin.products;
 
 export default adminReducer.reducer;

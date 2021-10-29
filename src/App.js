@@ -1,6 +1,8 @@
 import "./App.css";
 import React from "react";
-import { HashRouter as Router, Routes, Route } from "react-router-dom";
+import { HashRouter as Router, Switch, Route } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { getMe } from "./redux/reducers/userReducer";
 import HomePage from "./pages/HomePage";
 import ProductsPage from "./pages/ProductsPage";
 import ProductsSearchedPage from "./pages/ProductsSearchedPage";
@@ -28,6 +30,8 @@ import PasswordEdit from "./pages/PasswordEdit";
 import RulesPage from "./pages/RulesPage";
 import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
+import AdminMessagePage from "./pages/AdminMessagePage";
+import AdminFAQPage from "./pages/AdminFAQPage";
 
 function App() {
   const dispatch = useDispatch();
@@ -44,7 +48,7 @@ function App() {
     <div>
       <Router>
         <Navbar />
-        <Routes>
+        <Switch>
           <Route exact path="/">
             <HomePage />
           </Route>
@@ -99,6 +103,12 @@ function App() {
           <Route path="/admin_store_type">
             <AdminStoreTypePage />
           </Route>
+          <Route path="/admin_message">
+            <AdminMessagePage />
+          </Route>
+          <Route path="/admin_FAQ">
+            <AdminFAQPage />
+          </Route>
           <Route path="/entrance">
             <Entrance />
           </Route>
@@ -120,11 +130,10 @@ function App() {
           <Route path="/signup">
             <SignUp />
           </Route>
-        </Routes>
+        </Switch>
         <Footer />
       </Router>
     </div>
-
   );
 }
 

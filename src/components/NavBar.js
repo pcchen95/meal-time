@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Div, Input, Icon, Image, Button } from "atomize";
+import { Div, Input, Icon, Image, Button, SideDrawer, Text } from "atomize";
 import { Link, useHistory } from "react-router-dom";
 import PropTypes from "prop-types";
 import { getProductCategories } from "../redux/reducers/productReducer";
@@ -83,7 +83,7 @@ CategoryButton.propTypes = {
 };
 
 const LikeButton = () => {
-  const navigate = useNavigate();
+  const history = useHistory();
 
   return (
     <Button
@@ -92,7 +92,7 @@ const LikeButton = () => {
       bg="white"
       hoverBg="warning400"
       rounded="circle"
-      onClick={() => navigate("/cart")}
+      onClick={() => history.push("/cart")}
     >
       <Icon name="HeartSolid" size="20px" color="danger700" />
     </Button>
@@ -114,7 +114,7 @@ const NotiButton = () => {
 };
 
 const SizeSideDrawer = ({ isOpen, onClose }) => {
-  const navigate = useNavigate();
+  const history = useHistory();
 
   return (
     <SideDrawer
@@ -129,7 +129,7 @@ const SizeSideDrawer = ({ isOpen, onClose }) => {
           textColor="black700"
           hoverTextColor="info700"
           cursor="pointer"
-          onClick={() => navigate("/member_edit")}
+          onClick={() => history.push("/member_edit")}
         >
           編輯個人資料
         </Text>
@@ -148,7 +148,7 @@ const SizeSideDrawer = ({ isOpen, onClose }) => {
           textColor="black700"
           hoverTextColor="info700"
           cursor="pointer"
-          onClick={() => navigate("/update_store")}
+          onClick={() => history.push("/update_store")}
         >
           管理商家頁面
         </Text>{" "}
@@ -167,7 +167,7 @@ const SizeSideDrawer = ({ isOpen, onClose }) => {
           textColor="black700"
           hoverTextColor="info700"
           cursor="pointer"
-          onClick={() => navigate("/orders")}
+          onClick={() => history.push("/orders")}
         >
           訂單詳情
         </Text>
@@ -216,7 +216,7 @@ SizeSideDrawer.propTypes = {
 };
 
 const UserButton = () => {
-  const navigate = useNavigate();
+  const history = useHistory();
 
   return (
     <Button
@@ -226,7 +226,7 @@ const UserButton = () => {
       hoverBg="warning600"
       rounded="circle"
       m={{ l: "1rem" }}
-      onClick={() => navigate("/entrance")}
+      onClick={() => history.push("/entrance")}
     >
       <Icon name="UserCircle" size="30px" color="black900" />
     </Button>
