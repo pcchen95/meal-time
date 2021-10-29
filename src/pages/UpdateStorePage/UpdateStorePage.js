@@ -16,6 +16,8 @@ import {
 } from "../../redux/reducers/notificationReducer";
 import { Div, Text } from "atomize";
 import { remindText, inputRule } from "../../constants/inputText";
+import googleMapToken from "../../constants/googleMapToken";
+import { useJsApiLoader } from "@react-google-maps/api";
 import SuccessNotification from "../../Components/Notifications/SuccessNotification";
 import WarningNotification from "../../Components/Notifications/WarningNotification";
 import ButtonGroup from "../../Components/VendorSystem/ButtonGroup";
@@ -83,7 +85,7 @@ export default function UpdateStorePage() {
   const [isEdited, setIsEdited] = useState(false);
   const [isDeleteAvatar, setIsDeleteAvatar] = useState(false);
   const [isDeleteBanner, setIsDeleteBanner] = useState(false);
-  const [isDisabled, setIsDisabled] = useState(true);
+  const [isDisabled, setIsDisabled] = useState(false);
   const avatarInput = createRef();
   const bannerInput = createRef();
   const dispatch = useDispatch();
@@ -91,6 +93,11 @@ export default function UpdateStorePage() {
   const vendor = useSelector((store) => store.vendors.vendor);
   const isLoading = useSelector((store) => store.vendors.isLoading);
   const history = useHistory();
+
+  const { isLoaded } = useJsApiLoader({
+    id: "google-map-script",
+    googleMapsApiKey: googleMapToken,
+  });
 
   const handleSubmit = () => {
     if (!vendorName || !phone || !address || !openingHour) {
@@ -116,7 +123,7 @@ export default function UpdateStorePage() {
       (!bannerInfo || bannerInfo.size < 1048576)
     ) {
       dispatch(setErrorMessage(null));
-      if (!vendor) {
+      if (vendor === "not-vendor") {
         return dispatch(
           register({
             avatar: avatarInfo,
@@ -212,6 +219,19 @@ export default function UpdateStorePage() {
     return () => {
       setAvatar(null);
       setBanner(null);
+      setVendorName("");
+      setAddress("");
+      setLatLng(null);
+      setPhone("");
+      setOpeningHour(() => {
+        const time = {};
+        daysENG.forEach(
+          (day) => (time[day] = { isOpen: 0, start: "", end: "" })
+        );
+        return time;
+      });
+      setDescription("");
+      setCategoryId(1);
       dispatch(setErrorMessage(null));
     };
   }, []);
@@ -236,6 +256,7 @@ export default function UpdateStorePage() {
         setIsDisabled(false);
       }
     }
+    if (vendor && vendor === "not-vendor" && user) setIsEdited(true);
   }, [vendor, user]);
 
   useEffect(() => {
@@ -265,7 +286,7 @@ export default function UpdateStorePage() {
   return (
     <>
       {isLoading && <LoadingPage />}
-      {vendor && user && (
+      {vendor && user && isLoaded && (
         <Div w="80%" m={{ y: "4rem", x: "auto" }}>
           {(vendor.isSuspended || user.role === "suspended") && (
             <Div tag="h4" textColor="danger800" w="100%" textAlign="center">
@@ -423,7 +444,7 @@ export default function UpdateStorePage() {
               />
               <ButtonGroup
                 isInputDisabled={!isEdited}
-                isStoreOpen={vendor.isOpen}
+                isStoreOpen={vendor !== "not-vendor" ? vendor.isOpen : true}
                 isSuspended={vendor.isSuspended || user.role === "suspended"}
                 handleSubmit={handleSubmit}
                 handleBack={() => history.goBack()}

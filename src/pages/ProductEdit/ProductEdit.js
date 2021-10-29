@@ -136,14 +136,9 @@ export default function ProductEdit() {
       dispatch(setErrorMessage(null));
     }
   };
+
   useEffect(() => {
     dispatch(cleanProduct());
-    if (!user) {
-      return history.push("/");
-    }
-    if (user.role === "member" || user.role === "suspended") {
-      return history.push("/");
-    }
     dispatch(getVendor());
     dispatch(getProductCategories());
     window.scrollTo({
@@ -154,10 +149,21 @@ export default function ProductEdit() {
     return () => {
       dispatch(setErrorMessage(null));
     };
-  }, [dispatch]);
+  }, []);
 
   useEffect(() => {
-    if (product === 0) {
+    if (user && user === "non-login") return history.push("/");
+    if (
+      user &&
+      user !== "non-login" &&
+      (user.role === "member" || user.role === "suspended")
+    ) {
+      return history.push("/");
+    }
+  }, [user]);
+
+  useEffect(() => {
+    if (id !== "new" && product === 0) {
       return history.push("/");
     }
     if (product && vendor) {
@@ -175,6 +181,7 @@ export default function ProductEdit() {
       setIsAvailable(product.isAvailable);
       setImg(product.pictureUrl);
     }
+    return () => dispatch(cleanProduct);
   }, [vendor, product]);
 
   useEffect(() => {
