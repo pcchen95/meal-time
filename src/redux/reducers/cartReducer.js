@@ -83,7 +83,7 @@ export const getMe = () => (dispatch) => {
 };
 
 export const newOrder =
-  ({ orderProducts, vendorId, pickupTime, remarks }) =>
+  ({ orderProducts, vendorId, pickupTime, remarks, userId, cartData }) =>
   (dispatch) => {
     postOrder({
       orderProducts,
@@ -96,6 +96,16 @@ export const newOrder =
         dispatch(setShowWarningNotification(true));
         return;
       }
+      let newData = [].concat(
+        JSON.parse(cartData).filter((obj1) =>
+          orderProducts.every((obj2) => obj1.id !== obj2.id)
+        ),
+        orderProducts.filter((obj2) =>
+          JSON.parse(cartData).every((obj1) => obj2.id !== obj1.id)
+        )
+      );
+      localStorage.setItem(`cartId${userId}`, JSON.stringify(newData));
+      dispatch(setCartData(JSON.stringify(newData)));
       dispatch(setShowSuccessNotification(true, "訂單已成立"));
       return res;
     });
