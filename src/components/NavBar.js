@@ -100,6 +100,8 @@ const LikeButton = () => {
 };
 
 const NotiButton = () => {
+  const history = useHistory();
+
   return (
     <Button
       h="2.5rem"
@@ -107,6 +109,7 @@ const NotiButton = () => {
       bg="white"
       hoverBg="warning400"
       rounded="circle"
+      onClick={() => history.push("/entrance")}
     >
       <Icon name="Notification" size="20px" color="black700" />
     </Button>
