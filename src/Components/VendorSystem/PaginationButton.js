@@ -12,7 +12,7 @@ const SingleButton = ({ iconName, handleOnClick }) => {
         hoverTextColor="info900"
         bg="white"
         hoverBg="info200"
-        m={{ r: "0.5rem" }}
+        m={{ x: { xs: "0", sm: "0.5rem" } }}
         onClick={handleOnClick}
       >
         <Icon name={iconName} size="20px" color="info700" />
@@ -45,7 +45,12 @@ const PaginationButton = ({ setPage, page, totalPages }) => {
   return (
     <>
       <Div d="flex" w="100%" justify="center" align="center" m={{ t: "3rem" }}>
-        <Div d="flex" w={{ xs: "130px", sm: "145px" }}>
+        <Div
+          d="flex"
+          w={{ xs: "60px", sm: "145px" }}
+          m={{ r: "1rem" }}
+          justify="flex-start"
+        >
           {page !== 1 && (
             <>
               <SingleButton
@@ -62,13 +67,18 @@ const PaginationButton = ({ setPage, page, totalPages }) => {
 
         <Div
           p={{ x: "1rem" }}
-          textSize="captain"
+          textSize={{ xs: "tiny", sm: "captain" }}
           textColor="info700"
           m={{ r: "0.5rem" }}
         >
           {page} / {totalPages} 頁
         </Div>
-        <Div d="flex" w={{ xs: "130px", sm: "145px" }}>
+        <Div
+          d="flex"
+          w={{ xs: "60px", sm: "145px" }}
+          justify="flex-end"
+          m={{ l: "1rem" }}
+        >
           {page !== totalPages && (
             <>
               <SingleButton
