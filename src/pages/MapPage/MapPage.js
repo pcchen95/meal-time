@@ -5,6 +5,7 @@ import { setCurrentPosition } from "../../redux/reducers/userReducer";
 import {
   getCategories,
   getAllVendors,
+  cleanAllVendors,
   getVendorOfMap,
   getVendorOfSearchedProducts,
 } from "../../redux/reducers/vendorReducer";
@@ -128,6 +129,12 @@ export default function MapPage() {
       dispatch(getVendorOfSearchedProducts(array));
     }
   }, [searchedProducts]);
+
+  useEffect(() => {
+    return () => {
+      dispatch(cleanAllVendors());
+    };
+  }, []);
 
   return (
     <>

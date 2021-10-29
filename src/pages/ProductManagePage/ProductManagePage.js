@@ -5,6 +5,7 @@ import { useHistory } from "react-router-dom";
 import { getVendor } from "../../redux/reducers/vendorReducer";
 import {
   getMyVendorProducts,
+  cleanMyVendorProducts,
   getMyProductCategories,
   deleteProduct,
 } from "../../redux/reducers/productReducer";
@@ -87,6 +88,12 @@ export default function ProductManagePage() {
     setShowConfirm(false);
     setDeletedId(null);
   };
+
+  useEffect(() => {
+    return () => {
+      dispatch(cleanMyVendorProducts());
+    };
+  }, []);
 
   useEffect(() => {
     if (user && user === "non-login") return history.push("/");
