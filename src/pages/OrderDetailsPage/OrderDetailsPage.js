@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
+import { useParams, useHistory } from "react-router-dom";
 import { Div, Text } from "atomize";
 import OrderItems from "../../Components/OrderSystem/OrderItems";
 import OrderDetails from "../../Components/OrderSystem/OrderDetails";
@@ -25,13 +25,18 @@ export default function OrderDetailsPage() {
   const order = useSelector(selectSingleOrder);
   const isLoading = useSelector(selectIsLoading);
   const isDisabled = useSelector(selectIsDisabled);
+  const user = useSelector((store) => store.users.user);
   const dispatch = useDispatch();
+  const history = useHistory();
 
   useEffect(() => {
+    if (user === "non-login") {
+      return history.push("/");
+    }
     window.scroll(0, 0);
     dispatch(getOrder(id));
     return () => dispatch(cleanOrderDetails());
-  }, [id, isDisabled]);
+  }, [user, id, isDisabled]);
 
   const handleCompleteClick = () => {
     dispatch(completeOrder(id));
