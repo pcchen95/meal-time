@@ -93,7 +93,7 @@ const EachDay = ({
         required={isOpen}
         cursor={isStoreDisabled && "not-allowed"}
         handleOnChange={(e) => {
-          newValues[dayENG].start = e.target.value;
+          newValues[dayENG].end = e.target.value;
           setValues(newValues);
         }}
       />
