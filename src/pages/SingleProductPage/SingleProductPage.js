@@ -373,7 +373,7 @@ export default function SingleProductPage() {
           <Text textSize="title" textWeight="600" m={{ t: "0.5rem" }}>
             商品介紹
           </Text>
-          <Text textSize="subheader" style={{ "white-space": "pre-line" }}>
+          <Text textSize="subheader" style={{ whiteSpace: "pre-line" }}>
             {product && product.description}
           </Text>
         </Div>
