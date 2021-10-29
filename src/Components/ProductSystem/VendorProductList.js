@@ -25,7 +25,7 @@ Picture.propTypes = {
 const NameAndPrice = ({ name, price, category }) => {
   return (
     <Div
-      w={{ xs: "calc(100% - 7rem)", md: "15rem" }}
+      w={{ xs: "calc(100% - 7rem)", md: "10rem", lg: "15rem" }}
       m={{ l: "2rem" }}
       textSize="14px"
     >

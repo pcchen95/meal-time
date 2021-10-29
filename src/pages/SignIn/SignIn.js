@@ -75,8 +75,17 @@ const SignInInfo = () => {
 };
 
 const SignIn = () => {
+  const history = useHistory();
+  const user = useSelector((store) => store.users.user);
+
+  useEffect(() => {
+    if (user && user.id) {
+      return history.push("/");
+    }
+  }, []);
+
   return (
-    <Div>
+    <Div minH="calc(100vh - 330px)">
       <Row w={{ xs: "100%", md: "70%" }} h="30rem" m="3rem auto" p="1rem">
         <Col size={{ xs: "8", md: "6" }} d="flex" align="center" p="0">
           <SignInInfo></SignInInfo>
