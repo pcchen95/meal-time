@@ -2,13 +2,16 @@ import BASE_URL from "../constants/apiurl";
 import { getAuthToken } from "../utils";
 
 const getQueryString = (queryParameters) => {
-  const { page, sort, order, limit, category, filter } = queryParameters || {};
+  const { page, sort, order, limit, category, filter, notSupplied } =
+    queryParameters || {};
   let queryString = "";
   if (page) queryString += `&page=${page}`;
   if (sort) queryString += `&sort=${sort}`;
   if (order) queryString += `&order=${order}`;
   if (limit) queryString += `&limit=${limit}`;
   if (category) queryString += `&category=${category}`;
+  if (notSupplied) queryString += `&notSupplied=true`;
+
   if (filter) queryString += `&filter=${filter}`;
   return queryString;
 };
