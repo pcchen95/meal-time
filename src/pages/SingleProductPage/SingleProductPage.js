@@ -93,7 +93,9 @@ export default function SingleProductPage() {
   let { id } = useParams();
   const dispatch = useDispatch();
   const history = useHistory();
-  const isLoading = useSelector((state) => state.products.isLoading);
+  const isLoading = useSelector(
+    (state) => state.products.singleProductIsLoading
+  );
   const user = useSelector((state) => state.users.user);
   const product = useSelector((state) => state.products.product);
   const vendorProducts = useSelector((state) => state.products.vendorProducts);
@@ -115,6 +117,7 @@ export default function SingleProductPage() {
 
   useEffect(() => {
     if (user) getProductInCart();
+    setProductCount("");
     dispatch(getProduct(id));
     return () => {
       dispatch(cleanVendorProducts());
@@ -191,6 +194,11 @@ export default function SingleProductPage() {
   };
 
   const addToCart = (value) => {
+    if (user === "non-login") {
+      setShowWarning(true);
+      setProductCount("");
+      return;
+    }
     const newProductId = product && product.id;
     let cart = localStorage.getItem(`cartId${user.id}`) || null;
     let newCartArray = [];
@@ -628,7 +636,10 @@ export default function SingleProductPage() {
       <SyncWarningNotification
         showWarning={showWarning}
         setShowWarning={setShowWarning}
-        warningMessage={(user === null && "請登入") || "購物車內數量達上限"}
+        warningMessage={
+          ((user === null || user === "non-login") && "請登入") ||
+          "購物車內數量達上限"
+        }
       />
     </Div>
   );
