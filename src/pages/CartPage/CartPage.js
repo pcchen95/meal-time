@@ -202,7 +202,6 @@ export default function CartPage() {
     let pickupDateAndTime = new Date(pickupDate);
     pickupDateAndTime.setHours(Number(pickupTime.slice(0, 2)));
     pickupDateAndTime.setMinutes(Number(pickupTime.slice(3, 5)));
-    console.log(pickupDateAndTime);
 
     dispatch(
       newOrder({
