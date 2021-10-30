@@ -13,7 +13,6 @@ import {
   setShowSuccessNotification,
   setShowWarningNotification,
 } from "./notificationReducer";
-
 const initialState = {
   user: null,
   users: null,
@@ -105,7 +104,6 @@ export const login = (username, password) => (dispatch) => {
 export const logout = () => (dispatch) => {
   dispatch(setUser("non-login"));
   setAuthToken("");
-  dispatch(setShowSuccessNotification(true, "已登出"));
 };
 
 export const getMe = () => (dispatch) => {
