@@ -44,7 +44,9 @@ export default function ProductEdit() {
   const history = useHistory();
   const user = useSelector((store) => store.users.user);
   const product = useSelector((store) => store.products.product);
-  const isLoading = useSelector((store) => store.products.isLoading);
+  const isLoading = useSelector(
+    (store) => store.products.singleProductIsLoading
+  );
   const vendor = useSelector((store) => store.vendors.vendor);
   const handleSubmit = () => {
     if (
