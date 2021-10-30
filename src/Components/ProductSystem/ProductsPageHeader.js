@@ -95,7 +95,10 @@ export default function ProductsPageHeader({
         >
           過期與完售商品
           <Switch
-            onClick={() => setNotSupplied(!notSupplied)}
+            onClick={() => {
+              setPage(1);
+              setNotSupplied(!notSupplied);
+            }}
             checked={notSupplied}
             m={{ l: "0.2rem" }}
             activeShadow="3"
