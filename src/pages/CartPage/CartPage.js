@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch, batch } from "react-redux";
+import { useHistory } from "react-router-dom";
 import { Div, Button, Text, Icon } from "atomize";
 import CartList from "../../Components/CartSystem/CartList";
 import BookingBoard from "../../Components/CartSystem/BookingBoard";
@@ -25,7 +26,6 @@ import SuccessNotification from "../../Components/Notifications/SuccessNotificat
 import WarningNotification from "../../Components/Notifications/WarningNotification";
 
 export default function CartPage() {
-  const dispatch = useDispatch();
   const [isChecked, setIsChecked] = useState(false);
   const [isShow, setIsShow] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -39,9 +39,15 @@ export default function CartPage() {
   const userId = useSelector(selectUserId);
   const cart = useSelector(selectCart);
   const vendorId = useSelector(selectVendorId);
+  const user = useSelector((store) => store.users.user);
   const vendorById = useSelector((store) => store.vendors.vendorById);
+  const dispatch = useDispatch();
+  const history = useHistory();
 
   useEffect(() => {
+    if (user === "non-login") {
+      return history.push("/");
+    }
     setIsLoading(true);
     batch(async () => {
       await dispatch(getMe());
@@ -54,7 +60,7 @@ export default function CartPage() {
     return () => {
       dispatch(setErrorMessage(null));
     };
-  }, [userId, cartData, dispatch]);
+  }, [user, userId, cartData, dispatch]);
 
   useEffect(() => {
     if (pickupDate) {
