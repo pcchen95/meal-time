@@ -1,70 +1,72 @@
-# Getting Started with Create React App
+# 限時取餐 MealTime
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+網站連結 : 
 
-## Available Scripts
+## 專案簡介
+限食取餐 meal time 是因剩食議題而誕生的食物交易贈送平台。現代社會帶給人們資源與便利，但同時也造成了許多食物的浪費。透過限食取餐 meal time，可以即時將過剩的食物放上平台，提供給需要的人，讓食物不再有浪費。
 
-In the project directory, you can run:
+這是**限時取餐**的前端原始碼，採用 React Hooks + Redux Toolkit 開發。
 
-### `yarn start`
+專案後端請參考：[後端原始碼](https://github.com/pcchen95/meal-time-backend)
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+* 用戶可使用功能：
+  * 商品系統：關鍵字搜尋、固定分類搜尋，可以瀏覽網站上所有刊登的食物，且能利用最新、低價、即期篩選搜尋結果之食物
+  * 購物車系統：查看欲購買的項目及內容，並且成立訂單
+  * 個人資料管理系統：編輯個人聯絡資訊
+  * 訂單系統：掌握所有訂單的最新狀態、可以完成或取消訂單
+  * 地圖系統：透過所在位置搜尋附近店家、搜尋食物
+* 賣家可使用功能：
+  * 可提供賣場圖片、營業時間、賣場介紹、聯絡方式、賣場分類，讓買家更了解、更容易搜尋到賣場
+  * 可於賣家後台刊登、編輯所有上架的食物
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+## 使用技術
+### 前端框架
+  * `React Hooks`
+  * `React Dom`
+### 第三方套件
+  * `Redux Toolkit`
+  * `React Router` 路徑
+  * `styled-components`
+  * `atomize` 網頁基本樣式
+    * `react-transition-group` 安裝
+    * `npm styletron-engine-atomic styletron-react` with React 
+  * `react-loading` 讀取畫面
+  * `react-geocode` 地址與經緯度之間的轉換
+### 第三方 API
+  * `@react-google-maps/api` 地圖顯示
 
-### `yarn test`
+## 安裝
+1. `npm install` 安裝本專案所需要的所有套件
+2. 註冊 Google Map API Token，在 src/constants 建立 googleMapToken.js 檔案，放入 API token，在使用 API 的地方引入參數
+3. `npm start` 執行專案
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## 部署
+`npm run build`
 
-### `yarn build`
+## 專案 DEMO
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### 註冊為會員、編輯會員資料
+在網站註冊為會員之後，可以下訂食物、查看自己的所有訂單
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### 註冊賣家、編輯賣家資料
+可以透過賣場後台功能，上傳賣場主圖、頭像，編輯賣場名稱、聯絡電話、賣場地址、賣場介紹，也可以設定賣場分類讓用戶更容易搜尋到指定食物，沒有設定的話系統會自動設定為未分類
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### 食物搜尋
+可以利用關鍵字搜尋、點擊固定分類搜尋該分類所有食物，還可以依照最新上架、低價優先、即期優先篩選所有食物
 
-### `yarn eject`
+### 地圖
+可以依照自己所在地點，在地圖查看附近的店家
+也可以利用關鍵字搜尋感興趣的食物
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+### 訂購食物
+將欲訂購的食物、數量加入購物車內，之後可以在購物車查看所有加入購物車的食物，也可以在購物車裡修改數量或是刪除該筆食物，同一位賣家的所有食物視為同一張訂單，一次只能訂購一張訂單（同一位賣家） 
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### 查看訂單
+- 用戶可以透過訂單列表查看自己下訂的食物、地點、時間
+- 賣家可以透過訂單列表查看賣場所有被訂購的食物、地點、時間
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+買賣家皆可以透過待取貨、已完成、已取消篩選所有訂單的狀態
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+## License
 
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `yarn build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+[MIT](https://choosealicense.com/licenses/mit/)

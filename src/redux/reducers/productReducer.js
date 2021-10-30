@@ -30,6 +30,7 @@ const initialState = {
   productCategories: null,
   errorMessage: null,
   isLoading: false,
+  singleProductIsLoading: false,
   count: null,
 };
 
@@ -76,6 +77,9 @@ export const productReducer = createSlice({
     setIsLoading: (state, action) => {
       state.isLoading = action.payload;
     },
+    setSingleProductIsLoading: (state, action) => {
+      state.singleProductIsLoading = action.payload;
+    },
     setCount: (state, action) => {
       state.count = action.payload;
     },
@@ -96,6 +100,7 @@ export const {
   setSearchedProduct,
   setProductCategories,
   setIsLoading,
+  setSingleProductIsLoading,
   setCount,
 } = productReducer.actions;
 
@@ -121,7 +126,7 @@ export const cleanProducts = () => (dispatch) => {
 };
 
 export const getProduct = (id) => (dispatch) => {
-  dispatch(setIsLoading(true));
+  dispatch(setSingleProductIsLoading(true));
 
   return getProductApi(id)
     .then((res) => {
@@ -131,7 +136,7 @@ export const getProduct = (id) => (dispatch) => {
       return res.data;
     })
     .then((product) => {
-      dispatch(setIsLoading(false));
+      dispatch(setSingleProductIsLoading(false));
       if (product === null) return dispatch(setProduct(0));
       dispatch(setProduct(product));
     })
@@ -320,7 +325,7 @@ export const postProduct =
     // isDeletePicture,
   }) =>
   (dispatch) => {
-    dispatch(setIsLoading(true));
+    dispatch(setSingleProductIsLoading(true));
     return postProductApi({
       picture,
       name,
@@ -333,7 +338,7 @@ export const postProduct =
       isAvailable,
       // isDeletePicture,
     }).then((res) => {
-      dispatch(setIsLoading(false));
+      dispatch(setSingleProductIsLoading(false));
 
       if (!res.ok) {
         dispatch(setErrorMessage(res.message));
@@ -362,7 +367,7 @@ export const patchProduct =
     }
   ) =>
   (dispatch) => {
-    dispatch(setIsLoading(true));
+    dispatch(setSingleProductIsLoading(true));
     return updateProductApi(id, {
       picture,
       name,
@@ -375,7 +380,7 @@ export const patchProduct =
       isAvailable,
       // isDeletePicture,
     }).then((res) => {
-      dispatch(setIsLoading(false));
+      dispatch(setSingleProductIsLoading(false));
       if (!res.ok) {
         dispatch(setErrorMessage(res.message));
         dispatch(setShowWarningNotification(true));
