@@ -30,6 +30,10 @@ export default function CartPage() {
   const [isShow, setIsShow] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [pickupTime, setPickupTime] = useState("");
+  const [pickupDate, setPickupDate] = useState(null);
+  const [vendorAvailDays, setVendorAvailDays] = useState(null);
+  const [availPickupDates, setAvailPickupDates] = useState(null);
+  const [availBookingTime, setAvailBookingTime] = useState(null);
   const [remarks, setRemarks] = useState("");
   const cartData = useSelector(selectCartData);
   const userId = useSelector(selectUserId);
@@ -51,6 +55,76 @@ export default function CartPage() {
       dispatch(setErrorMessage(null));
     };
   }, [userId, cartData, dispatch]);
+
+  useEffect(() => {
+    if (pickupDate) {
+      const pickupDay = new Date(pickupDate).getDay();
+      for (let i = 0; i < vendorAvailDays.length; i++) {
+        const entries = Object.entries(vendorAvailDays[i]);
+        if (Number(entries[0][0]) === pickupDay) {
+          setAvailBookingTime(entries[0][1]);
+        }
+      }
+    }
+  }, [pickupDate, vendorAvailDays]);
+
+  useEffect(() => {
+    if (vendorById) {
+      const openingHourDetails = Object.entries(
+        JSON.parse(vendorById.openingHour)
+      );
+      setVendorAvailDays(() => {
+        return openingHourDetails
+          .filter((item) => item[1].isOpen)
+          .map((item) => {
+            switch (item[0]) {
+              case "Monday":
+                return { 1: { start: item[1].start, end: item[1].end } };
+              case "Tuesday":
+                return { 2: { start: item[1].start, end: item[1].end } };
+              case "Wednesday":
+                return { 3: { start: item[1].start, end: item[1].end } };
+              case "Thursday":
+                return { 4: { start: item[1].start, end: item[1].end } };
+              case "Friday":
+                return { 5: { start: item[1].start, end: item[1].end } };
+              case "Saturday":
+                return { 6: { start: item[1].start, end: item[1].end } };
+              case "Sunday":
+                return { 7: { start: item[1].start, end: item[1].end } };
+            }
+          });
+      });
+    }
+  }, [vendorById]);
+
+  useEffect(() => {
+    if (vendorAvailDays) {
+      const key = Object.keys(cart).indexOf(vendorId);
+      const cartItems = Object.values(cart)[key];
+      const now = new Date();
+      now.setHours(0);
+      now.setMinutes(0);
+      now.setSeconds(0);
+      const expiryDates = cartItems.map((cartItem) =>
+        Date.parse(cartItem.expiryDate).valueOf()
+      );
+      const minExpiryDate = new Date(Math.min(...expiryDates));
+      const array = [];
+      for (
+        let i = Date.parse(now).valueOf();
+        i < Date.parse(minExpiryDate).valueOf();
+        i += 86400000
+      ) {
+        vendorAvailDays.forEach((vendorAvailDay) => {
+          if (new Date(i).getDay() === Number(Object.keys(vendorAvailDay)[0])) {
+            array.push(i);
+          }
+        });
+      }
+      setAvailPickupDates(array);
+    }
+  }, [vendorAvailDays, vendorId, cart]);
 
   const handleIsShow = (type) => {
     if (type === "book") {
@@ -102,17 +176,33 @@ export default function CartPage() {
     userId,
     cartData
   ) => {
-    if (!pickupTime) {
+    if (!pickupTime || !pickupDate) {
       setIsShow(false);
       dispatch(setErrorMessage("請填寫預約時間!"));
       dispatch(setShowWarningNotification(true));
       return;
     }
+    const start = Number(availBookingTime.start.replace(":", ""));
+    const end = Number(availBookingTime.end.replace(":", ""));
+    const pickup = Number(pickupTime.replace(":", ""));
+
+    if (pickup < start || pickup > end) {
+      setIsShow(false);
+      dispatch(setErrorMessage("預約時間非店家營業時間"));
+      dispatch(setShowWarningNotification(true));
+      return;
+    }
+
+    let pickupDateAndTime = new Date(pickupDate);
+    pickupDateAndTime.setHours(Number(pickupTime.slice(0, 2)));
+    pickupDateAndTime.setMinutes(Number(pickupTime.slice(3, 5)));
+    console.log(pickupDateAndTime);
+
     dispatch(
       newOrder({
         orderProducts,
         vendorId,
-        pickupTime,
+        pickupTime: pickupDateAndTime,
         remarks,
         userId,
         cartData,
@@ -205,9 +295,14 @@ export default function CartPage() {
             handleSubmit={handleSubmit}
             userId={userId}
             pickupTime={pickupTime}
+            pickupDate={pickupDate}
             remarks={remarks}
             setPickupTime={setPickupTime}
+            setPickupDate={setPickupDate}
             setRemarks={setRemarks}
+            cart={cart}
+            availBookingTime={availBookingTime}
+            availPickupDates={availPickupDates}
           />
         </>
       )}

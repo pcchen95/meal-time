@@ -8,6 +8,7 @@ import {
   selectOrderProducts,
 } from "../../redux/reducers/cartReducer";
 import { useSelector } from "react-redux";
+import Dropdown from "./Dropdown";
 
 const Booking = styled.div`
   display: none;
@@ -52,6 +53,73 @@ const BookingProducts = styled.div`
   `}
 `;
 
+const TimeInput = ({
+  pickupTime,
+  setPickupTime,
+  pickupDate,
+  availBookingTime,
+}) => {
+  return (
+    <Div
+      d="flex"
+      flexDir={{ xs: "column", lg: "row" }}
+      m={{ l: { xs: "1rem", md: "3rem" }, t: { xs: "1rem", md: "0" } }}
+      align={{ xs: "flex-start", lg: "center" }}
+    >
+      <Input
+        m={{ l: { lg: "1rem" } }}
+        type="time"
+        value={pickupTime}
+        min={availBookingTime && availBookingTime.start}
+        max={availBookingTime && availBookingTime.end}
+        onChange={(e) => setPickupTime(e.target.value)}
+        disabled={!pickupDate}
+      />
+    </Div>
+  );
+};
+
+TimeInput.propTypes = {
+  pickupTime: PropTypes.string,
+  setPickupTime: PropTypes.func,
+  pickupDate: PropTypes.number,
+  availBookingTime: PropTypes.object,
+};
+
+const ChooseTime = ({
+  pickupTime,
+  setPickupTime,
+  pickupDate,
+  setPickupDate,
+  availBookingTime,
+  availPickupDates,
+}) => {
+  return (
+    <div>
+      <Dropdown
+        availPickupDates={availPickupDates}
+        pickupDate={pickupDate}
+        setPickupDate={setPickupDate}
+      />
+      <TimeInput
+        pickupTime={pickupTime}
+        setPickupTime={setPickupTime}
+        pickupDate={pickupDate}
+        availBookingTime={availBookingTime}
+      />
+    </div>
+  );
+};
+
+ChooseTime.propTypes = {
+  pickupTime: PropTypes.string,
+  pickupDate: PropTypes.number,
+  availBookingTime: PropTypes.object,
+  setPickupTime: PropTypes.func,
+  setPickupDate: PropTypes.func,
+  availPickupDates: PropTypes.array,
+};
+
 const BookingBoard = ({
   vendorById,
   isShow,
@@ -59,12 +127,16 @@ const BookingBoard = ({
   handleSubmit,
   pickupTime,
   setPickupTime,
+  pickupDate,
+  setPickupDate,
   remarks,
   setRemarks,
+  cart,
+  availBookingTime,
+  availPickupDates,
 }) => {
   const vendorId = useSelector(selectVendorId);
   const orderProducts = useSelector(selectOrderProducts);
-
   return (
     <Booking $isShow={isShow}>
       <BookingProducts $isShow={isShow}>
@@ -104,15 +176,16 @@ const BookingBoard = ({
                 <Text textSize="subheader" textColor="warning700">
                   請預約在店家營業時段
                 </Text>
-                <Input
-                  type="datetime-local"
-                  name="pickupTime"
-                  value={pickupTime}
-                  onChange={(e) => setPickupTime(e.target.value)}
-                  m="1rem"
-                  min={new Date().toISOString().slice(0, 16)}
-                  required={true}
-                />
+                {vendorId && cart && vendorById && (
+                  <ChooseTime
+                    pickupDate={pickupDate}
+                    setPickupDate={setPickupDate}
+                    pickupTime={pickupTime}
+                    setPickupTime={setPickupTime}
+                    availBookingTime={availBookingTime}
+                    availPickupDates={availPickupDates}
+                  />
+                )}
                 <Text textSize="heading" m="1rem" textColor="gray800">
                   備註
                 </Text>
@@ -181,9 +254,14 @@ BookingBoard.propTypes = {
   handleIsShow: PropTypes.func,
   handleSubmit: PropTypes.func,
   pickupTime: PropTypes.string,
+  pickupDate: PropTypes.number,
   remarks: PropTypes.string,
   setPickupTime: PropTypes.func,
+  setPickupDate: PropTypes.func,
   setRemarks: PropTypes.func,
+  cart: PropTypes.object,
+  availBookingTime: PropTypes.object,
+  availPickupDates: PropTypes.array,
 };
 
 export default BookingBoard;
