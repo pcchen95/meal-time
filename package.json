@@ -9,16 +9,17 @@
     "@testing-library/react": "^11.2.7",
     "@testing-library/user-event": "^12.8.3",
     "atomize": "^1.0.28",
-    "bootstrap": "^5.1.0",
+    "eslint-config-react-app": "^6.0.0",
     "react": "^17.0.2",
-    "react-bootstrap": "^2.0.0-beta.6",
     "react-dom": "^17.0.2",
     "react-geocode": "^0.2.3",
     "react-loading": "^2.0.3",
     "react-redux": "^7.2.5",
+    "react-router": "^5.2.1",
     "react-router-dom": "^5.3.0",
     "react-scripts": "4.0.3",
     "react-transition-group": "^4.4.2",
+    "redux": "^4.1.1",
     "styled-components": "^5.3.1",
     "styletron-engine-atomic": "^1.4.8",
     "styletron-react": "^6.0.1",
@@ -49,9 +50,6 @@
     ]
   },
   "devDependencies": {
-    "eslint": "^7.32.0",
-    "eslint-plugin-react": "^7.25.2",
-    "prettier": "^2.4.1",
-    "prettier-eslint": "^13.0.0"
+    "eslint-plugin-jest": "^25.2.0"
   }
 }
