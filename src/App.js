@@ -30,6 +30,8 @@ import PasswordEdit from "./pages/PasswordEdit";
 import RulesPage from "./pages/RulesPage";
 import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
+import AdminMessagePage from "./pages/AdminMessagePage";
+import AdminFAQPage from "./pages/AdminFAQPage";
 
 function App() {
   const dispatch = useDispatch();
@@ -101,6 +103,12 @@ function App() {
           <Route path="/admin_store_type">
             <AdminStoreTypePage />
           </Route>
+          <Route path="/admin_message">
+            <AdminMessagePage />
+          </Route>
+          <Route path="/admin_FAQ">
+            <AdminFAQPage />
+          </Route>
           <Route path="/entrance">
             <Entrance />
           </Route>
@@ -126,7 +134,6 @@ function App() {
         <Footer />
       </Router>
     </div>
-
   );
 }
 

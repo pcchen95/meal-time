@@ -42,10 +42,10 @@ const BookingProducts = styled.div`
     top: 50%;
     left: 50%;
     transform: translate(-50%,-50%);
-    @media screen and (max-width: 768px){
-      bottom: 0;
+    @media screen and (max-width: 1024px){
+      top: 0;
       left: 0;
-      right: 0;
+      position: static;
       transform: translate(0,0);
       height: 48rem;
       width: 100%;
@@ -196,7 +196,7 @@ const BookingBoard = ({
                   value={remarks}
                   onChange={(e) => setRemarks(e.target.value)}
                 />
-                <Div d="flex" w="26rem" justify="center">
+                <Div d="flex" w="26rem" textAlign="center" justify="center">
                   <Button
                     h="3rem"
                     p={{ x: "1.25rem" }}
