@@ -100,14 +100,7 @@ export default function CartPage() {
     dispatch(setCartData(newCartData));
   };
 
-  const handleSubmit = (
-    orderProducts,
-    vendorId,
-    pickupTime,
-    remarks,
-    userId,
-    cartData
-  ) => {
+  const handleSubmit = (orderProducts, vendorId, pickupTime, remarks) => {
     if (!pickupTime) {
       setIsShow(false);
       dispatch(setErrorMessage("請填寫預約時間!"));
@@ -209,7 +202,6 @@ export default function CartPage() {
             isShow={isShow}
             handleIsShow={handleIsShow}
             handleSubmit={handleSubmit}
-            userId={userId}
             pickupTime={pickupTime}
             remarks={remarks}
             setPickupTime={setPickupTime}
