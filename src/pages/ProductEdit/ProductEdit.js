@@ -1,5 +1,5 @@
 import React from "react";
-import { useState, useEffect, createRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useParams } from "react-router-dom";
 import { Div } from "atomize";
@@ -39,7 +39,7 @@ export default function ProductEdit() {
   const [fileInfo, setFileInfo] = useState(null);
   const [isDeletePicture, setIsDeletePicture] = useState(false);
   const [isEdited, setIsEdited] = useState(false);
-  const fileInput = createRef();
+  const fileInput = useRef();
   const dispatch = useDispatch();
   const history = useHistory();
   const user = useSelector((store) => store.users.user);
@@ -56,9 +56,10 @@ export default function ProductEdit() {
       !categoryId ||
       !manufactureDate ||
       !expiryDate ||
-      !description
+      !description ||
+      !img
     ) {
-      dispatch(setErrorMessage("請填入所有必填欄位"));
+      dispatch(setErrorMessage("請填入所有欄位"));
       dispatch(setShowWarningNotification(true));
       return;
     }
@@ -131,6 +132,9 @@ export default function ProductEdit() {
         setImg(e.target.result);
         dispatch(setErrorMessage(null));
         setIsEdited(true);
+      };
+      reader.onloadend = function () {
+        fileInput.current.value = "";
       };
       reader.readAsDataURL(file);
     } else {
@@ -242,13 +246,8 @@ export default function ProductEdit() {
               handleEvent={() => {
                 setFileInfo(null);
                 setImg(null);
-                if (user.avatarURL) {
-                  setIsDeletePicture(true);
-                  setIsEdited(true);
-                }
-                if (!user.avatarURL) {
-                  setIsEdited(false);
-                }
+                setIsDeletePicture(true);
+                setIsEdited(true);
               }}
             />
             <UploadButton fileInput={fileInput} handleEvent={handleImg} />
