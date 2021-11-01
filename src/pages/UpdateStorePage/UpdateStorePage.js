@@ -311,12 +311,14 @@ export default function UpdateStorePage() {
                 handleDelete={() => {
                   setBanner(null);
                   setBannerInfo(null);
-                  if (vendor.bannerUrl) {
-                    setIsDeleteBanner(true);
-                    setIsEdited(true);
-                  }
-                  if (!vendor.bannerUrl) {
-                    setIsEdited(false);
+                  if (vendor !== "not-vendor") {
+                    if (vendor.bannerUrl) {
+                      setIsDeleteBanner(true);
+                      setIsEdited(true);
+                    }
+                    if (!vendor.bannerUrl) {
+                      setIsEdited(false);
+                    }
                   }
                 }}
               />
@@ -334,12 +336,14 @@ export default function UpdateStorePage() {
                     handleDelete={() => {
                       setAvatar(null);
                       setAvatarInfo(null);
-                      if (vendor.avatarUrl) {
-                        setIsDeleteAvatar(true);
-                        setIsEdited(true);
-                      }
-                      if (!vendor.avatarUrl) {
-                        setIsEdited(false);
+                      if (vendor !== "not-vendor") {
+                        if (vendor.avatarUrl) {
+                          setIsDeleteAvatar(true);
+                          setIsEdited(true);
+                        }
+                        if (!vendor.avatarUrl) {
+                          setIsEdited(false);
+                        }
                       }
                     }}
                   />
