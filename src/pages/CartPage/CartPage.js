@@ -17,7 +17,10 @@ import {
   selectVendorId,
   selectCartData,
 } from "../../redux/reducers/cartReducer";
-import { getVendorById } from "../../redux/reducers/vendorReducer";
+import {
+  getVendorById,
+  cleanVendorById,
+} from "../../redux/reducers/vendorReducer";
 import {
   setErrorMessage,
   setShowWarningNotification,
@@ -105,7 +108,7 @@ export default function CartPage() {
   }, [vendorById]);
 
   useEffect(() => {
-    if (vendorAvailDays) {
+    if (vendorAvailDays && vendorId) {
       const key = Object.keys(cart).indexOf(vendorId);
       const cartItems = Object.values(cart)[key];
       const now = new Date();
@@ -155,6 +158,9 @@ export default function CartPage() {
     }
     if (type === "cancel") {
       setIsShow(false);
+      dispatch(cleanVendorById(vendorId));
+      setPickupDate(null);
+      setPickupTime(null);
       setVendorId(null);
     }
   };
