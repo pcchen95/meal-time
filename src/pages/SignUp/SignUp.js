@@ -29,6 +29,7 @@ const SignUpInfo = () => {
   const dispatch = useDispatch();
   const history = useHistory();
   const isLoading = useSelector((store) => store.users.isLoading);
+  const user = useSelector((store) => store.users.user);
 
   const handleSubmit = () => {
     if (
@@ -91,11 +92,12 @@ const SignUpInfo = () => {
   };
 
   useEffect(() => {
-    window.scrollTo({
-      top: 0,
-      left: 0,
-      behavior: "instant",
-    });
+    if (user && user.id) {
+      return history.push("/");
+    }
+  }, []);
+
+  useEffect(() => {
     return () => {
       setImg(null);
       dispatch(setErrorMessage(null));
