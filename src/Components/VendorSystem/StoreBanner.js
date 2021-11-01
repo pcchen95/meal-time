@@ -76,11 +76,9 @@ const Address = () => {
 
   useEffect(() => {
     if (vendor)
-      setLatLng(() => {
-        return {
-          lat: vendor.position.coordinates[0],
-          lng: vendor.position.coordinates[1],
-        };
+      setLatLng({
+        lat: vendor.position.coordinates[0],
+        lng: vendor.position.coordinates[1],
       });
   }, [vendor]);
 

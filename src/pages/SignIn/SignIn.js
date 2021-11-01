@@ -20,7 +20,8 @@ const SignInInfo = () => {
   const history = useHistory();
   const isLoading = useSelector((store) => store.users.isLoading);
 
-  const handleSubmit = () => {
+  const handleSubmit = (e) => {
+    e.preventDefault();
     if (!username || !password) {
       dispatch(setErrorMessage("請填入帳號及密碼"));
       dispatch(setShowWarningNotification(true));
