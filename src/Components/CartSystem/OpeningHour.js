@@ -23,7 +23,7 @@ const openingHour = ({ vendorById }) => {
             {vendorById &&
               Object.values(JSON.parse(vendorById.openingHour)).map(
                 (item, index) => (
-                  <Div m={{ l: "1rem" }} key={index}>
+                  <Div m={{ l: "1rem" }} w="150px" key={index}>
                     {item.isOpen ? (
                       <Text>
                         {item.start}~{item.end}

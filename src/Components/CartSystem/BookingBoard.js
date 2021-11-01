@@ -1,14 +1,14 @@
 import React from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
-import { Div, Text, Input, Textarea, Button } from "atomize";
+import { Div, Text, Textarea, Button } from "atomize";
 import OpeningHour from "./OpeningHour";
 import {
   selectVendorId,
   selectOrderProducts,
 } from "../../redux/reducers/cartReducer";
 import { useSelector } from "react-redux";
-import Dropdown from "./Dropdown";
+import ChooseTime from "./ChooseTime";
 
 const Booking = styled.div`
   display: none;
@@ -52,73 +52,6 @@ const BookingProducts = styled.div`
     }
   `}
 `;
-
-const TimeInput = ({
-  pickupTime,
-  setPickupTime,
-  pickupDate,
-  availBookingTime,
-}) => {
-  return (
-    <Div
-      d="flex"
-      flexDir={{ xs: "column", lg: "row" }}
-      m={{ l: { xs: "1rem", md: "3rem" }, t: { xs: "1rem", md: "0" } }}
-      align={{ xs: "flex-start", lg: "center" }}
-    >
-      <Input
-        m={{ l: { lg: "1rem" } }}
-        type="time"
-        value={pickupTime}
-        min={availBookingTime && availBookingTime.start}
-        max={availBookingTime && availBookingTime.end}
-        onChange={(e) => setPickupTime(e.target.value)}
-        disabled={!pickupDate}
-      />
-    </Div>
-  );
-};
-
-TimeInput.propTypes = {
-  pickupTime: PropTypes.string,
-  setPickupTime: PropTypes.func,
-  pickupDate: PropTypes.number,
-  availBookingTime: PropTypes.object,
-};
-
-const ChooseTime = ({
-  pickupTime,
-  setPickupTime,
-  pickupDate,
-  setPickupDate,
-  availBookingTime,
-  availPickupDates,
-}) => {
-  return (
-    <div>
-      <Dropdown
-        availPickupDates={availPickupDates}
-        pickupDate={pickupDate}
-        setPickupDate={setPickupDate}
-      />
-      <TimeInput
-        pickupTime={pickupTime}
-        setPickupTime={setPickupTime}
-        pickupDate={pickupDate}
-        availBookingTime={availBookingTime}
-      />
-    </div>
-  );
-};
-
-ChooseTime.propTypes = {
-  pickupTime: PropTypes.string,
-  pickupDate: PropTypes.number,
-  availBookingTime: PropTypes.object,
-  setPickupTime: PropTypes.func,
-  setPickupDate: PropTypes.func,
-  availPickupDates: PropTypes.array,
-};
 
 const BookingBoard = ({
   vendorById,
