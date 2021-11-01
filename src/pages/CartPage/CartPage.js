@@ -20,6 +20,7 @@ import {
 import {
   getVendorById,
   cleanVendorById,
+  setVendorById,
 } from "../../redux/reducers/vendorReducer";
 import {
   setErrorMessage,
@@ -104,7 +105,9 @@ export default function CartPage() {
             }
           });
       });
+      return;
     }
+    setVendorAvailDays(null);
   }, [vendorById]);
 
   useEffect(() => {
@@ -158,7 +161,7 @@ export default function CartPage() {
     }
     if (type === "cancel") {
       setIsShow(false);
-      dispatch(cleanVendorById(vendorId));
+      dispatch(cleanVendorById());
       setPickupDate(null);
       setPickupTime(null);
       setVendorId(null);
@@ -216,6 +219,10 @@ export default function CartPage() {
     setIsChecked(false);
     setPickupTime("");
     setRemarks("");
+    dispatch(setVendorId(null));
+    dispatch(setVendorById(null));
+    setPickupDate(null);
+    setPickupTime(null);
   };
 
   return (
