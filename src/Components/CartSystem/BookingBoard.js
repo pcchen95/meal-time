@@ -1,13 +1,14 @@
 import React from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
-import { Div, Text, Input, Textarea, Button } from "atomize";
+import { Div, Text, Textarea, Button } from "atomize";
 import OpeningHour from "./OpeningHour";
 import {
   selectVendorId,
   selectOrderProducts,
 } from "../../redux/reducers/cartReducer";
 import { useSelector } from "react-redux";
+import ChooseTime from "./ChooseTime";
 
 const Booking = styled.div`
   display: none;
@@ -59,12 +60,16 @@ const BookingBoard = ({
   handleSubmit,
   pickupTime,
   setPickupTime,
+  pickupDate,
+  setPickupDate,
   remarks,
   setRemarks,
+  cart,
+  availBookingTime,
+  availPickupDates,
 }) => {
   const vendorId = useSelector(selectVendorId);
   const orderProducts = useSelector(selectOrderProducts);
-
   return (
     <Booking $isShow={isShow}>
       <BookingProducts $isShow={isShow}>
@@ -104,15 +109,16 @@ const BookingBoard = ({
                 <Text textSize="subheader" textColor="warning700">
                   請預約在店家營業時段
                 </Text>
-                <Input
-                  type="datetime-local"
-                  name="pickupTime"
-                  value={pickupTime}
-                  onChange={(e) => setPickupTime(e.target.value)}
-                  m="1rem"
-                  min={new Date().toISOString().slice(0, 16)}
-                  required={true}
-                />
+                {vendorId && cart && vendorById && (
+                  <ChooseTime
+                    pickupDate={pickupDate}
+                    setPickupDate={setPickupDate}
+                    pickupTime={pickupTime}
+                    setPickupTime={setPickupTime}
+                    availBookingTime={availBookingTime}
+                    availPickupDates={availPickupDates}
+                  />
+                )}
                 <Text textSize="heading" m="1rem" textColor="gray800">
                   備註
                 </Text>
@@ -181,9 +187,14 @@ BookingBoard.propTypes = {
   handleIsShow: PropTypes.func,
   handleSubmit: PropTypes.func,
   pickupTime: PropTypes.string,
+  pickupDate: PropTypes.number,
   remarks: PropTypes.string,
   setPickupTime: PropTypes.func,
+  setPickupDate: PropTypes.func,
   setRemarks: PropTypes.func,
+  cart: PropTypes.object,
+  availBookingTime: PropTypes.object,
+  availPickupDates: PropTypes.array,
 };
 
 export default BookingBoard;
