@@ -90,6 +90,7 @@ export const register =
     categoryId,
   }) =>
   (dispatch) => {
+    dispatch(setIsLoading(true));
     return registerApi({
       avatar,
       banner,
@@ -102,15 +103,16 @@ export const register =
       categoryId,
     }).then((res) => {
       if (!res.ok) {
+        dispatch(setIsLoading(false));
         dispatch(setErrorMessage(res.message));
         dispatch(setShowWarningNotification(true));
         return;
       }
-      dispatch(setShowSuccessNotification(true));
       setAuthToken(res.token);
 
       return getVendorProfileApi().then((res) => {
         if (!res.ok) {
+          dispatch(setIsLoading(false));
           dispatch(setErrorMessage(res.message));
           dispatch(setShowWarningNotification(true));
           return;
@@ -119,11 +121,14 @@ export const register =
         return getMeApi().then((res) => {
           if (!res.ok) {
             setAuthToken("");
+            dispatch(setIsLoading(false));
             dispatch(setErrorMessage(res.message));
             dispatch(setShowWarningNotification(true));
             return;
           }
           dispatch(setUser(res.data));
+          dispatch(setIsLoading(false));
+          dispatch(setShowSuccessNotification(true));
           return res.data;
         });
       });
@@ -135,14 +140,19 @@ export const getVendor = () => (dispatch) => {
   return getVendorProfileApi().then((res) => {
     dispatch(setIsLoading(false));
     if (!res.ok) {
-      console.log(res.message);
       dispatch(setErrorMessage(res.message));
       dispatch(setShowWarningNotification(true));
       return;
     }
-    if (!res.data) return dispatch(setVendor("not-vendor"));
+    if (!res.data) {
+      return dispatch(setVendor("not-vendor"));
+    }
     dispatch(setVendor(res.data));
   });
+};
+
+export const cleanVendor = () => (dispatch) => {
+  dispatch(setVendor(null));
 };
 
 export const updateProfile =
@@ -177,16 +187,19 @@ export const updateProfile =
       if (!res.ok) {
         dispatch(setErrorMessage(res.message));
         dispatch(setShowWarningNotification(true));
+        dispatch(setIsLoading(false));
         return;
       }
-      dispatch(setShowSuccessNotification(true));
+
       getVendorProfileApi().then((res) => {
         if (!res.ok) {
           dispatch(setErrorMessage(res.message));
           dispatch(setShowWarningNotification(true));
+          dispatch(setIsLoading(false));
           return;
         }
         dispatch(setIsLoading(false));
+        dispatch(setShowSuccessNotification(true));
         dispatch(setVendor(res.data));
       });
       return res;
@@ -197,18 +210,20 @@ export const setToggleOpen = () => (dispatch) => {
   dispatch(setIsLoading(true));
   return updateIsOpenApi().then((res) => {
     if (!res.ok) {
+      dispatch(setIsLoading(false));
       dispatch(setErrorMessage(res.message));
       dispatch(setShowWarningNotification(true));
       return;
     }
-    dispatch(setShowSuccessNotification(true));
     getVendorProfileApi().then((res) => {
       if (!res.ok) {
+        dispatch(setIsLoading(false));
         dispatch(setErrorMessage(res.message));
         dispatch(setShowWarningNotification(true));
         return;
       }
       dispatch(setIsLoading(false));
+      dispatch(setShowSuccessNotification(true));
       dispatch(setVendor(res.data));
     });
   });

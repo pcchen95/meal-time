@@ -111,7 +111,7 @@ const PageNavButton = ({ name, link, logoutEvent }) => {
       textSize="subheader"
       textWeight="600"
       p={{ x: "1rem" }}
-      onClick={() => name === "登出" && logoutEvent}
+      onClick={() => name === "登出" && logoutEvent()}
     >
       <Text hoverTextColor="info800">{name}</Text>
     </Anchor>
@@ -339,7 +339,7 @@ const UserBlock = ({ setShowUserBtn, showUserBtn, user, logoutEvent }) => {
 UserBlock.propTypes = {
   setShowUserBtn: PropTypes.func,
   showUserBtn: PropTypes.bool,
-  user: PropTypes.object,
+  user: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
   logoutEvent: PropTypes.func,
 };
 

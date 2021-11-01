@@ -135,6 +135,7 @@ const FAQPage = () => {
       </Div>
       <Div
         w="100%"
+        minH="calc(100vh - 470px)"
         border="1px solid"
         borderColor="gray700"
         p={{ y: "2rem", x: "1rem" }}
