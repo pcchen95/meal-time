@@ -21,17 +21,19 @@ const openingHour = ({ vendorById }) => {
           </Div>
           <Div>
             {vendorById &&
-              Object.values(JSON.parse(vendorById.openingHour)).map((item) => (
-                <Div m={{ l: "1rem" }} key={item.index}>
-                  {item.isOpen ? (
-                    <Text>
-                      {item.start}~{item.end}
-                    </Text>
-                  ) : (
-                    <Text textColor="danger600">－</Text>
-                  )}
-                </Div>
-              ))}
+              Object.values(JSON.parse(vendorById.openingHour)).map(
+                (item, index) => (
+                  <Div m={{ l: "1rem" }} w="150px" key={index}>
+                    {item.isOpen ? (
+                      <Text>
+                        {item.start}~{item.end}
+                      </Text>
+                    ) : (
+                      <Text textColor="danger600">－</Text>
+                    )}
+                  </Div>
+                )
+              )}
           </Div>
         </Div>
       </Div>
