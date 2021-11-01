@@ -1,5 +1,5 @@
 import React from "react";
-import { useState, useEffect, createRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
 import { updateProfile } from "../../redux/reducers/userReducer";
@@ -25,7 +25,7 @@ const MemberEdit = () => {
   const [fileInfo, setFileInfo] = useState(null);
   const [isDeleteAvatar, setIsDeleteAvatar] = useState(false);
   const [isEdited, setIsEdited] = useState(false);
-  const fileInput = createRef();
+  const fileInput = useRef();
   const dispatch = useDispatch();
   const history = useHistory();
   const user = useSelector((store) => store.users.user);
@@ -66,6 +66,9 @@ const MemberEdit = () => {
         setImg(e.target.result);
         dispatch(setErrorMessage(null));
         setIsEdited(true);
+      };
+      reader.onloadend = function () {
+        fileInput.current.value = "";
       };
       reader.readAsDataURL(file);
     } else {

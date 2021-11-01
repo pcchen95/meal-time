@@ -65,6 +65,7 @@ const BannerPreview = ({
   isDisabled,
 }) => {
   const location = useLocation();
+
   return (
     <Div>
       {location.pathname === "/update_store" && (
@@ -75,15 +76,6 @@ const BannerPreview = ({
               <UploadButton
                 fileInput={bannerInput}
                 handleEvent={handleBanner}
-              />
-              <input
-                type="file"
-                accept=".png,.jpg,.jpeg"
-                ref={bannerInput}
-                onChange={handleBanner}
-                style={{ display: "none" }}
-                id="bannerInput"
-                disabled={isDisabled}
               />
             </>
           )}

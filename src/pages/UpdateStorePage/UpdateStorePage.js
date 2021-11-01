@@ -1,10 +1,11 @@
 import React from "react";
-import { useState, useEffect, createRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
 import {
   register,
   getVendor,
+  cleanVendor,
   getCategories,
   updateProfile,
   setToggleOpen,
@@ -86,8 +87,8 @@ export default function UpdateStorePage() {
   const [isDeleteAvatar, setIsDeleteAvatar] = useState(false);
   const [isDeleteBanner, setIsDeleteBanner] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false);
-  const avatarInput = createRef();
-  const bannerInput = createRef();
+  const avatarInput = useRef();
+  const bannerInput = useRef();
   const dispatch = useDispatch();
   const user = useSelector((store) => store.users.user);
   const vendor = useSelector((store) => store.vendors.vendor);
@@ -99,7 +100,8 @@ export default function UpdateStorePage() {
     googleMapsApiKey: googleMapToken,
   });
 
-  const handleSubmit = () => {
+  const handleSubmit = (e) => {
+    e.preventDefault();
     if (!vendorName || !phone || !address || !openingHour) {
       dispatch(setErrorMessage("請填入所有必填欄位"));
       dispatch(setShowWarningNotification(true));
@@ -171,10 +173,15 @@ export default function UpdateStorePage() {
         dispatch(setErrorMessage(null));
         setIsEdited(true);
       };
+      reader.onloadend = function () {
+        bannerInput.current.value = "";
+      };
       reader.readAsDataURL(file);
     } else {
       setBanner(null);
       dispatch(setErrorMessage(null));
+      setIsEdited(false);
+      if (vendor.bannerUrl) setIsEdited(true);
     }
   };
 
@@ -193,10 +200,15 @@ export default function UpdateStorePage() {
         dispatch(setErrorMessage(null));
         setIsEdited(true);
       };
+      reader.onloadend = function () {
+        avatarInput.current.value = "";
+      };
       reader.readAsDataURL(file);
     } else {
       setAvatar(null);
       dispatch(setErrorMessage(null));
+      setIsEdited(false);
+      if (vendor.avatarUrl) setIsEdited(true);
     }
   };
 
@@ -233,6 +245,7 @@ export default function UpdateStorePage() {
       setDescription("");
       setCategoryId(1);
       dispatch(setErrorMessage(null));
+      dispatch(cleanVendor());
     };
   }, []);
 
