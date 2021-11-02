@@ -83,6 +83,7 @@ export const login = (username, password) => (dispatch) => {
       return;
     }
     setAuthToken(res.token);
+    dispatch(setShowSuccessNotification(true, "登入成功！"));
     return getMeApi().then((res) => {
       if (!res.ok) {
         setAuthToken("");
@@ -92,7 +93,7 @@ export const login = (username, password) => (dispatch) => {
         return;
       }
       dispatch(setIsLoading(false));
-      dispatch(setShowSuccessNotification(true, "登入成功！"));
+
       dispatch(setUser(res.data));
       return res.data;
     });

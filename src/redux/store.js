@@ -7,6 +7,7 @@ import cartReducer from "./reducers/cartReducer";
 import productReducer from "./reducers/productReducer";
 import systemReducer from "./reducers/systemReducer";
 import adminReducer from "./reducers/adminReducer";
+import messageReducer from "./reducers/messageReducer";
 
 export default configureStore({
   reducer: {
@@ -18,5 +19,6 @@ export default configureStore({
     products: productReducer,
     system: systemReducer,
     admin: adminReducer,
+    messages: messageReducer,
   },
 });
