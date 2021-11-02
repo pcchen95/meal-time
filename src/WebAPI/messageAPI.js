@@ -1,14 +1,17 @@
-import BASE_URL from '../constants/apiurl';
-import { getAuthToken } from '../utils';
+import BASE_URL from "../constants/apiurl";
+import { getAuthToken } from "../utils";
 
-export const getUserMessages = ({ page, limit, sort, order }) => {
+export const getUserMessages = (queryParameters) => {
   const token = getAuthToken();
-  let queryString = '?';
-  if (page) queryString += `_page=${page}&`;
-  if (limit) queryString += `_limit=${limit}&`;
-  if (sort) queryString += `_sort=${sort}&`;
-  if (order) queryString += `_order=${order}`;
-  return fetch(`${BASE_URL}/messages${queryString}`, {
+  let queryString = "?";
+  if (queryParameters) {
+    const { page, limit, sort, order } = queryParameters;
+    if (page) queryString += `_page=${page}&`;
+    if (limit) queryString += `_limit=${limit}&`;
+    if (sort) queryString += `_sort=${sort}&`;
+    if (order) queryString += `_order=${order}`;
+  }
+  return fetch(`${BASE_URL}/messages/user${queryString}`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -17,20 +20,23 @@ export const getUserMessages = ({ page, limit, sort, order }) => {
 
 export const getUserMessagesById = (id) => {
   const token = getAuthToken();
-  return fetch(`${BASE_URL}/messages/${id}`, {
+  return fetch(`${BASE_URL}/messages/user/${id}`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
   }).then((res) => res.json());
 };
 
-export const getVendorMessages = ({ page, limit, sort, order }) => {
+export const getVendorMessages = (queryParameters) => {
   const token = getAuthToken();
-  let queryString = '?';
-  if (page) queryString += `_page=${page}&`;
-  if (limit) queryString += `_limit=${limit}&`;
-  if (sort) queryString += `_sort=${sort}&`;
-  if (order) queryString += `_order=${order}`;
+  let queryString = "?";
+  if (queryParameters) {
+    const { page, limit, sort, order } = queryParameters;
+    if (page) queryString += `_page=${page}&`;
+    if (limit) queryString += `_limit=${limit}&`;
+    if (sort) queryString += `_sort=${sort}&`;
+    if (order) queryString += `_order=${order}`;
+  }
   return fetch(`${BASE_URL}/messages/vendor${queryString}`, {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -40,7 +46,7 @@ export const getVendorMessages = ({ page, limit, sort, order }) => {
 
 export const getVendorMessagesById = (id) => {
   const token = getAuthToken();
-  return fetch(`${BASE_URL}/messages/${id}`, {
+  return fetch(`${BASE_URL}/messages/vendor/${id}`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -49,10 +55,11 @@ export const getVendorMessagesById = (id) => {
 
 export const sendMessageToVendor = (id, content) => {
   const token = getAuthToken();
-  return fetch(`${BASE_URL}/messages/${id}`, {
-    method: 'POST',
+  return fetch(`${BASE_URL}/messages/user/${id}`, {
+    method: "POST",
     headers: {
       Authorization: `Bearer ${token}`,
+      "content-type": "application/json",
     },
     body: JSON.stringify({ content }),
   }).then((res) => res.json());
@@ -61,9 +68,10 @@ export const sendMessageToVendor = (id, content) => {
 export const sendMessageToClient = (id, content) => {
   const token = getAuthToken();
   return fetch(`${BASE_URL}/messages/vendor/${id}`, {
-    method: 'POST',
+    method: "POST",
     headers: {
       Authorization: `Bearer ${token}`,
+      "content-type": "application/json",
     },
     body: JSON.stringify({ content }),
   }).then((res) => res.json());
@@ -81,9 +89,10 @@ export const getMessageToAdmin = () => {
 export const sendMessageToAdmin = (content) => {
   const token = getAuthToken();
   return fetch(`${BASE_URL}/messages-to-admin`, {
-    method: 'POST',
+    method: "POST",
     headers: {
       Authorization: `Bearer ${token}`,
+      "content-type": "application/json",
     },
     body: JSON.stringify({ content }),
   }).then((res) => res.json());
@@ -91,7 +100,7 @@ export const sendMessageToAdmin = (content) => {
 
 export const getAllAdminMessages = ({ page, limit, sort, order }) => {
   const token = getAuthToken();
-  let queryString = '?';
+  let queryString = "?";
   if (page) queryString += `_page=${page}&`;
   if (limit) queryString += `_limit=${limit}&`;
   if (sort) queryString += `_sort=${sort}&`;
@@ -115,9 +124,10 @@ export const getAdminMessageById = (id) => {
 export const sendMessageToUser = (id, content) => {
   const token = getAuthToken();
   return fetch(`${BASE_URL}/messages-to-admin/admin/${id}`, {
-    method: 'POST',
+    method: "POST",
     headers: {
       Authorization: `Bearer ${token}`,
+      "content-type": "application/json",
     },
     body: JSON.stringify({ content }),
   }).then((res) => res.json());
@@ -130,7 +140,7 @@ export const sendReportMessage = ({
 }) => {
   const token = getAuthToken();
   return fetch(`${BASE_URL}/report-messages`, {
-    method: 'POST',
+    method: "POST",
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -144,7 +154,7 @@ export const sendReportMessage = ({
 
 export const getAllReportMessages = ({ page, limit, sort, order }) => {
   const token = getAuthToken();
-  let queryString = '?';
+  let queryString = "?";
   if (page) queryString += `_page=${page}&`;
   if (limit) queryString += `_limit=${limit}&`;
   if (sort) queryString += `_sort=${sort}&`;
