@@ -79,7 +79,7 @@ const MessageButton = () => {
       bg="white"
       hoverBg="info200"
       rounded="circle"
-      onClick={() => history.push("/")} //訊息功能完成後加上訊息連結
+      onClick={() => history.push("/message")}
     >
       <Icon name="Message" size="20px" color="black700" />
     </Button>

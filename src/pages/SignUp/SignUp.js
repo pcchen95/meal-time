@@ -84,6 +84,9 @@ const SignUpInfo = () => {
         dispatch(setErrorMessage(null));
         setImg(e.target.result);
       };
+      reader.onloadend = function () {
+        fileInput.current.value = "";
+      };
       reader.readAsDataURL(file);
     } else {
       setImg(null);

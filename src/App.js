@@ -32,6 +32,7 @@ import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
 import AdminMessagePage from "./pages/AdminMessagePage";
 import AdminFAQPage from "./pages/AdminFAQPage";
+import MessagePage from "./pages/MessagePage";
 
 function App() {
   const dispatch = useDispatch();
@@ -90,6 +91,9 @@ function App() {
           </Route>
           <Route path="/cart">
             <CartPage />
+          </Route>
+          <Route path="/message">
+            <MessagePage />
           </Route>
           <Route path="/admin_member">
             <AdminMemberPage />
