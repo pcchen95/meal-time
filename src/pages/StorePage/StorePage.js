@@ -29,7 +29,7 @@ export default function StorePage() {
 
   const vendor = useSelector((store) => store.vendors.vendorById);
   const products = useSelector((store) => store.products.vendorProducts);
-  const isLoadingProduct = useSelector((store) => store.products.isLoading);
+  const isLoadingVendor = useSelector((store) => store.vendors.isLoading);
   const count = useSelector((store) => store.products.count);
   const { id } = useParams();
   const history = useHistory();
@@ -62,7 +62,12 @@ export default function StorePage() {
         dispatch(setCurrentPosition(position));
       }
     );
-  }, []);
+    window.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: "instant",
+    });
+  }, [dispatch]);
 
   useEffect(() => {
     if (vendor) {
@@ -96,13 +101,10 @@ export default function StorePage() {
   }, [categoryId]);
   return (
     <>
-      {isLoadingProduct && <LoadingPage />}
-      {vendor && vendor !== "no-result" && isLoaded && (
+      {isLoadingVendor && !isLoaded && <LoadingPage />}
+      {isLoaded && (
         <>
-          <StoreBanner
-            banner={vendor && vendor.bannerUrl}
-            avatar={vendor && vendor.avatarUrl}
-          />
+          <StoreBanner />
           <Div
             w={{ xs: "100%", md: "80%" }}
             maxW="1100px"

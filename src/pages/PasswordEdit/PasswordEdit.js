@@ -30,7 +30,8 @@ const PasswordInfo = () => {
     });
   }, []);
 
-  const handleSubmit = () => {
+  const handleSubmit = (e) => {
+    e.preventDefault();
     if (!oldPassword || !newPassword || !confirmPassword) {
       dispatch(setErrorMessage("請填入所有必填欄位"));
       dispatch(setShowWarningNotification(true));
