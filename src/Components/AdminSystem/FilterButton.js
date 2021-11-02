@@ -20,7 +20,7 @@ export function MemberFilterButton(props) {
         textWeight="600"
         onClick={props.handleRegularFilter}
       >
-        一般用戶
+        所有用戶
       </Button>
       <Button
         h="2.5rem"

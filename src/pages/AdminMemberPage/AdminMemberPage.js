@@ -1,15 +1,34 @@
 import React, { useState, useEffect } from "react";
 import { Div } from "atomize";
 //import { useSelector, useDispatch } from "react-redux";
+//import { useHistory } from "react-router-dom";
 //import { getAllProfiles as getAllProfilesAPI } from "../../redux/reducers/adminReducer";
 import { login } from "../../WebAPI/userAPI";
 import { updateUserAuth, getAllProfiles } from "../../WebAPI/userAPI";
-
-//import { getAllProfiles, updateUserAuth } from "../../WebAPI/userAPI";
 import { MemberFilterButton } from "../../Components/AdminSystem/FilterButton";
 import MemberList from "../../Components/AdminSystem/MemberList";
 
 const AdminMemberPage = () => {
+  /*
+  const dispatch = useDispatch();
+  const history = useHistory();
+  const user = useSelector((store) => store.users.user);
+
+  useEffect(() => {
+    if (user === "non-login") {
+      return history.push("/");
+    }
+    window.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: "instant",
+    });
+    return () => {
+      dispatch(setErrorMessage(null));
+    };
+  }, [dispatch]);
+  */
+
   /*
   const dispatch = useDispatch();
   const users = useSelector((store) => store.admin.users);
@@ -18,6 +37,7 @@ const AdminMemberPage = () => {
   const state = useSelector(selectAllUsers);
   console.log(state.rows);
   */
+
   const [users, setUsers] = useState([]);
   const [display, setDisplay] = useState("all");
   const [errorMessage, setErrorMessage] = useState();
@@ -27,24 +47,13 @@ const AdminMemberPage = () => {
     suspended: (user) => user.role == "suspended",
   };
 
-  /*
-  useEffect(() => {
-    dispatch(getAllProfilesAPI(1)).then((res) => {
-      console.log(res);
-      setUsers(res.data);
-    });
-  }, []);
-    useEffect(() => {
-      dispatch(getAllProfilesAPI(1));
-      setUsers(users);
-    });
-    */
   useEffect(() => {
     login("admin", "admin").then((data) => {
       if (data.ok === 0) {
         return setErrorMessage(data.message);
       }
       getAllProfiles(1).then((res) => {
+        console.log(res);
         setUsers(res.data.rows);
       });
     });

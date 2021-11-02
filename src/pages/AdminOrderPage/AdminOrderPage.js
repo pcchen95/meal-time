@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { Div, Button } from "atomize";
 import { login } from "../../WebAPI/userAPI";
-import { getOrders } from "../../WebAPI/orderAPI";
+import { getOrders, deleteOrder } from "../../WebAPI/orderAPI";
 import { OrderFilterButton } from "../../Components/AdminSystem/FilterButton";
 import PropTypes from "prop-types";
 
-const OrderList = ({ order }) => {
+const OrderList = ({ order, handleDeleteOrder }) => {
   return (
     <Div
       border="1px solid"
@@ -47,6 +47,9 @@ const OrderList = ({ order }) => {
           border="1px solid"
           borderColor="black900"
           textWeight="300"
+          onClick={() => {
+            handleDeleteOrder(order.id);
+          }}
         >
           取消訂單
         </Button>
@@ -58,6 +61,7 @@ const OrderList = ({ order }) => {
 OrderList.propTypes = {
   order: PropTypes.object,
   id: PropTypes.number,
+  handleDeleteOrder: PropTypes.func,
 };
 
 const AdminOrderPage = () => {
@@ -77,6 +81,10 @@ const AdminOrderPage = () => {
       });
     });
   }, []);
+
+  function handleDeleteOrder(id) {
+    deleteOrder(id);
+  }
 
   console.log(orders);
 
@@ -102,7 +110,11 @@ const AdminOrderPage = () => {
           handleCompletedFilter={handleCompletedFilter}
         />
         {orders.filter(DISPLAY_MAP[display]).map((order) => (
-          <OrderList key={order.id} order={order} />
+          <OrderList
+            key={order.id}
+            order={order}
+            handleDeleteOrder={handleDeleteOrder}
+          />
         ))}
       </Div>
     </Div>
