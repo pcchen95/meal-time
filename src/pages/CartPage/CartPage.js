@@ -213,13 +213,12 @@ export default function CartPage() {
         remarks,
         userId,
         cartData,
+        setIsChecked,
       })
     );
     setIsShow(false);
-    setIsChecked(false);
     setPickupTime("");
     setRemarks("");
-    dispatch(setVendorId(null));
     dispatch(setVendorById(null));
     setPickupDate(null);
     setPickupTime(null);
