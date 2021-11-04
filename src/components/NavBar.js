@@ -406,16 +406,25 @@ const NavBar = () => {
         align="center"
       >
         <Div d="flex" justify={{ xs: "center" }} align="center">
-          {user && user !== "non-login" && user.role !== "suspended" && (
+          {user &&
+            user !== "non-login" &&
+            user.role !== "suspended" &&
+            user.role !== "admin" && (
+              <>
+                <CartButton></CartButton>
+              </>
+            )}
+          {user && user !== "non-login" && user.role !== "admin" && (
             <>
-              <CartButton></CartButton>
               <MessageButton></MessageButton>
-              <Drawer
-                showSideDrawer={showSideDrawer}
-                setShowSideDrawer={setShowSideDrawer}
-                user={user}
-              />
             </>
+          )}
+          {user && user !== "non-login" && user.role !== "suspended" && (
+            <Drawer
+              showSideDrawer={showSideDrawer}
+              setShowSideDrawer={setShowSideDrawer}
+              user={user}
+            />
           )}
           {user && user !== "non-login" && user.role === "vendor" && (
             <StoreButton handleEvent={toMyStore}></StoreButton>

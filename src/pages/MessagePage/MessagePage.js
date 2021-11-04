@@ -16,9 +16,12 @@ import {
   setSelectedId,
   cleanRoleInfo,
   setRole,
+  getSystemMessages,
+  sendMessageToAdmin,
 } from "../../redux/reducers/messageReducer";
 import MessageList from "../../Components/MessageSystem/MessageList";
 import MessageContent from "../../Components/MessageSystem/MessageContent";
+import SystemMessageContent from "../../Components/MessageSystem/SystemMessageContent";
 
 const UserMessagePage = () => {
   const dispatch = useDispatch();
@@ -37,6 +40,13 @@ const UserMessagePage = () => {
 
   const handleSendMessage = () => {
     if (!input) return;
+    if (id === "admin") {
+      dispatch(sendMessageToAdmin(input)).then(() => {
+        dispatch(getSystemMessages());
+      });
+      setInput("");
+      return;
+    }
     if (role === "user") {
       dispatch(sendMessageToVendor(id, input)).then(() => {
         dispatch(getUserMessages());
@@ -75,6 +85,7 @@ const UserMessagePage = () => {
     if (user && user.role === "suspended") {
       return setIsUserDisabled(true);
     }
+    dispatch(getSystemMessages());
     if (user && user.vendorId) {
       dispatch(getVendor());
     }
@@ -93,6 +104,7 @@ const UserMessagePage = () => {
 
   useEffect(() => {
     if (id) {
+      if (id === "admin") return;
       if (role === "user") dispatch(getUserMessagesById(id));
       if (role === "vendor") dispatch(getVendorMessagesById(id));
     }
@@ -153,17 +165,27 @@ const UserMessagePage = () => {
           selectedId={id}
           handleChange={handleChange}
         />
-        <MessageContent
-          role={role}
-          roleInfo={roleInfo}
-          messages={messagesById}
-          handleSendMessage={handleSendMessage}
-          input={input}
-          setInput={setInput}
-          isLoading={isLoading}
-          isUserDisabled={isUserDisabled}
-          isVendorDisabled={isVendorDisabled}
-        />
+        {id === "admin" && (
+          <SystemMessageContent
+            handleSendMessage={handleSendMessage}
+            input={input}
+            setInput={setInput}
+            isLoading={isLoading}
+          />
+        )}
+        {id !== "admin" && (
+          <MessageContent
+            role={role}
+            roleInfo={roleInfo}
+            messages={messagesById}
+            handleSendMessage={handleSendMessage}
+            input={input}
+            setInput={setInput}
+            isLoading={isLoading}
+            isUserDisabled={isUserDisabled}
+            isVendorDisabled={isVendorDisabled}
+          />
+        )}
       </Div>
     </Div>
   );

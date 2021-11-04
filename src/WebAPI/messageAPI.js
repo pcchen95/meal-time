@@ -98,13 +98,16 @@ export const sendMessageToAdmin = (content) => {
   }).then((res) => res.json());
 };
 
-export const getAllAdminMessages = ({ page, limit, sort, order }) => {
+export const getAllAdminMessages = (queryParameters) => {
   const token = getAuthToken();
   let queryString = "?";
-  if (page) queryString += `_page=${page}&`;
-  if (limit) queryString += `_limit=${limit}&`;
-  if (sort) queryString += `_sort=${sort}&`;
-  if (order) queryString += `_order=${order}`;
+  if (queryParameters) {
+    const { page, limit, sort, order } = queryParameters;
+    if (page) queryString += `_page=${page}&`;
+    if (limit) queryString += `_limit=${limit}&`;
+    if (sort) queryString += `_sort=${sort}&`;
+    if (order) queryString += `_order=${order}`;
+  }
   return fetch(`${BASE_URL}/messages-to-admin/admin${queryString}`, {
     headers: {
       Authorization: `Bearer ${token}`,
