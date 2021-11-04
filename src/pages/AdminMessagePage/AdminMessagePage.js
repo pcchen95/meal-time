@@ -1,87 +1,124 @@
 import React, { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useHistory } from "react-router-dom";
 import { Div } from "atomize";
-//import { useSelector, useDispatch } from "react-redux";
-//import { getAllProfiles as getAllProfilesAPI } from "../../redux/reducers/adminReducer";
-import { login } from "../../WebAPI/userAPI";
-import { updateUserAuth, getAllProfiles } from "../../WebAPI/userAPI";
+import { getAllProfiles } from "../../redux/reducers/adminReducer";
+import {
+  getAdminMessages,
+  cleanMessages,
+  getAdminMessagesById,
+  cleanMessagesById,
+  sendMessageToUser,
+  setSelectedId,
+  cleanRoleInfo,
+  setIsLoadingPage,
+} from "../../redux/reducers/messageReducer";
+import AdminUserList from "../../Components/MessageSystem/AdminUserList";
+import AdminMessageList from "../../Components/MessageSystem/AdminMessageList";
+import AdminMessageContent from "../../Components/MessageSystem/AdminMessageContent";
 
-//import { getAllProfiles, updateUserAuth } from "../../WebAPI/userAPI";
-import { MemberFilterButton } from "../../Components/AdminSystem/FilterButton";
-import MemberList from "../../Components/AdminSystem/MemberList";
-
-const AdminMemberPage = () => {
-  /*
+const AdminMessagePage = () => {
   const dispatch = useDispatch();
-  const users = useSelector((store) => store.admin.users);
-  let usersData = Object.values(users)[1];
-  dispatch(getAllProfilesAPI({ page: 1 }));
-  const state = useSelector(selectAllUsers);
-  console.log(state.rows);
-  */
-  const [users, setUsers] = useState([]);
-  const [display, setDisplay] = useState("all");
-  const [errorMessage, setErrorMessage] = useState();
+  const history = useHistory();
+  const [input, setInput] = useState("");
+  const user = useSelector((store) => store.users.user);
+  const messages = useSelector((store) => store.messages.messages);
+  const messagesById = useSelector((store) => store.messages.messagesById);
+  const id = useSelector((store) => store.messages.id);
+  const roleInfo = useSelector((store) => store.messages.roleInfo);
+  const isLoading = useSelector((store) => store.messages.isLoading);
 
-  const DISPLAY_MAP = {
-    all: (user) => user,
-    suspended: (user) => user.role == "suspended",
+  const handleSendMessage = () => {
+    if (!input) return;
+    dispatch(sendMessageToUser(id, input)).then(() => {
+      dispatch(getAdminMessages());
+    });
+    setInput("");
   };
 
-  /*
+  const handleChange = (id) => {
+    dispatch(setSelectedId(id));
+    dispatch(cleanMessagesById());
+    dispatch(cleanRoleInfo());
+  };
+
+  const clearData = () => {
+    dispatch(cleanMessages());
+    dispatch(cleanMessagesById());
+    dispatch(cleanRoleInfo());
+    dispatch(setSelectedId(null));
+  };
+
   useEffect(() => {
-    dispatch(getAllProfilesAPI(1)).then((res) => {
-      console.log(res);
-      setUsers(res.data);
-    });
-  }, []);
-    useEffect(() => {
-      dispatch(getAllProfilesAPI(1));
-      setUsers(users);
-    });
-    */
-  useEffect(() => {
-    login("admin", "admin").then((data) => {
-      if (data.ok === 0) {
-        return setErrorMessage(data.message);
-      }
-      getAllProfiles(1).then((res) => {
-        setUsers(res.data.rows);
-      });
-    });
+    return () => {
+      clearData();
+    };
   }, []);
 
-  function handleRegularFilter() {
-    setDisplay("all");
-  }
+  useEffect(() => {
+    if (user && (user === "non-login" || user.role !== "admin")) {
+      history.push("/");
+    }
+    if (user && user.role === "admin") {
+      dispatch(getAdminMessages());
+      dispatch(getAllProfiles({ sort: "username", order: "ASC" }));
+    }
+  }, [user]);
 
-  function handleSuspendedFilter() {
-    setDisplay("suspended");
-  }
+  useEffect(() => {
+    if (id) {
+      dispatch(getAdminMessagesById(id));
+    }
+  }, [id]);
 
-  function handleChangeAuth(id) {
-    console.log("btn");
-    updateUserAuth(id);
-  }
+  useEffect(() => {
+    if (!id && messages && messages.length > 0) {
+      dispatch(setSelectedId(messages[0].userId));
+    }
+  }, [id, messages]);
+
+  useEffect(() => {
+    if (roleInfo) {
+      dispatch(setIsLoadingPage(false));
+    }
+  }, [roleInfo]);
 
   return (
-    <Div>
-      <Div m={{ l: "5rem", r: "5rem" }}>
-        {errorMessage && <Div>{errorMessage}</Div>}
-        <MemberFilterButton
-          user={users}
-          handleRegularFilter={handleRegularFilter}
-          handleSuspendedFilter={handleSuspendedFilter}
-        />
-        {users.filter(DISPLAY_MAP[display]).map((user) => (
-          <MemberList
-            key={user.id}
-            user={user}
-            handleChangeAuth={handleChangeAuth}
+    <Div
+      w={{ xs: "100%", lg: "80%" }}
+      maxW="900px"
+      m="0 auto"
+      p="2rem 1rem 5rem 1rem"
+      textAlign="center"
+    >
+      <Div d="flex" justify="space-between" align="center">
+        <Div tag="h2">管理員訊息</Div>
+      </Div>
+
+      <Div d="flex" w="100%" flexDir={{ xs: "column", sm: "row" }}>
+        <Div
+          d="flex"
+          flexDir={{ xs: "column", lg: "row-reverse" }}
+          align={{ xs: "flex-start", lg: "center" }}
+        >
+          <AdminMessageList
+            messages={messages}
+            selectedId={id}
+            handleChange={handleChange}
           />
-        ))}
+          <AdminUserList selectedId={id} handleChange={handleChange} />
+        </Div>
+        <AdminMessageContent
+          roleInfo={roleInfo}
+          messages={messagesById}
+          handleSendMessage={handleSendMessage}
+          input={input}
+          setInput={setInput}
+          isLoading={isLoading}
+        />
       </Div>
     </Div>
   );
 };
 
-export default AdminMemberPage;
+export default AdminMessagePage;
