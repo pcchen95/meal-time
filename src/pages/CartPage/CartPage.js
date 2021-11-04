@@ -16,6 +16,7 @@ import {
   selectUserId,
   selectVendorId,
   selectCartData,
+  cleanCartData,
 } from "../../redux/reducers/cartReducer";
 import {
   getVendorById,
@@ -63,6 +64,7 @@ export default function CartPage() {
     });
     return () => {
       dispatch(setErrorMessage(null));
+      dispatch(cleanCartData())
     };
   }, [user, userId, cartData, dispatch]);
 
