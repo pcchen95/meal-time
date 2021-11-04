@@ -83,7 +83,7 @@ export const getMe = () => (dispatch) => {
 };
 
 export const newOrder =
-  ({ orderProducts, vendorId, pickupTime, remarks, userId, cartData }) =>
+  ({ orderProducts, vendorId, pickupTime, remarks, userId, cartData, setIsChecked }) =>
   (dispatch) => {
     postOrder({
       orderProducts,
@@ -107,6 +107,8 @@ export const newOrder =
       localStorage.setItem(`cartId${userId}`, JSON.stringify(newData));
       dispatch(setCartData(JSON.stringify(newData)));
       dispatch(setShowSuccessNotification(true, "訂單已成立"));
+      setIsChecked(false)
+      dispatch(setVendorId(null))
       return res;
     });
   };

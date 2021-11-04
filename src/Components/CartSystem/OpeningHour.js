@@ -5,10 +5,10 @@ import { Div, Text } from "atomize";
 const openingHour = ({ vendorById }) => {
   return (
     <>
-      <Text textSize="heading" textColor="gray900" m="1rem">
+      <Text textSize={{xs: "subheader", lg: "title"}} textColor="gray900" m={{y: "0.5rem"}}>
         營業時間
       </Text>
-      <Div textSize="title" textColor="gray800" m="1rem">
+      <Div textSize={{xs: "paragraph", lg: "subheader"}} textColor="gray800">
         <Div d="flex" justify="center">
           <Div>
             <Text>禮拜一</Text>
