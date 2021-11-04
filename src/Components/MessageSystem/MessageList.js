@@ -3,6 +3,57 @@ import { useSelector } from "react-redux";
 import PropTypes from "prop-types";
 import { Div, Icon } from "atomize";
 
+const SystemMessageCard = ({ selectedId, content, handleChange }) => {
+  const latestSender = Object.keys(content[content.length - 1])[0];
+  const lastIndex = Object.values(content[content.length - 1])[0].length - 1;
+  const latestMessage = Object.values(content[content.length - 1])[0][
+    lastIndex
+  ];
+
+  return (
+    <Div
+      p="1rem 0.5rem"
+      w="100%"
+      border={{ b: "1px dotted" }}
+      borderColor="gray700"
+      textAlign="left"
+      cursor="pointer"
+      d="flex"
+      align="center"
+      onClick={() => handleChange("admin")}
+      bg={selectedId === "admin" ? "success400" : "success300"}
+      hoverBg="success400"
+      rounded="md"
+    >
+      <Div w="3rem" h="3rem" d="flex" align="center" justify="center">
+        <Icon name="NotificationSolid" size="20px" color="success900" />
+      </Div>
+      <Div w="calc(100% - 3.5rem)">
+        <Div w="100%" textColor="black" d="flex">
+          系統訊息
+        </Div>
+        <Div
+          w="100%"
+          style={{
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+          }}
+          textColor="info900"
+        >
+          {`${latestSender === "client" ? "我：" : ""}${latestMessage}`}
+        </Div>
+      </Div>
+    </Div>
+  );
+};
+
+SystemMessageCard.propTypes = {
+  selectedId: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+  content: PropTypes.array,
+  handleChange: PropTypes.func,
+};
+
 const UserCard = ({ id, info, selectedId, content, handleChange }) => {
   const [isVendorDisabled, setIsVendorDisabled] = useState(false);
   const [isUserDisabled, setIsUserDisabled] = useState(false);
@@ -107,24 +158,32 @@ const UserCard = ({ id, info, selectedId, content, handleChange }) => {
 UserCard.propTypes = {
   id: PropTypes.number,
   info: PropTypes.object,
-  selectedId: PropTypes.number,
+  selectedId: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
   content: PropTypes.array,
   handleChange: PropTypes.func,
 };
 
 const MessageList = ({ messages, selectedId, handleChange }) => {
+  const systemMessages = useSelector((store) => store.messages.systemMessages);
   const role = useSelector((store) => store.messages.role);
   return (
     <Div
       w={{ xs: "100%", sm: "10rem", md: "15rem" }}
       h={{ xs: "8rem", sm: "calc(30rem + 4px)" }}
-      border="2px groove"
+      border="2px solid"
       borderColor="gray500"
       m={{ r: "1rem" }}
       overflow="scroll"
       rounded="md"
       shadow="4"
     >
+      {role === "user" && systemMessages && (
+        <SystemMessageCard
+          selectedId={selectedId}
+          content={systemMessages}
+          handleChange={handleChange}
+        />
+      )}
       {messages &&
         role === "user" &&
         messages.map((message, index) => (
@@ -166,7 +225,7 @@ const MessageList = ({ messages, selectedId, handleChange }) => {
 
 MessageList.propTypes = {
   messages: PropTypes.array,
-  selectedId: PropTypes.number,
+  selectedId: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
   handleChange: PropTypes.func,
 };
 

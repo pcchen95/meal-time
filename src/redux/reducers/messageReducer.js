@@ -6,13 +6,20 @@ import {
   getVendorMessages as getVendorMessagesApi,
   getVendorMessagesById as getVendorMessagesByIdApi,
   sendMessageToClient as sendMessageToClientApi,
+  getAllAdminMessages as getAdminMessagesApi,
+  getAdminMessageById as getAdminMessagesByIdApi,
+  sendMessageToUser as sendMessageToUserApi,
+  getMessageToAdmin as getMessageToAdminApi,
+  sendMessageToAdmin as sendMessageToAdminApi,
 } from "../../WebAPI/messageAPI";
 import { getAvailVendorProfileById } from "../../WebAPI/vendorAPI";
+import { getProfileById } from "../../WebAPI/userAPI";
 
 const initialState = {
   role: "user",
   messages: null,
   messagesById: null,
+  systemMessages: null,
   id: null,
   roleInfo: null,
   isLoading: null,
@@ -31,6 +38,9 @@ export const messageReducer = createSlice({
     setMessagesById: (state, action) => {
       state.messagesById = action.payload;
     },
+    setSystemMessages: (state, action) => {
+      state.systemMessages = action.payload;
+    },
     setId: (state, action) => {
       state.id = action.payload;
     },
@@ -47,6 +57,7 @@ export const {
   setRole,
   setMessages,
   setMessagesById,
+  setSystemMessages,
   setId,
   setRoleInfo,
   setIsLoading,
@@ -150,6 +161,78 @@ export const sendMessageToClient = (id, content) => (dispatch) => {
   });
 };
 
+export const getAdminMessages = (queryParameters) => (dispatch) => {
+  return getAdminMessagesApi(queryParameters).then((res) => {
+    if (!res.ok) {
+      console.log("Error: ", res.message);
+      return;
+    }
+    dispatch(setMessages(res.data));
+  });
+};
+
+export const getAdminMessagesById = (id) => (dispatch) => {
+  dispatch(setIsLoading(true));
+  return getAdminMessagesByIdApi(id).then((res) => {
+    if (!res.ok) {
+      dispatch(setIsLoading(false));
+      console.log("Error: ", res.message);
+      return;
+    }
+    if (res.data === null) {
+      getProfileById(id).then((res) => {
+        if (!res.ok) {
+          console.log("Error: ", res.message);
+          return;
+        }
+        dispatch(setRoleInfo(res.data));
+      });
+      return;
+    }
+    dispatch(setMessagesById(JSON.parse(res.data.content)));
+    dispatch(
+      setRoleInfo({
+        id: res.data.userId,
+        ...res.data.User,
+      })
+    );
+    dispatch(setIsLoading(false));
+  });
+};
+
+export const sendMessageToUser = (id, content) => (dispatch) => {
+  return sendMessageToUserApi(id, content).then((res) => {
+    if (!res.ok) {
+      console.log("Error: ", res.message);
+      return;
+    }
+    dispatch(setMessagesById(JSON.parse(res.data.content)));
+  });
+};
+
+export const getSystemMessages = () => (dispatch) => {
+  return getMessageToAdminApi().then((res) => {
+    if (!res.ok) {
+      console.log("Error: ", res.message);
+      return;
+    }
+    if (res.data === null) {
+      return;
+    }
+    dispatch(setSystemMessages(JSON.parse(res.data.content)));
+  });
+};
+
+export const sendMessageToAdmin = (id, content) => (dispatch) => {
+  return sendMessageToAdminApi(id, content).then((res) => {
+    if (!res.ok) {
+      console.log("Error: ", res.message);
+      return;
+    }
+    dispatch(setSystemMessages(JSON.parse(res.data.content)));
+  });
+};
+
 export const cleanMessagesById = () => (dispatch) => {
   dispatch(setMessagesById(null));
 };
@@ -164,6 +247,10 @@ export const cleanRoleInfo = () => (dispatch) => {
 
 export const setSelectedId = (id) => (dispatch) => {
   dispatch(setId(id));
+};
+
+export const setIsLoadingPage = (status) => (dispatch) => {
+  dispatch(setIsLoading(status));
 };
 
 export default messageReducer.reducer;
