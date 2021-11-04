@@ -247,7 +247,11 @@ const MessageContent = ({
   }, [roleInfo, role]);
   return (
     <Div
-      w={{ xs: "100%", sm: "calc(100% - 11rem)", lg: "calc(100% - 16rem)" }}
+      w={{
+        xs: "100%",
+        sm: "calc(100% - 11rem - 4px)",
+        lg: "calc(100% - 16rem - 4px)",
+      }}
       m={{ t: { xs: "1rem", sm: "0" } }}
       border="2px groove"
       borderColor="gray500"
