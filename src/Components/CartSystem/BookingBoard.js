@@ -34,7 +34,7 @@ const BookingProducts = styled.div`
     display: block;
     position: fixed;
     z-index: 3;
-    height: 48rem;
+    height: 40rem;
     width: 26rem;
     background: white;
     border: 1px solid #adadad;
@@ -42,12 +42,12 @@ const BookingProducts = styled.div`
     top: 50%;
     left: 50%;
     transform: translate(-50%,-50%);
-    @media screen and (max-width: 1024px){
+    @media screen and (max-width: 768px){
       top: 0;
       left: 0;
       position: static;
       transform: translate(0,0);
-      height: 48rem;
+      height: 38rem;
       width: 100%;
     }
   `}
@@ -103,10 +103,10 @@ const BookingBoard = ({
             <OpeningHour vendorById={vendorById} />
             <div>
               <Div border={{ t: "3px solid" }} borderColor="gray200">
-                <Text textSize="heading" m="1rem" textColor="info800">
+                <Text textSize={{xs: "subheader", lg: "title"}} m={{y: "0.5rem"}} textColor="info800">
                   預約時間
                 </Text>
-                <Text textSize="subheader" textColor="warning700">
+                <Text textSize={{xs: "body", lg: "paragraph"}} textColor="warning700">
                   請預約在店家營業時段
                 </Text>
                 {vendorId && cart && vendorById && (
@@ -119,17 +119,17 @@ const BookingBoard = ({
                     availPickupDates={availPickupDates}
                   />
                 )}
-                <Text textSize="heading" m="1rem" textColor="gray800">
+                <Text textSize={{xs: "paragraph", lg: "subheader"}} m={{y: "0.5rem"}} textColor="gray800">
                   備註
                 </Text>
                 <Textarea
-                  m="1rem"
-                  maxH="8rem"
+                  m={{x: "1rem"}}
+                  maxH="6rem"
                   name="remarks"
                   value={remarks}
                   onChange={(e) => setRemarks(e.target.value)}
                 />
-                <Div d="flex" w="26rem" textAlign="center" justify="center">
+                <Div d="flex" w="26rem" align="center" justify="center" m={{t: "0.5rem" }}>
                   <Button
                     h="3rem"
                     p={{ x: "1.25rem" }}
@@ -141,7 +141,6 @@ const BookingBoard = ({
                     border="1px solid"
                     borderColor="info700"
                     hoverBorderColor="warning800"
-                    m={{ r: "0.5rem", t: "1rem" }}
                     onClick={() =>
                       handleSubmit(
                         orderProducts,
@@ -166,7 +165,7 @@ const BookingBoard = ({
                     border="1px solid"
                     borderColor="info700"
                     hoverBorderColor="danger800"
-                    m={{ r: "0.5rem", t: "1rem" }}
+                    m={{ l: "0.5rem"}}
                     onClick={() => handleIsShow("cancel")}
                   >
                     取消
