@@ -16,6 +16,7 @@ import {
   selectUserId,
   selectVendorId,
   selectCartData,
+  cleanCartData,
 } from "../../redux/reducers/cartReducer";
 import {
   getVendorById,
@@ -49,7 +50,11 @@ export default function CartPage() {
   const history = useHistory();
 
   useEffect(() => {
-    if (user === "non-login") {
+    if (
+      user === "non-login" ||
+      user.role === "admin" ||
+      user.role === "suspended"
+    ) {
       return history.push("/");
     }
     setIsLoading(true);
@@ -63,6 +68,7 @@ export default function CartPage() {
     });
     return () => {
       dispatch(setErrorMessage(null));
+      dispatch(cleanCartData());
     };
   }, [user, userId, cartData, dispatch]);
 
