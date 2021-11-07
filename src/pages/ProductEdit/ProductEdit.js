@@ -25,6 +25,8 @@ import { remindText, inputRule } from "../../constants/inputText";
 import SuccessNotification from "../../Components/Notifications/SuccessNotification";
 import WarningNotification from "../../Components/Notifications/WarningNotification";
 import LoadingPage from "../LoadingPage";
+import { toLocaleDateString } from "../../utils";
+
 export default function ProductEdit() {
   let { id } = useParams();
   const [name, setName] = useState("");
@@ -39,6 +41,7 @@ export default function ProductEdit() {
   const [fileInfo, setFileInfo] = useState(null);
   const [isDeletePicture, setIsDeletePicture] = useState(false);
   const [isEdited, setIsEdited] = useState(false);
+  const [now, setNow] = useState("");
   const fileInput = useRef();
   const dispatch = useDispatch();
   const history = useHistory();
@@ -48,10 +51,12 @@ export default function ProductEdit() {
     (store) => store.products.singleProductIsLoading
   );
   const vendor = useSelector((store) => store.vendors.vendor);
-  const handleSubmit = () => {
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
     if (
       !name ||
-      !price ||
+      price === "" ||
       !quantity ||
       !categoryId ||
       !manufactureDate ||
@@ -63,7 +68,14 @@ export default function ProductEdit() {
       dispatch(setShowWarningNotification(true));
       return;
     }
-
+    let manufactureTime = new Date(manufactureDate);
+    manufactureTime.setHours(0);
+    manufactureTime.setMinutes(0);
+    manufactureTime.setSeconds(0);
+    let expiredTime = new Date(expiryDate);
+    expiredTime.setHours(23);
+    expiredTime.setMinutes(59);
+    expiredTime.setSeconds(59);
     if (!fileInfo || fileInfo.size <= 1048576) {
       dispatch(setErrorMessage(null));
       if (id !== "new") {
@@ -74,8 +86,8 @@ export default function ProductEdit() {
             price,
             quantity,
             categoryId,
-            manufactureDate,
-            expiryDate,
+            manufactureDate: new Date(manufactureTime).toUTCString(),
+            expiryDate: new Date(expiredTime).toUTCString(),
             description,
             isAvailable,
           })
@@ -94,8 +106,8 @@ export default function ProductEdit() {
             price,
             quantity,
             categoryId,
-            manufactureDate,
-            expiryDate,
+            manufactureDate: new Date(manufactureTime).toUTCString(),
+            expiryDate: new Date(expiredTime).setHours(0).toUTCString(),
             description,
             isAvailable,
             isDeletePicture,
@@ -152,6 +164,7 @@ export default function ProductEdit() {
       left: 0,
       behavior: "instant",
     });
+    setNow(toLocaleDateString(new Date()));
     return () => {
       dispatch(setErrorMessage(null));
     };
@@ -181,8 +194,9 @@ export default function ProductEdit() {
       setQuantity(product.quantity);
       setCategoryId(product.categoryId);
       product.manufactureDate &&
-        setManufactureDate(product.manufactureDate.slice(0, 10));
-      product.expiryDate && setExpiryDate(product.expiryDate.slice(0, 10));
+        setManufactureDate(toLocaleDateString(product.manufactureDate));
+      product.expiryDate &&
+        setExpiryDate(toLocaleDateString(product.expiryDate));
       setDescription(product.description);
       setIsAvailable(product.isAvailable);
       setImg(product.pictureUrl);
@@ -295,6 +309,7 @@ export default function ProductEdit() {
             remind={remindText.manufactureDate}
             rule={inputRule.manufactureDate}
             required={true}
+            now={now}
           />
           <InputField
             name={"有效期限"}
@@ -304,6 +319,7 @@ export default function ProductEdit() {
             remind={remindText.expiryDate}
             rule={inputRule.expiryDate}
             required={true}
+            now={now}
           />
           <InputField
             name={"商品介紹"}

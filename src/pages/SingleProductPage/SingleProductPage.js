@@ -143,7 +143,11 @@ export default function SingleProductPage() {
 
   useEffect(() => {
     getProductInCart();
-    if (productInCart && productInCart + productCount > product.quantity) {
+    if (
+      product &&
+      productInCart &&
+      productInCart + productCount > product.quantity
+    ) {
       setShowWarning(true);
       setProductCount(product.quantity - productInCart);
     }
