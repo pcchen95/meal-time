@@ -31,7 +31,11 @@ export default function OrdersBoughtPage() {
   const limit = 5;
 
   useEffect(() => {
-    if (user === "non-login") {
+    if (
+      user === "non-login" ||
+      user.role === "admin" ||
+      user.role === "suspended"
+    ) {
       return history.push("/");
     }
     window.scroll(0, 0);
