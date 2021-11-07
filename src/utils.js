@@ -20,3 +20,14 @@ export const AddressToLatLng = (address) => {
     }
   );
 };
+
+export const toLocaleDateString = (time) => {
+  const pad = (n) => (n < 10 ? "0" + n : n);
+  return (
+    pad(new Date(time).getFullYear()) +
+    "-" +
+    pad(new Date(time).getUTCMonth() + 1) +
+    "-" +
+    pad(new Date(time).getUTCDate())
+  );
+};
