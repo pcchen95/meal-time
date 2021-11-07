@@ -32,7 +32,7 @@ const FooterButtons = () => {
       <Button name="FAQ" link="#/faq" />
       <Button name="隱私權條款" link="#" />
       <Button name="聯絡我們" link="#" />
-      <Button name="關於我們" link="#" />
+      <Button name="關於我們" link="#/about" />
     </Div>
   );
 };
