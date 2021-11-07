@@ -30,11 +30,8 @@ export default function ProductManagePage() {
   const [sort, setSort] = useState("id");
   const [order, setOrder] = useState("DESC");
   const currentTime = useRef(() => {
-    const now = new Date();
-    now.setHours(0);
-    now.setMinutes(0);
-    now.setSeconds(0);
-    return now.getTime();
+    const now = new Date().toUTCString();
+    return new Date(now).getTime();
   });
   const user = useSelector((store) => store.users.user);
   const vendor = useSelector((store) => store.vendors.vendor);
@@ -42,7 +39,7 @@ export default function ProductManagePage() {
   const count = useSelector((store) => store.products.count);
   const isLoadingProduct = useSelector((store) => store.products.isLoading);
   const history = useHistory();
-  const limit = 10;
+  const limit = 8;
 
   const getProducts = (id) => {
     let queryParameters = {
