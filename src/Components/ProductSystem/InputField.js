@@ -12,6 +12,7 @@ const InputField = ({
   remind,
   rule,
   required,
+  now,
 }) => {
   const location = useLocation();
   let titleLength = 5;
@@ -64,11 +65,11 @@ const InputField = ({
               w={{ xs: "100%", md: "100%" }}
               required={required}
               {...(name === "有效期限" && {
-                min: new Date().toISOString().slice(0, 10),
+                min: now,
               })}
               {...((name === "價錢" || name === "數量") && { min: 0 })}
               {...(name === "製造日期" && {
-                max: new Date().toISOString().slice(0, 10),
+                max: now,
               })}
             />
           )}
@@ -94,6 +95,7 @@ InputField.propTypes = {
   remind: PropTypes.string,
   rule: PropTypes.string,
   required: PropTypes.bool,
+  now: PropTypes.string,
 };
 
 export default InputField;

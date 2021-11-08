@@ -4,6 +4,7 @@ import { HashRouter as Router, Switch, Route } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { getMe } from "./redux/reducers/userReducer";
 import HomePage from "./pages/HomePage";
+import AboutMe from "./pages/AboutMe/AboutMe";
 import ProductsPage from "./pages/ProductsPage";
 import ProductsSearchedPage from "./pages/ProductsSearchedPage";
 import ProductsByCategoryPage from "./pages/ProductsByCategoryPage";
@@ -32,6 +33,7 @@ import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
 import AdminMessagePage from "./pages/AdminMessagePage";
 import AdminFAQPage from "./pages/AdminFAQPage";
+import MessagePage from "./pages/MessagePage";
 
 function App() {
   const dispatch = useDispatch();
@@ -51,6 +53,9 @@ function App() {
         <Switch>
           <Route exact path="/">
             <HomePage />
+          </Route>
+          <Route path="/about">
+            <AboutMe />
           </Route>
           <Route path="/products/search/:keyword">
             <ProductsSearchedPage />
@@ -90,6 +95,9 @@ function App() {
           </Route>
           <Route path="/cart">
             <CartPage />
+          </Route>
+          <Route path="/message">
+            <MessagePage />
           </Route>
           <Route path="/admin_member">
             <AdminMemberPage />

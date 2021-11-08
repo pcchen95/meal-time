@@ -3,9 +3,13 @@ import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams, useHistory } from "react-router-dom";
 import { setCurrentPosition } from "../../redux/reducers/userReducer";
-import { getVendorById } from "../../redux/reducers/vendorReducer";
+import {
+  getVendorById,
+  cleanVendorById,
+} from "../../redux/reducers/vendorReducer";
 import {
   getVendorProducts,
+  cleanVendorProducts,
   getVendorProductCategories,
 } from "../../redux/reducers/productReducer";
 import { Div } from "atomize";
@@ -26,6 +30,8 @@ export default function StorePage() {
   const [page, setPage] = useState(1);
   const [pageStart, setPageStart] = useState(null);
   const [pageEnd, setPageEnd] = useState(null);
+  const [latlng, setLatLng] = useState(null);
+  const [distance, setDistance] = useState("");
 
   const vendor = useSelector((store) => store.vendors.vendorById);
   const products = useSelector((store) => store.products.vendorProducts);
@@ -55,6 +61,13 @@ export default function StorePage() {
   };
 
   useEffect(() => {
+    return () => {
+      dispatch(cleanVendorProducts());
+      dispatch(cleanVendorById());
+    };
+  }, []);
+
+  useEffect(() => {
     dispatch(getVendorById(id));
     navigator?.geolocation.getCurrentPosition(
       ({ coords: { latitude: lat, longitude: lng } }) => {
@@ -74,8 +87,15 @@ export default function StorePage() {
       if (vendor === "no-result") {
         return history.push("/");
       }
+      if (!vendor.isOpen || vendor.isSuspended) {
+        return history.push("/");
+      }
       dispatch(getVendorProductCategories(vendor.id));
       getProducts(vendor.id, categoryId, page);
+      setLatLng({
+        lat: vendor.position.coordinates[0],
+        lng: vendor.position.coordinates[1],
+      });
     }
   }, [vendor]);
 
@@ -101,10 +121,14 @@ export default function StorePage() {
   }, [categoryId]);
   return (
     <>
-      {isLoadingVendor && !isLoaded && <LoadingPage />}
-      {isLoaded && (
+      {isLoadingVendor && <LoadingPage />}
+      {isLoaded && vendor && vendor !== "no-result" && (
         <>
-          <StoreBanner />
+          <StoreBanner
+            latlng={latlng}
+            distance={distance}
+            setDistance={setDistance}
+          />
           <Div
             w={{ xs: "100%", md: "80%" }}
             maxW="1100px"

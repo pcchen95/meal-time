@@ -1,9 +1,10 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { useHistory } from "react-router";
 import { GoogleMap, DistanceMatrixService } from "@react-google-maps/api";
-import { Icon, Div } from "atomize";
+import { Icon, Div, Button } from "atomize";
+import { setSelectedId } from "../../redux/reducers/messageReducer";
 
 const Banner = ({ banner }) => {
   return (
@@ -68,19 +69,9 @@ const Category = () => {
   );
 };
 
-const Address = () => {
+const Address = ({ latlng, distance, setDistance }) => {
   const vendor = useSelector((store) => store.vendors.vendorById);
   const currentPosition = useSelector((store) => store.users.position);
-  const [latlng, setLatLng] = useState(null);
-  const [distance, setDistance] = useState("");
-
-  useEffect(() => {
-    if (vendor)
-      setLatLng({
-        lat: vendor.position.coordinates[0],
-        lng: vendor.position.coordinates[1],
-      });
-  }, [vendor]);
 
   return (
     <Div
@@ -115,6 +106,12 @@ const Address = () => {
   );
 };
 
+Address.propTypes = {
+  latlng: PropTypes.object,
+  distance: PropTypes.string,
+  setDistance: PropTypes.func,
+};
+
 const Phone = () => {
   const vendor = useSelector((store) => store.vendors.vendorById);
   return (
@@ -128,7 +125,15 @@ const Phone = () => {
   );
 };
 
-const InfoMain = ({ name, category, address, phone }) => {
+const InfoMain = ({
+  name,
+  category,
+  address,
+  phone,
+  latlng,
+  distance,
+  setDistance,
+}) => {
   return (
     <Div
       w={{ xs: "80%", md: "100%" }}
@@ -138,7 +143,12 @@ const InfoMain = ({ name, category, address, phone }) => {
     >
       <Name name={name} />
       <Category category={category} />
-      <Address address={address} />
+      <Address
+        address={address}
+        latlng={latlng}
+        distance={distance}
+        setDistance={setDistance}
+      />
       <Phone phone={phone} />
     </Div>
   );
@@ -149,9 +159,23 @@ InfoMain.propTypes = {
   category: PropTypes.string,
   address: PropTypes.string,
   phone: PropTypes.string,
+  latlng: PropTypes.object,
+  distance: PropTypes.string,
+  setDistance: PropTypes.func,
 };
 
-const Info = ({ name, address, phone, category }) => {
+const Info = ({
+  id,
+  name,
+  address,
+  phone,
+  category,
+  latlng,
+  distance,
+  setDistance,
+}) => {
+  const history = useHistory();
+  const dispatch = useDispatch();
   return (
     <Div
       d="flex"
@@ -170,19 +194,51 @@ const Info = ({ name, address, phone, category }) => {
         address={address}
         phone={phone}
         category={category}
+        latlng={latlng}
+        distance={distance}
+        setDistance={setDistance}
       />
+      <Button
+        suffix={
+          <Icon
+            name="MessageSolid"
+            size="16px"
+            color="white"
+            m={{ l: "0.5rem" }}
+          />
+        }
+        m={{ t: "0.5rem" }}
+        h="2rem"
+        bg="info700"
+        hoverBg="info800"
+        rounded="circle"
+        p={{ r: "1rem", l: "1rem" }}
+        shadow="2"
+        hoverShadow="3"
+        textSize="caption"
+        onClick={() => {
+          dispatch(setSelectedId(id));
+          history.push("/message");
+        }}
+      >
+        傳送訊息
+      </Button>
     </Div>
   );
 };
 
 Info.propTypes = {
+  id: PropTypes.number,
   name: PropTypes.string,
   address: PropTypes.string,
   phone: PropTypes.string,
   category: PropTypes.string,
+  latlng: PropTypes.object,
+  distance: PropTypes.string,
+  setDistance: PropTypes.func,
 };
 
-const StoreBanner = () => {
+const StoreBanner = ({ latlng, distance, setDistance }) => {
   const vendor = useSelector((store) => store.vendors.vendorById);
   return (
     <Div>
@@ -197,14 +253,24 @@ const StoreBanner = () => {
       >
         <Avatar avatar={vendor && vendor.avatarUrl} />
         <Info
+          id={vendor && vendor.id}
           name={vendor && vendor.vendorName}
           address={vendor && vendor.address}
           phone={vendor && vendor.phone}
           category={vendor && vendor.VendorCategory.name}
+          latlng={latlng}
+          distance={distance}
+          setDistance={setDistance}
         />
       </Div>
     </Div>
   );
+};
+
+StoreBanner.propTypes = {
+  latlng: PropTypes.object,
+  distance: PropTypes.string,
+  setDistance: PropTypes.func,
 };
 
 export default StoreBanner;
