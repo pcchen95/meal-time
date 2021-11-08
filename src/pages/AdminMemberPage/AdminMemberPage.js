@@ -1,63 +1,42 @@
 import React, { useState, useEffect } from "react";
 import { Div } from "atomize";
-//import { useSelector, useDispatch } from "react-redux";
-//import { useHistory } from "react-router-dom";
-//import { getAllProfiles as getAllProfilesAPI } from "../../redux/reducers/adminReducer";
-import { login } from "../../WebAPI/userAPI";
-import { updateUserAuth, getAllProfiles } from "../../WebAPI/userAPI";
+import { useSelector, useDispatch } from "react-redux";
+import { useHistory } from "react-router-dom";
+import {
+  getAllProfiles as getAllProfilesAPI,
+  //updateUserAuth as updateUserAuthAPI,
+} from "../../redux/reducers/adminReducer";
+import { updateUserAuth } from "../../WebAPI/userAPI";
 import { MemberFilterButton } from "../../Components/AdminSystem/FilterButton";
 import MemberList from "../../Components/AdminSystem/MemberList";
+import AdminOrderPage from "../AdminOrderPage/AdminOrderPage";
+import AdminProductTypePage from "../AdminProductTypePage/AdminProductTypePage";
+import AdminStoreTypePage from "../AdminStoreTypePage/AdminStoreTypePage";
+import LoadingPage from "../LoadingPage/LoadingPage";
 
 const AdminMemberPage = () => {
-  /*
   const dispatch = useDispatch();
   const history = useHistory();
   const user = useSelector((store) => store.users.user);
-
-  useEffect(() => {
-    if (user === "non-login") {
-      return history.push("/");
-    }
-    window.scrollTo({
-      top: 0,
-      left: 0,
-      behavior: "instant",
-    });
-    return () => {
-      dispatch(setErrorMessage(null));
-    };
-  }, [dispatch]);
-  */
-
-  /*
-  const dispatch = useDispatch();
-  const users = useSelector((store) => store.admin.users);
-  let usersData = Object.values(users)[1];
-  dispatch(getAllProfilesAPI({ page: 1 }));
-  const state = useSelector(selectAllUsers);
-  console.log(state.rows);
-  */
-
-  const [users, setUsers] = useState([]);
+  const members = useSelector((store) => store.admin.users);
+  const isLoadingMember = useSelector((store) => store.admin.isLoading);
+  console.log("members:", members);
+  const [tab, setTab] = useState("Users");
   const [display, setDisplay] = useState("all");
-  const [errorMessage, setErrorMessage] = useState();
 
   const DISPLAY_MAP = {
-    all: (user) => user,
-    suspended: (user) => user.role == "suspended",
+    all: (member) => member,
+    suspended: (member) => member.role == "suspended",
   };
 
   useEffect(() => {
-    login("admin", "admin").then((data) => {
-      if (data.ok === 0) {
-        return setErrorMessage(data.message);
-      }
-      getAllProfiles(1).then((res) => {
-        console.log(res);
-        setUsers(res.data.rows);
-      });
-    });
-  }, []);
+    if (user && (user === "non-login" || user.role !== "admin")) {
+      history.push("/");
+    }
+    if (user && user.role === "admin") {
+      dispatch(getAllProfilesAPI({ sort: "username", order: "ASC" }));
+    }
+  }, [user]);
 
   function handleRegularFilter() {
     setDisplay("all");
@@ -69,25 +48,147 @@ const AdminMemberPage = () => {
 
   function handleChangeAuth(id) {
     console.log("btn");
+    //dispatch(updateUserAuthAPI(id));
     updateUserAuth(id);
   }
 
   return (
     <Div>
+      {isLoadingMember && <LoadingPage />}
       <Div m={{ l: "5rem", r: "5rem" }}>
-        {errorMessage && <Div>{errorMessage}</Div>}
-        <MemberFilterButton
-          user={users}
-          handleRegularFilter={handleRegularFilter}
-          handleSuspendedFilter={handleSuspendedFilter}
-        />
-        {users.filter(DISPLAY_MAP[display]).map((user) => (
-          <MemberList
-            key={user.id}
-            user={user}
-            handleChangeAuth={handleChangeAuth}
-          />
-        ))}
+        <Div
+          textAlign="center"
+          textWeight="700"
+          textColor="black700"
+          textSize="display1"
+          border={{ b: "2px solid" }}
+          borderColor="black700"
+          p="1rem"
+          m={{ b: "3rem" }}
+        >
+          管理員後台
+        </Div>
+        <Div align="center" d="flex">
+          <Div
+            rounded={{ tl: "md", tr: "md" }}
+            textSize="subheader"
+            textAlign="center"
+            textWeight="700"
+            textColor="info900"
+            border={{ t: "2px solid", l: "2px solid", r: "2px solid" }}
+            borderColor="info900"
+            w="8rem"
+            p="0.5rem"
+            m={{ r: "1rem" }}
+            cursor="pointer"
+            hoverBg="info900"
+            hoverTextColor="white"
+            tab={tab}
+            onClick={(e) => {
+              setTab("Users");
+              e.target.style.backgroundColor = "#14428a";
+              e.target.style.color = "white";
+            }}
+          >
+            管理使用者
+          </Div>
+          <Div
+            rounded={{ tl: "md", tr: "md" }}
+            textSize="subheader"
+            textAlign="center"
+            textWeight="700"
+            textColor="info900"
+            border={{ t: "2px solid", l: "2px solid", r: "2px solid" }}
+            borderColor="info900"
+            w="8rem"
+            p="0.5rem"
+            m={{ r: "1rem" }}
+            cursor="pointer"
+            hoverBg="info900"
+            hoverTextColor="white"
+            tab={tab}
+            onClick={(e) => {
+              setTab("Stores");
+              e.target.style.backgroundColor = "#14428a";
+              e.target.style.color = "white";
+            }}
+          >
+            管理商家
+          </Div>
+          <Div
+            rounded={{ tl: "md", tr: "md" }}
+            textSize="subheader"
+            textAlign="center"
+            textWeight="700"
+            textColor="info900"
+            border={{ t: "2px solid", l: "2px solid", r: "2px solid" }}
+            borderColor="info900"
+            w="8rem"
+            p="0.5rem"
+            m={{ r: "1rem" }}
+            cursor="pointer"
+            hoverBg="info900"
+            hoverTextColor="white"
+            tab={tab}
+            onClick={(e) => {
+              setTab("Products");
+              e.target.style.backgroundColor = "#14428a";
+              e.target.style.color = "white";
+            }}
+          >
+            管理產品
+          </Div>
+          <Div
+            rounded={{ tl: "md", tr: "md" }}
+            textSize="subheader"
+            textAlign="center"
+            textWeight="700"
+            textColor="info900"
+            border={{ t: "2px solid", l: "2px solid", r: "2px solid" }}
+            borderColor="info900"
+            w="8rem"
+            p="0.5rem"
+            m={{ r: "1rem" }}
+            cursor="pointer"
+            hoverBg="info900"
+            hoverTextColor="white"
+            tab={tab}
+            onClick={(e) => {
+              setTab("Orders");
+              e.target.style.backgroundColor = "#14428a";
+              e.target.style.color = "white";
+            }}
+          >
+            管理訂單
+          </Div>
+        </Div>
+        <Div border="2px solid" borderColor="info900" p="2rem">
+          {/*errorMessage && <Div>{errorMessage}</Div>*/}
+
+          {tab === "Users" && (
+            <Div>
+              {" "}
+              <MemberFilterButton
+                members={members}
+                handleRegularFilter={handleRegularFilter}
+                handleSuspendedFilter={handleSuspendedFilter}
+              />
+              {members &&
+                members.rows
+                  .filter(DISPLAY_MAP[display])
+                  .map((member) => (
+                    <MemberList
+                      key={member.id}
+                      member={member}
+                      handleChangeAuth={handleChangeAuth}
+                    />
+                  ))}
+            </Div>
+          )}
+          {tab === "Stores" && <AdminStoreTypePage />}
+          {tab === "Products" && <AdminProductTypePage />}
+          {tab === "Orders" && <AdminOrderPage />}
+        </Div>
       </Div>
     </Div>
   );

@@ -40,14 +40,15 @@ import {
 } from "./notificationReducer";
 
 const initialState = {
-  user: [],
-  users: [],
-  message: {},
-  messages: [],
-  vendor: [],
-  vendors: [],
-  orders: [],
-  products: [],
+  user: null,
+  users: null,
+  message: null,
+  messages: null,
+  vendor: null,
+  vendors: null,
+  orders: null,
+  products: null,
+  isLoading: false,
 };
 
 export const adminReducer = createSlice({
@@ -78,6 +79,9 @@ export const adminReducer = createSlice({
     setProducts: (state, action) => {
       state.products = action.payload;
     },
+    setIsLoading: (state, action) => {
+      state.isLoading = action.payload;
+    },
   },
 });
 
@@ -90,6 +94,7 @@ export const {
   setVendors,
   setOrders,
   setProducts,
+  setIsLoading,
 } = adminReducer.actions;
 
 export const getMe = () => (dispatch) => {
@@ -109,6 +114,7 @@ export const getMe = () => (dispatch) => {
 export const getAllProfiles =
   ({ page, limit, sort, order, role }) =>
   (dispatch) => {
+    dispatch(setIsLoading(true));
     getAllProfilesAPI({ page, limit, sort, order, role }).then((res) => {
       if (!res.ok) {
         dispatch(setErrorMessage(res.message));
@@ -116,6 +122,7 @@ export const getAllProfiles =
         return;
       }
       dispatch(setUsers(res.data));
+      dispatch(setIsLoading(false));
     });
   };
 
@@ -216,7 +223,7 @@ export const getAllVendorProfiles =
         dispatch(setShowWarningNotification(true));
         return;
       }
-      dispatch(setVendors(res.data));
+      dispatch(setVendors(res.data.rows));
     });
   };
 

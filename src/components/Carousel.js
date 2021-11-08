@@ -7,23 +7,23 @@ const HomepageCarousel = () => {
   return (
     <Carousel>
       <Div
-        bgImg="https://images.unsplash.com/photo-1490818387583-1baba5e638af?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1464&q=80"
+        bgImg="https://i.imgur.com/vc6WV4u.png"
         bgSize="cover"
-        bgPos="left"
-        h="30rem"
+        bgPos="bottom"
+        h="50rem"
       />
       <Div
-        bgImg="https://images.unsplash.com/photo-1461354464878-ad92f492a5a0?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1740&q=80"
+        bgImg="https://i.imgur.com/I78GIvc.png"
         bgSize="cover"
         bgPos="left"
-        h="30rem"
+        h="50rem"
       />
 
       <Div
-        bgImg="https://images.unsplash.com/photo-1592502712628-c5219bf0bc12?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1742&q=80"
+        bgImg="https://i.imgur.com/LIPGvxV.png"
         bgSize="cover"
         bgPos="left"
-        h="30rem"
+        h="50rem"
       />
     </Carousel>
   );

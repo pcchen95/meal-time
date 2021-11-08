@@ -31,22 +31,6 @@ const OrderList = ({ order, handleDeleteOrder }) => {
           border="1px solid"
           borderColor="black900"
           textWeight="300"
-        >
-          編輯訂單
-        </Button>
-        <Button
-          h="2.5rem"
-          p={{ x: "1.25rem" }}
-          textSize="body"
-          bg="white"
-          hoverBg="warning300"
-          rounded="xl"
-          m={{ r: "1rem" }}
-          fontFamily="code"
-          textColor="black700"
-          border="1px solid"
-          borderColor="black900"
-          textWeight="300"
           onClick={() => {
             handleDeleteOrder(order.id);
           }}

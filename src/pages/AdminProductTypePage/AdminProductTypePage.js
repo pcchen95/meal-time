@@ -1,46 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Div, Dropdown, Anchor } from "atomize";
-import { login } from "../../WebAPI/userAPI";
-import { getProducts } from "../../WebAPI/productAPI";
+import { Div } from "atomize";
 import PropTypes from "prop-types";
-
-const ProductListOption = () => {
-  return (
-    <Div p={{ x: "1rem", y: "0.5rem" }}>
-      {["生鮮雜貨", "冷藏肉品", "零食", "飲品", "其他"].map((name, index) => (
-        <Anchor
-          key={index}
-          d="block"
-          p={{ y: "0.25rem" }}
-          onClick={() => {
-            //handleProductTypeFilter(name);
-          }}
-        >
-          {name}
-        </Anchor>
-      ))}
-    </Div>
-  );
-};
-
-const ProductTypeFilter = (/*{ handleProductTypeFilter }*/) => {
-  const [showDropdown, setShowDropdown] = useState(false);
-
-  const handleToggleDropdown = () => {
-    setShowDropdown(!showDropdown);
-  };
-  return (
-    <Dropdown
-      w="fit-content"
-      isOpen={showDropdown}
-      onClick={handleToggleDropdown}
-      menu={ProductListOption}
-      //handleProductTypeFilter={handleProductTypeFilter}
-    >
-      商品種類
-    </Dropdown>
-  );
-};
+import ProductDropdown from "../../Components/AdminSystem/ProductDropdown";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  getProducts,
+  getProductCategories,
+} from "../../redux/reducers/productReducer";
 
 const ProductList = ({ product }) => {
   return (
@@ -69,38 +35,28 @@ ProductList.propTypes = {
 };
 
 const AdminProductTypePage = () => {
-  const [products, setProducts] = useState([]);
-  const [display, setDisplay] = useState("all");
-
-  const DISPLAY_MAP = {
-    all: (product) => product,
-    //categoryId: (product) => product.categoryId == categoryId,
-  };
+  const dispatch = useDispatch();
+  const [categoryId, setCategoryId] = useState(0);
+  const products = useSelector((store) => store.products.products);
 
   useEffect(() => {
-    login("admin", "admin").then(() => {
-      getProducts(1).then((res) => {
-        setProducts(res.data.rows);
-      });
-    });
-  }, []);
-
-  console.log(products);
-
-  function handleProductTypeFilter(type) {
-    setDisplay(type);
-  }
+    categoryId !== 0
+      ? dispatch(getProducts({ categoryId }))
+      : dispatch(getProducts({}));
+    dispatch(getProductCategories());
+  }, [categoryId, dispatch]);
 
   return (
     <Div>
       <Div m={{ l: "5rem", r: "5rem" }}>
-        <ProductTypeFilter handleProductTypeFilter={handleProductTypeFilter} />
-        {products.filter(DISPLAY_MAP[display]).map((product) => (
-          <ProductList key={product.id} product={product} />
-        ))}
-        {/*products.map((product) => (
-          <ProductList key={product.id} product={product} />
-        ))*/}
+        <ProductDropdown
+          categoryId={categoryId}
+          setCategoryId={setCategoryId}
+        />
+        {products &&
+          products.rows.map((product) => (
+            <ProductList key={product.id} product={product} />
+          ))}
       </Div>
     </Div>
   );
