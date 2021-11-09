@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { Div, Icon, Button } from "atomize";
-import Carousel from "../../Components/Carousel";
+import HomepageCarousel from "../../Components/Carousel";
 import { useDispatch, useSelector } from "react-redux";
 import PropTypes from "prop-types";
 import {
@@ -84,13 +84,15 @@ const HomePage = () => {
     products = productsData.rows;
   }
   return (
-    <Div d="flex" flexDir="column" align="center" justify="center">
+    <Div>
       {isLoading && <LoadingPage />}
-      <Carousel />
-      <NewItemList
-        products={products}
-        loadMoreEvent={() => history.push("/products")}
-      />
+      <HomepageCarousel />
+      <Div d="flex" flexDir="column" align="center" justify="center">
+        <NewItemList
+          products={products}
+          loadMoreEvent={() => history.push("/products")}
+        />
+      </Div>
     </Div>
   );
 };

@@ -1,36 +1,61 @@
 import React from "react";
-import { Div } from "atomize";
+import { Div, Button } from "atomize";
 import PropTypes from "prop-types";
-import ChangeMemberAuthButton from "../../Components/AdminSystem/ChangeMemberAuthButton";
 
-export default function MemberList({ user, handleChangeAuth }) {
+export default function MemberList({ member, handleChangeAuth }) {
   return (
     <Div
-      border="1px solid"
       m={{ t: "2rem" }}
-      p="1rem"
-      rounded="sm"
+      border={{ b: "1px solid" }}
+      p="0.25rem"
       d="flex"
-      justify="space-between"
+      justify="flex-start"
+      hoverBg="info900"
+      hoverTextColor="white"
+      cursor="pointer"
     >
-      {" "}
-      <Div d="flex">
-        <Div transform="translateY(25%)">編號：{user.id}</Div>
-        <Div transform="translateY(25%)" m={{ l: "1rem" }}>
-          暱稱：{user.nickname}
-          {user.role}
-        </Div>
+      {/*member.avatarURL && (
+        <Image src={member.avatarURL} maxW="3rem" maxH="3rem"></Image>
+      )*/}
+      <Div>
+        <Button
+          h="2.5rem"
+          p={{ x: "0.75rem" }}
+          textSize="body"
+          bg="white"
+          hoverBg="danger800"
+          hoverTextColor="white"
+          rounded="xl"
+          m={{ r: "1rem", b: "0.25rem" }}
+          fontFamily="code"
+          textColor="danger800"
+          border="1px solid"
+          borderColor="danger800"
+          textWeight="400"
+          id={member.id}
+          onClick={() => {
+            handleChangeAuth(member.id);
+          }}
+        >
+          {member.role === "member" && "使停權"}
+          {member.role === "vendor" && "使停權"}
+          {member.role === "suspended" && "使復權"}
+          {member.role === "admin" && "管理員"}
+        </Button>
       </Div>
-      <ChangeMemberAuthButton
-        id={user.id}
-        handleChangeAuth={handleChangeAuth}
-      />
+      <Div transform="translateY(20%)" m={{ r: "1rem" }}>
+        編號：{member.id} |
+      </Div>
+      <Div transform="translateY(20%)" m={{ r: "1rem" }}>
+        暱稱：{member.nickname} |
+      </Div>
+      <Div transform="translateY(20%)">權限：{member.role}</Div>
     </Div>
   );
 }
 
 MemberList.propTypes = {
-  user: PropTypes.object,
+  member: PropTypes.object,
   id: PropTypes.number,
   nickname: PropTypes.string,
   role: PropTypes.string,

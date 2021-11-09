@@ -378,9 +378,9 @@ const NavBar = () => {
       d={{ md: "flex" }}
       align="center"
       justify="space-between"
-      border={{ b: "1px solid" }}
+      border={{ b: "2px solid" }}
       borderColor="info400"
-      shadow="2"
+      shadow="3"
     >
       <InputWithRightIcon
         searchContent={searchContent}

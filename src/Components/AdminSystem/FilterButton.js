@@ -10,8 +10,9 @@ export function MemberFilterButton(props) {
         p={{ x: "1.25rem" }}
         textSize="body"
         bg="white"
-        hoverBg="warning300"
-        rounded="sm"
+        hoverBg="info900"
+        hoverTextColor="white"
+        rounded="circle"
         m={{ r: "1rem" }}
         fontFamily="code"
         textColor="black700"
@@ -20,15 +21,16 @@ export function MemberFilterButton(props) {
         textWeight="600"
         onClick={props.handleRegularFilter}
       >
-        一般用戶
+        所有用戶
       </Button>
       <Button
         h="2.5rem"
         p={{ x: "1.25rem" }}
         textSize="body"
         bg="white"
-        hoverBg="warning300"
-        rounded="sm"
+        hoverBg="info900"
+        hoverTextColor="white"
+        rounded="circle"
         m={{ r: "1rem" }}
         fontFamily="code"
         textColor="black700"
@@ -51,8 +53,9 @@ export function OrderFilterButton(props) {
         p={{ x: "1.25rem" }}
         textSize="body"
         bg="white"
-        hoverBg="warning300"
-        rounded="sm"
+        hoverBg="info900"
+        hoverTextColor="white"
+        rounded="circle"
         m={{ r: "1rem" }}
         fontFamily="code"
         textColor="black700"
@@ -68,8 +71,9 @@ export function OrderFilterButton(props) {
         p={{ x: "1.25rem" }}
         textSize="body"
         bg="white"
-        hoverBg="warning300"
-        rounded="sm"
+        hoverBg="info900"
+        hoverTextColor="white"
+        rounded="circle"
         m={{ r: "1rem" }}
         fontFamily="code"
         textColor="black700"
@@ -85,8 +89,9 @@ export function OrderFilterButton(props) {
         p={{ x: "1.25rem" }}
         textSize="body"
         bg="white"
-        hoverBg="warning300"
-        rounded="sm"
+        hoverBg="info900"
+        hoverTextColor="white"
+        rounded="circle"
         m={{ r: "1rem" }}
         fontFamily="code"
         textColor="black700"

@@ -1,39 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { Div, Dropdown, Anchor } from "atomize";
-import { login } from "../../WebAPI/userAPI";
-import { getAllVendorProfiles } from "../../WebAPI/vendorAPI";
+import { Div } from "atomize";
 import PropTypes from "prop-types";
-
-const StoreListOption = (
-  <Div p={{ x: "1rem", y: "0.5rem" }}>
-    {["生鮮雜貨", "冷藏肉品", "零食", "飲品", "其他"].map((name, index) => (
-      <Anchor key={index} d="block" p={{ y: "0.25rem" }}>
-        {name}
-      </Anchor>
-    ))}
-  </Div>
-);
-class StoreTypeFilter extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      showDropdown: false,
-    };
-  }
-  render() {
-    const { showDropdown } = this.state;
-    return (
-      <Dropdown
-        w="fit-content"
-        isOpen={showDropdown}
-        onClick={() => this.setState({ showDropdown: !showDropdown })}
-        menu={StoreListOption}
-      >
-        商家類別
-      </Dropdown>
-    );
-  }
-}
+import {
+  getCategories,
+  getAllVendors,
+} from "../../redux/reducers/vendorReducer";
+import { useDispatch, useSelector } from "react-redux";
+import { EditVendorButton } from "../../Components/AdminSystem/EditButtonGroup";
+import VendorDropdown from "../../Components/AdminSystem/VendorDropdown";
+import LoadingPage from "../LoadingPage/LoadingPage";
 
 const StoreList = ({ vendor }) => {
   return (
@@ -43,14 +18,17 @@ const StoreList = ({ vendor }) => {
       p="1rem"
       rounded="sm"
       d="flex"
-      justify="space-between"
+      justify="flex-start"
+      hoverBg="info900"
+      hoverTextColor="white"
+      cursor="pointer"
     >
-      {" "}
-      <Div transform="translateY(25%)">
-        1. 商家編號：{vendor.id}
-        {vendor.vendorName}
+      <Div>商家編號：{vendor.id} | </Div>
+      <Div m={{ l: "1rem" }}>商家名稱：{vendor.vendorName} |</Div>
+      <Div m={{ l: "1rem" }}>
+        商家分類：
+        {vendor.VendorCategory.name}
       </Div>
-      <StoreTypeFilter />
     </Div>
   );
 };
@@ -63,25 +41,34 @@ StoreList.propTypes = {
 };
 
 const AdminStoreTypePage = () => {
-  const [vendors, setVendors] = useState([]);
+  const dispatch = useDispatch();
+  const [categoryId, setCategoryId] = useState(0);
+  const vendors = useSelector((store) => store.vendors.vendors);
+  const isLoadingVendor = useSelector((store) => store.vendors.isLoading);
+  console.log(vendors);
 
   useEffect(() => {
-    login("admin", "admin").then(() => {
-      getAllVendorProfiles(1).then((res) => {
-        setVendors(res.data.rows);
-      });
-    });
-  }, []);
-
-  console.log(vendors);
+    categoryId !== 0
+      ? dispatch(getAllVendors({ categoryId }))
+      : dispatch(getAllVendors({}));
+    dispatch(getCategories());
+  }, [categoryId, dispatch]);
 
   return (
     <Div>
-      <Div m={{ l: "5rem", r: "5rem" }}>
-        <StoreTypeFilter />
-        {vendors.map((vendor) => (
-          <StoreList key={vendor.id} vendor={vendor} />
-        ))}
+      {isLoadingVendor && <LoadingPage />}
+      <Div m={{ l: "5rem", r: "5rem" }} fontFamily="code" textSize="subheader">
+        <Div d="flex" justify="space-between">
+          <VendorDropdown
+            categoryId={categoryId}
+            setCategoryId={setCategoryId}
+          />
+          <EditVendorButton />
+        </Div>
+        {vendors &&
+          vendors.map((vendor) => (
+            <StoreList key={vendor.id} vendor={vendor} />
+          ))}
       </Div>
     </Div>
   );
