@@ -7,7 +7,7 @@ import {
   setErrorMessage,
   setShowWarningNotification,
 } from "../../redux/reducers/notificationReducer";
-import { Row, Col, Div, Text } from "atomize";
+import { Div, Text } from "atomize";
 import { remindText, inputRule } from "../../constants/inputText";
 import PreviewAvatar from "../../Components/UserSystem/PreviewAvatar";
 import InputField from "../../Components/UserSystem/InputField";
@@ -204,27 +204,28 @@ const SignUpInfo = () => {
 const SignUp = () => {
   return (
     <Div w="100%">
-      <Row
-        w={{ xs: "100%", md: "80%" }}
-        maxW={{ md: "52rem" }}
-        h="auto"
+      <Div
+        d="flex"
+        flexDir={{ xs: "column", sm: "row" }}
+        minH="30rem"
         m="3rem auto"
         p="1rem"
+        w={{ xs: "100%", md: "80%" }}
+        maxW={{ md: "1200px" }}
+        h="auto"
       >
-        <Col size="4" d="flex" align="flex-start" p="0">
-          <Div
-            bgImg="https://images.unsplash.com/photo-1490818387583-1baba5e638af?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1464&q=80"
-            bgSize="cover"
-            bgPos="left"
-            rounded="xl"
-            w="100%"
-            h="100%"
-          />
-        </Col>
-        <Col size="8">
+        <Div
+          w={{ xs: "100%", md: "30%" }}
+          bgImg="https://images.unsplash.com/photo-1490818387583-1baba5e638af?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1464&q=80"
+          bgSize="cover"
+          bgPos="left"
+          rounded="xl"
+          h={{ xs: "10rem", sm: "100%" }}
+        />
+        <Div w={{ xs: "100%", md: "70%" }} m={{ l: { sm: "1.5rem" } }}>
           <SignUpInfo></SignUpInfo>
-        </Col>
-      </Row>
+        </Div>
+      </Div>
       <SuccessNotification />
       <WarningNotification />
     </Div>
