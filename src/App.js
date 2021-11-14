@@ -4,6 +4,7 @@ import { HashRouter as Router, Switch, Route } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { getMe } from "./redux/reducers/userReducer";
 import HomePage from "./pages/HomePage";
+import AboutMe from "./pages/AboutMe/AboutMe";
 import ProductsPage from "./pages/ProductsPage";
 import ProductsSearchedPage from "./pages/ProductsSearchedPage";
 import ProductsByCategoryPage from "./pages/ProductsByCategoryPage";
@@ -52,6 +53,9 @@ function App() {
         <Switch>
           <Route exact path="/">
             <HomePage />
+          </Route>
+          <Route path="/about">
+            <AboutMe />
           </Route>
           <Route path="/products/search/:keyword">
             <ProductsSearchedPage />
