@@ -1,55 +1,32 @@
 import React from "react";
+import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
+import { Carousel } from "react-responsive-carousel";
 import { Div } from "atomize";
 
-const CarouselImgae = () => {
+const HomepageCarousel = () => {
   return (
-    <Div
-      bgImg="https://images.unsplash.com/photo-1490818387583-1baba5e638af?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1464&q=80"
-      bgSize="cover"
-      bgPos="left"
-      h="20rem"
-    />
+    <Carousel>
+      <Div
+        bgImg="https://i.imgur.com/vc6WV4u.png"
+        bgSize="cover"
+        bgPos="bottom"
+        h="50rem"
+      />
+      <Div
+        bgImg="https://i.imgur.com/I78GIvc.png"
+        bgSize="cover"
+        bgPos="left"
+        h="50rem"
+      />
+
+      <Div
+        bgImg="https://i.imgur.com/LIPGvxV.png"
+        bgSize="cover"
+        bgPos="left"
+        h="50rem"
+      />
+    </Carousel>
   );
 };
 
-/*
-const CarouselLeftButton = () => {
-  return (
-    <Button
-      h="3rem"
-      w="3rem"
-      bg="transparent"
-      hoverBg="danger300"
-      rounded="lg"
-      m={{ r: "1rem" }}
-    >
-      <Icon name="LeftArrow" size="35px" color="black900" />
-    </Button>
-  );
-};
-
-const CarouselRightButton = () => {
-  return (
-    <Button
-      h="3rem"
-      w="3rem"
-      bg="transparent"
-      hoverBg="danger300"
-      rounded="lg"
-      m={{ r: "1rem" }}
-    >
-      <Icon name="RightArrow" size="35px" color="black900" />
-    </Button>
-  );
-};
-*/
-
-const Carousel = () => {
-  return (
-    <Div>
-      <CarouselImgae />
-    </Div>
-  );
-};
-
-export default Carousel;
+export default HomepageCarousel;
