@@ -164,6 +164,37 @@ InfoMain.propTypes = {
   setDistance: PropTypes.func,
 };
 
+const MessageBtn = ({ handleEvent }) => {
+  return (
+    <Button
+      suffix={
+        <Icon
+          name="MessageSolid"
+          size="16px"
+          color="white"
+          m={{ l: "0.5rem" }}
+        />
+      }
+      m={{ t: "0.5rem" }}
+      h="2rem"
+      bg="info700"
+      hoverBg="info800"
+      rounded="circle"
+      p={{ r: "1rem", l: "1rem" }}
+      shadow="2"
+      hoverShadow="3"
+      textSize="caption"
+      onClick={handleEvent}
+    >
+      傳送訊息
+    </Button>
+  );
+};
+
+MessageBtn.propTypes = {
+  handleEvent: PropTypes.func,
+};
+
 const Info = ({
   id,
   name,
@@ -173,9 +204,16 @@ const Info = ({
   latlng,
   distance,
   setDistance,
+  user,
 }) => {
   const history = useHistory();
   const dispatch = useDispatch();
+
+  const handleEvent = () => {
+    dispatch(setSelectedId(id));
+    history.push("/message");
+  };
+
   return (
     <Div
       d="flex"
@@ -198,31 +236,7 @@ const Info = ({
         distance={distance}
         setDistance={setDistance}
       />
-      <Button
-        suffix={
-          <Icon
-            name="MessageSolid"
-            size="16px"
-            color="white"
-            m={{ l: "0.5rem" }}
-          />
-        }
-        m={{ t: "0.5rem" }}
-        h="2rem"
-        bg="info700"
-        hoverBg="info800"
-        rounded="circle"
-        p={{ r: "1rem", l: "1rem" }}
-        shadow="2"
-        hoverShadow="3"
-        textSize="caption"
-        onClick={() => {
-          dispatch(setSelectedId(id));
-          history.push("/message");
-        }}
-      >
-        傳送訊息
-      </Button>
+      {user && user != "non-login" && <MessageBtn handleEvent={handleEvent} />}
     </Div>
   );
 };
@@ -236,9 +250,10 @@ Info.propTypes = {
   latlng: PropTypes.object,
   distance: PropTypes.string,
   setDistance: PropTypes.func,
+  user: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
 };
 
-const StoreBanner = ({ latlng, distance, setDistance }) => {
+const StoreBanner = ({ latlng, distance, setDistance, user }) => {
   const vendor = useSelector((store) => store.vendors.vendorById);
   return (
     <Div>
@@ -261,6 +276,7 @@ const StoreBanner = ({ latlng, distance, setDistance }) => {
           latlng={latlng}
           distance={distance}
           setDistance={setDistance}
+          user={user}
         />
       </Div>
     </Div>
@@ -271,6 +287,7 @@ StoreBanner.propTypes = {
   latlng: PropTypes.object,
   distance: PropTypes.string,
   setDistance: PropTypes.func,
+  user: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
 };
 
 export default StoreBanner;
