@@ -33,6 +33,7 @@ export default function StorePage() {
   const [latlng, setLatLng] = useState(null);
   const [distance, setDistance] = useState("");
 
+  const user = useSelector((store) => store.users.user);
   const vendor = useSelector((store) => store.vendors.vendorById);
   const products = useSelector((store) => store.products.vendorProducts);
   const isLoadingVendor = useSelector((store) => store.vendors.isLoading);
@@ -128,6 +129,7 @@ export default function StorePage() {
             latlng={latlng}
             distance={distance}
             setDistance={setDistance}
+            user={user}
           />
           <Div
             w={{ xs: "100%", md: "80%" }}
