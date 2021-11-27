@@ -107,7 +107,7 @@ export default function ProductEdit() {
             quantity,
             categoryId,
             manufactureDate: new Date(manufactureTime).toUTCString(),
-            expiryDate: new Date(expiredTime).setHours(0).toUTCString(),
+            expiryDate: new Date(expiredTime).toUTCString(),
             description,
             isAvailable,
             isDeletePicture,
